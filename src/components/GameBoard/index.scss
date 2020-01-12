@@ -1,94 +1,126 @@
 @import "cards.css";
 
+.played-card-area {
+    font-size: 10px;
+}
+
 #left-player {
-  position: absolute;
-  width: 280px;
-  height: 130px;
-  background-color: blue;
-  left: 0px;
-  top: 10px;
-  font-size: 10px;
-
-  .player-info {
-    font-size: 16px;
-    width: 130px;
-    height: 100%;
-    background-color: green;
-  }
-
-  .player-hand-up {
     position: absolute;
-    top: 0px;
-    margin-left: 130px;
-    width: 150px;
-  }
+    left: 0px;
+    top: 10px;
 
-  .player-hand-down {
-    position: absolute;
-    top: 50px;
-    margin-left: 130px;
-    width: 150px;
-  }
+    .player-main-area {
+        width: 280px;
+        height: 130px;
+        background-color: blue;
+        font-size: 10px;
+
+        .player-info {
+            font-size: 16px;
+            width: 130px;
+            height: 100%;
+            background-color: green;
+        }
+
+        .player-hand-up {
+            position: absolute;
+            top: 0px;
+            margin-left: 130px;
+            width: 150px;
+        }
+
+        .player-hand-down {
+            position: absolute;
+            top: 50px;
+            margin-left: 130px;
+            width: 150px;
+        }
+    }
+
+    .played-card-area {
+        position: relative;
+        left: 100px;
+        top: 20px;
+    }
 }
 
 #right-player {
-  position: absolute;
-  width: 280px;
-  height: 130px;
-  background-color: blue;
-  right: 0px;
-  top: 10px;
-  font-size: 10px;
-
-  .player-info {
-    float: right;
-    font-size: 16px;
-    width: 130px;
-    height: 100%;
-    background-color: green;
-  }
-
-  .player-hand-up {
     position: absolute;
-    top: 0px;
-    margin-right: 130px;
-    width: 150px;
-  }
+    right: 0px;
+    top: 10px;
 
-  .player-hand-down {
-    position: absolute;
-    top: 50px;
-    margin-right: 130px;
-    width: 150px;
-  }
+    .player-main-area {
+        width: 280px;
+        height: 130px;
+        background-color: blue;
+        font-size: 10px;
+
+        .player-info {
+            float: right;
+            font-size: 16px;
+            width: 130px;
+            height: 100%;
+            background-color: green;
+        }
+
+        .player-hand-up {
+            position: absolute;
+            top: 0px;
+            margin-right: 130px;
+            width: 150px;
+        }
+
+        .player-hand-down {
+            position: absolute;
+            top: 50px;
+            margin-right: 130px;
+            width: 150px;
+        }
+    }
+
+    .played-card-area {
+        position: relative;
+        right: 100px;
+        top: 20px;
+    }
 }
 
 #bottom-player {
-  position: absolute;
-  width: 580px;
-  height: 130px;
-  background-color: blue;
-  left: 50%;
-  margin-left: -290px;
-  bottom: 0px;
-
-  .player-info {
-    width: 130px;
-    height: 100%;
-    background-color: green;
-  }
-
-  .player-hand {
     position: absolute;
-    top: 0px;
-    margin-left: 130px;
-    width: 450px;
-  }
+    bottom: 0px;
+    left: 50%;
+    margin-left: -290px;
+
+    .player-main-area {
+        width: 580px;
+        height: 130px;
+        background-color: blue;
+        position: relative;
+
+        .player-info {
+            width: 130px;
+            height: 100%;
+            background-color: green;
+        }
+
+        .player-hand {
+            position: absolute;
+            top: 0px;
+            margin-left: 130px;
+            width: 450px;
+        }
+    }
+
+    .played-card-area {
+        position: relative;
+        //right: 100px;
+        //top: 20px;
+    }
 }
 
 .playingCards {
-  a.card.selected {
-    bottom: 1em;
-  }
+    a.card.selected {
+        bottom: 1em;
+    }
 }
 

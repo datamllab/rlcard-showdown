@@ -3,7 +3,7 @@ import DoudizhuGameBoard from './components/GameBoard';
 
 function App() {
     return (
-        <div style={{width: "640px", height: "360px"}}>
+        <div style={{width: "960px", height: "540px"}}>
             <DoudizhuGameBoard/>
         </div>
     );

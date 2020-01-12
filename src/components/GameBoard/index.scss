@@ -1,0 +1,94 @@
+@import "cards.css";
+
+#left-player {
+  position: absolute;
+  width: 280px;
+  height: 130px;
+  background-color: blue;
+  left: 0px;
+  top: 10px;
+  font-size: 10px;
+
+  .player-info {
+    font-size: 16px;
+    width: 130px;
+    height: 100%;
+    background-color: green;
+  }
+
+  .player-hand-up {
+    position: absolute;
+    top: 0px;
+    margin-left: 130px;
+    width: 150px;
+  }
+
+  .player-hand-down {
+    position: absolute;
+    top: 50px;
+    margin-left: 130px;
+    width: 150px;
+  }
+}
+
+#right-player {
+  position: absolute;
+  width: 280px;
+  height: 130px;
+  background-color: blue;
+  right: 0px;
+  top: 10px;
+  font-size: 10px;
+
+  .player-info {
+    float: right;
+    font-size: 16px;
+    width: 130px;
+    height: 100%;
+    background-color: green;
+  }
+
+  .player-hand-up {
+    position: absolute;
+    top: 0px;
+    margin-right: 130px;
+    width: 150px;
+  }
+
+  .player-hand-down {
+    position: absolute;
+    top: 50px;
+    margin-right: 130px;
+    width: 150px;
+  }
+}
+
+#bottom-player {
+  position: absolute;
+  width: 580px;
+  height: 130px;
+  background-color: blue;
+  left: 50%;
+  margin-left: -290px;
+  bottom: 0px;
+
+  .player-info {
+    width: 130px;
+    height: 100%;
+    background-color: green;
+  }
+
+  .player-hand {
+    position: absolute;
+    top: 0px;
+    margin-left: 130px;
+    width: 450px;
+  }
+}
+
+.playingCards {
+  a.card.selected {
+    bottom: 1em;
+  }
+}
+

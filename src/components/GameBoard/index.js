@@ -1,54 +1,15 @@
-import React, { useState, useEffect} from 'react';
-import ReactDOM from 'react-dom';
-import webSocket from 'socket.io-client';
+import React from 'react';
 
 import './index.scss';
 
-const TestWebSocket = () => {
-    const [ws, setWs] = useState(null);
-
-    const connectWebSocket = () => {
-        setWs(webSocket("http://localhost:10080"));
-    };
-
-    useEffect(() => {
-        if(ws){
-            console.log('successfully connect from client');
-            initWebSocket();
-        }
-    });
-
-    const initWebSocket = () => {
-        ws.on("getMessage", message => {
-            console.log(message);
-        })
-    };
-
-    const sendMessage = () => {
-        ws.emit("getMessage", "wdnmd shuangma?");
-    };
-
-    return (
-        <div>
-            <input type='button' value='connect' onClick={connectWebSocket} />
-            <input type='button' value='sendMessage' onClick={sendMessage} />
-        </div>
-    );
-}
-
 class DoudizhuGameBoard extends React.Component {
-    constructor(props) {
-        super(props);
-
-    }
-
     render() {
         return (
             <div style={{width: "100%", height: "100%", backgroundColor: "#ffcc99", position: "relative"}}>
                 <div id={"left-player"}>
                     <div className="player-main-area">
                         <div className="player-info">
-                            placeholder
+                            <span style={{display: "inline-block"}}>player 2</span>
                         </div>
                         <div className="player-hand-up">
                             <div className="playingCards">
@@ -313,7 +274,7 @@ class DoudizhuGameBoard extends React.Component {
                 <div id={"right-player"}>
                     <div className="player-main-area">
                         <div className="player-info">
-                        placeholder
+                            player 1
                         </div>
                         <div className="player-hand-up">
                             <div className="playingCards">
@@ -576,7 +537,6 @@ class DoudizhuGameBoard extends React.Component {
                     </div>
                 </div>
                 <div id={"bottom-player"}>
-
                     <div className="played-card-area">
                         <div style={{width: "280px", marginLeft: "auto", marginRight: "auto", textAlign: "center"}}>
                             <div className="playingCards">
@@ -707,7 +667,7 @@ class DoudizhuGameBoard extends React.Component {
                     </div>
                     <div className="player-main-area">
                         <div className="player-info">
-                            placeholder
+                            player 0
                         </div>
                         <div className="player-hand">
                             <div className="playingCards">
@@ -838,7 +798,6 @@ class DoudizhuGameBoard extends React.Component {
                     </div>
 
                 </div>
-                <TestWebSocket />
             </div>
         );
     }

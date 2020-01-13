@@ -1,10 +1,10 @@
 import React from 'react';
-import DoudizhuGameBoard from './components/GameBoard';
+import DoudizhuGameView from './view/DoudizhuGameView';
 
 function App() {
     return (
-        <div style={{width: "960px", height: "540px"}}>
-            <DoudizhuGameBoard/>
+        <div>
+            <DoudizhuGameView />
         </div>
     );
 }

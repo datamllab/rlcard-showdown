@@ -1,7 +1,24 @@
 @import "cards.css";
 
 .played-card-area {
-    font-size: 10px;
+    font-size: 12px;
+}
+
+.player-info {
+    text-align: center;
+    line-height: 130px;
+    font-size: 16px;
+    width: 130px;
+    height: 130px;
+    background-color: green;
+
+    span {
+        vertical-align: middle;
+    }
+}
+
+.player-main-area {
+    background-color: initial;
 }
 
 #left-player {
@@ -12,15 +29,7 @@
     .player-main-area {
         width: 280px;
         height: 130px;
-        background-color: blue;
         font-size: 10px;
-
-        .player-info {
-            font-size: 16px;
-            width: 130px;
-            height: 100%;
-            background-color: green;
-        }
 
         .player-hand-up {
             position: absolute;
@@ -52,15 +61,10 @@
     .player-main-area {
         width: 280px;
         height: 130px;
-        background-color: blue;
         font-size: 10px;
 
         .player-info {
             float: right;
-            font-size: 16px;
-            width: 130px;
-            height: 100%;
-            background-color: green;
         }
 
         .player-hand-up {
@@ -94,14 +98,7 @@
     .player-main-area {
         width: 580px;
         height: 130px;
-        background-color: blue;
         position: relative;
-
-        .player-info {
-            width: 130px;
-            height: 100%;
-            background-color: green;
-        }
 
         .player-hand {
             position: absolute;
@@ -113,8 +110,7 @@
 
     .played-card-area {
         position: relative;
-        //right: 100px;
-        //top: 20px;
+        transform: translateY(30px);
     }
 }
 

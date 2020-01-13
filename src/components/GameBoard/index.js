@@ -3,13 +3,40 @@ import React from 'react';
 import './index.scss';
 
 class DoudizhuGameBoard extends React.Component {
+
+    computeMainViewerHand() {
+
+    }
+
     render() {
+        // compute the id as well as index in list for every player
+        const bottomId = this.props.mainPlayerId;
+        let found = this.props.playerInfo.find(element=>{
+            return element.id === bottomId;
+        });
+        const bottomIdx = found ? found.index : -1;
+        const rightIdx = bottomIdx >= 0 ? (bottomIdx+1)%3 : -1;
+        const leftIdx = rightIdx >= 0 ? (rightIdx+1)%3 : -1;
+        let rightId = -1;
+        let leftId = -1;
+        if(rightIdx >= 0 && leftIdx >= 0){
+            found = this.props.playerInfo.find(element=>{
+                return element.index === rightIdx;
+            });
+            if(found)
+                rightId = found.id;
+            found = this.props.playerInfo.find(element=>{
+                return element.index === leftIdx;
+            });
+            if(found)
+                leftId = found.id;
+        }
         return (
             <div style={{width: "100%", height: "100%", backgroundColor: "#ffcc99", position: "relative"}}>
                 <div id={"left-player"}>
                     <div className="player-main-area">
                         <div className="player-info">
-                            <span style={{display: "inline-block"}}>player 2</span>
+                            <span>{`Player Id ${leftId}`}</span>
                         </div>
                         <div className="player-hand-up">
                             <div className="playingCards">
@@ -274,7 +301,7 @@ class DoudizhuGameBoard extends React.Component {
                 <div id={"right-player"}>
                     <div className="player-main-area">
                         <div className="player-info">
-                            player 1
+                            <span>{`Player Id ${rightId}`}</span>
                         </div>
                         <div className="player-hand-up">
                             <div className="playingCards">
@@ -667,7 +694,7 @@ class DoudizhuGameBoard extends React.Component {
                     </div>
                     <div className="player-main-area">
                         <div className="player-info">
-                            player 0
+                            <span>{`Player Id ${bottomId}`}</span>
                         </div>
                         <div className="player-hand">
                             <div className="playingCards">

@@ -7,6 +7,7 @@ class DoudizhuGameView extends React.Component {
         super(props);
 
         const mainViewerId = 0;     // Id of the player at the bottom of screen
+        this.initConsiderationTime = 2;
 
         this.state = {
             ws: null,
@@ -14,15 +15,44 @@ class DoudizhuGameView extends React.Component {
                 playerInfo: [],
                 hand: [],
                 latestAction: [[], [], []],
-                mainViewerId: mainViewerId
-            }
+                mainViewerId: mainViewerId,
+                turn: 0,
+                currentPlayer: null,
+                considerationTime: this.initConsiderationTime,
+            },
+            gameStateLoop: null
         };
+    }
+
+    gameStateTimer() {
+        setTimeout(()=>{
+            let currentConsiderationTime = this.state.gameInfo.considerationTime;
+            if(currentConsiderationTime > 0) {
+                currentConsiderationTime--;
+                let gameInfo = JSON.parse(JSON.stringify(this.state.gameInfo));
+                gameInfo.considerationTime = currentConsiderationTime;
+                this.setState({gameInfo: gameInfo});
+                this.gameStateTimer();
+            }else{
+                const turn = this.state.gameInfo.turn;
+                const gameStateReq = {
+                    type: 1,
+                    message: {turn: turn}
+                };
+                let gameInfo = JSON.parse(JSON.stringify(this.state.gameInfo));
+                gameInfo.considerationTime = this.initConsiderationTime;
+                this.setState({gameInfo: gameInfo});
+                this.state.ws.emit("getMessage", gameStateReq);
+            }
+        }, 1000);
     }
 
     startReplay() {
         if(this.state.ws !== null){
             const replayReq = {type: 0};
             this.state.ws.emit("getMessage", replayReq);
+            // loop to update game state
+            this.gameStateTimer();
         }else{
             console.log("websocket not connected");
         }
@@ -31,7 +61,6 @@ class DoudizhuGameView extends React.Component {
     connectWebSocket() {
         let ws = webSocket("http://localhost:10080");
         ws.on("getMessage", message => {
-            // console.log(message);
             if(message){
                 switch(message.type){
                     case 0:
@@ -41,7 +70,29 @@ class DoudizhuGameView extends React.Component {
                         gameInfo.hand = message.message.initHand.map(element => {
                             return element.split(" ");
                         });
+                        // the first player should be landlord
+                        gameInfo.currentPlayer = message.message.playerInfo.find(element=>{return element.role === "landlord"}).index;
                         this.setState({gameInfo: gameInfo});
+                        break;
+                    case 1:
+                        // getting player actions
+                        console.log(message.message);
+                        let res = message.message;
+                        if(res.turn === this.state.gameInfo.turn && res.playerIdx === this.state.gameInfo.currentPlayer){
+                            let gameInfo = JSON.parse(JSON.stringify(this.state.gameInfo));
+                            gameInfo.latestAction[res.playerIdx] = res.move === "P" ? "P" : res.move.split(" ");
+                            gameInfo.turn++;
+                            gameInfo.currentPlayer = (gameInfo.currentPlayer+1)%3;
+                            // todo: take away played cards from player's hand
+
+                            this.setState({gameInfo: gameInfo});
+                            this.gameStateTimer();
+                        }else{
+                            console.log("Mismatched game turn or current player index", message);
+                        }
+                        break;
+                    default:
+                        console.log("Wrong message type ", message);
                         break;
                 }
             }
@@ -58,6 +109,8 @@ class DoudizhuGameView extends React.Component {
                         hand={this.state.gameInfo.hand}
                         latestAction={this.state.gameInfo.latestAction}
                         mainPlayerId={this.state.gameInfo.mainViewerId}
+                        currentPlayer={this.state.gameInfo.currentPlayer}
+                        considerationTime={this.state.gameInfo.considerationTime}
                     />
                 </div>
                 <div style={{marginTop: "10px"}}>

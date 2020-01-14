@@ -31,9 +31,9 @@ class DoudizhuGameBoard extends React.Component {
             suitClass = "joker";
             suitText = "Joker";
         }else{
-            rankClass = card.charAt(0) === "T" ? `10` : card.charAt(1).toLowerCase();
+            rankClass = card.charAt(1) === "T" ? `10` : card.charAt(1).toLowerCase();
             rankClass = `rank-${rankClass}`;
-            rankText = card.charAt(0) === "T" ? `10` : card.charAt(1);
+            rankText = card.charAt(1) === "T" ? `10` : card.charAt(1);
         }
         // translate suitClass
         if(card !== "RJ" && card !== "BJ"){
@@ -51,15 +51,20 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     computeSingleLineHand(cards) {
-        return (
-            <div className="playingCards">
-                <ul className="hand">
-                    {cards.map(card=>{
-                        return this.translateCardData(card);
-                    })}
-                </ul>
-            </div>
-        )
+        console.log(cards);
+        if(cards === "P"){
+            return <div>Pass</div>
+        }else{
+            return (
+                <div className="playingCards">
+                    <ul className="hand">
+                        {cards.map(card=>{
+                            return this.translateCardData(card);
+                        })}
+                    </ul>
+                </div>
+            )
+        }
     }
 
     computeSideHand(cards) {
@@ -116,6 +121,7 @@ class DoudizhuGameBoard extends React.Component {
         }
         return (
             <div style={{width: "100%", height: "100%", backgroundColor: "#ffcc99", position: "relative"}}>
+                <div>{`Current Player: ${this.props.currentPlayer} , Consideration Time: ${this.props.considerationTime}`}</div>
                 <div id={"left-player"}>
                     <div className="player-main-area">
                         <div className="player-info">

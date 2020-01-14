@@ -21,16 +21,33 @@ io.on("connection", socket => {
     console.log("successfully connected to rlcard showdown frontend");
     socket.emit("getMessage", "successfully connected to rlcard showdown node server");
     socket.on("getMessage", message => {
+        let res = null;
         if(message){
             switch(message.type){
                 case(0):
-                    const res = {
+                    res = {
                         type: 0,
                         message: {
                             playerInfo: testDoudizhuData.playerInfo,
                             initHand: testDoudizhuData.initHand
                         }
                     };
+                    socket.emit("getMessage", res);
+                    break;
+                case(1):
+                    console.log(message);
+                    if(message.message.turn >= testDoudizhuData.moveHistory.length){
+                        // todo: process end of game
+                    }else{
+                        res = {
+                            type: 1,
+                            message: {
+                                turn: message.message.turn,
+                                playerIdx: testDoudizhuData.moveHistory[message.message.turn].playerIdx,
+                                move: testDoudizhuData.moveHistory[message.message.turn].move
+                            }
+                        };
+                    }
                     socket.emit("getMessage", res);
                     break;
             }

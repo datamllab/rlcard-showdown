@@ -9,6 +9,9 @@ class DoudizhuGameBoard extends React.Component {
         this.suitMap = new Map(
             [["H", "hearts"], ["D", "diams"], ["S", "spades"], ["C", "clubs"]]
         );
+        this.suitMapSymbol = new Map(
+            [["H", "\u2665"], ["D", "\u2666"], ["S", "\u2660"], ["C", "\u2663"]]
+        )
     }
 
     translateCardData(card) {
@@ -28,17 +31,18 @@ class DoudizhuGameBoard extends React.Component {
             suitClass = "joker";
             suitText = "Joker";
         }else{
-            rankClass = card.charAt(0) === "T" ? `10` : card.charAt(0).toLowerCase();
-            rankText = card.charAt(0) === "T" ? `10` : card.charAt(0);
+            rankClass = card.charAt(0) === "T" ? `10` : card.charAt(1).toLowerCase();
+            rankClass = `rank-${rankClass}`;
+            rankText = card.charAt(0) === "T" ? `10` : card.charAt(1);
         }
         // translate suitClass
         if(card !== "RJ" && card !== "BJ"){
-            suitClass = this.suitMap.get(card.charAt(1));
-            suitText = `&${this.suitMap.get(card.charAt(1))};`;
+            suitClass = this.suitMap.get(card.charAt(0));
+            suitText = this.suitMapSymbol.get(card.charAt(0));
         }
         return (
-            <li>
-                <a className={`card rank-${rankClass} ${suitClass}`} href="/#">
+            <li key={`handCard-${card}`}>
+                <a className={`card ${rankClass} ${suitClass}`} href="/#">
                     <span className="rank">{rankText}</span>
                     <span className="suit">{suitText}</span>
                 </a>
@@ -46,15 +50,42 @@ class DoudizhuGameBoard extends React.Component {
         )
     }
 
-    computeBottomHand(cards) {
+    computeSingleLineHand(cards) {
         return (
-            <div className="played-card-area">
-                <div className="playingCards">
-                    <ul className="hand">
-                        {cards.split(" ").map(card=>{
-                            return this.translateCardData(card);
-                        })}
-                    </ul>
+            <div className="playingCards">
+                <ul className="hand">
+                    {cards.map(card=>{
+                        return this.translateCardData(card);
+                    })}
+                </ul>
+            </div>
+        )
+    }
+
+    computeSideHand(cards) {
+        let upCards = [];
+        let downCards = [];
+        if(cards.length > 10){
+            upCards = cards.slice(0, 10);
+            downCards = cards.slice(10, );
+        }else{
+            upCards = cards;
+        }
+        return (
+            <div>
+                <div className="player-hand-up">
+                    <div className="playingCards">
+                        <ul className="hand">
+                            {upCards.map(element => {return this.translateCardData(element)})}
+                        </ul>
+                    </div>
+                </div>
+                <div className="player-hand-down">
+                    <div className="playingCards">
+                        <ul className="hand">
+                            {downCards.map(element => {return this.translateCardData(element)})}
+                        </ul>
+                    </div>
                 </div>
             </div>
         )
@@ -88,794 +119,35 @@ class DoudizhuGameBoard extends React.Component {
                 <div id={"left-player"}>
                     <div className="player-main-area">
                         <div className="player-info">
-                            <span>{`Player Id ${leftId}`}</span>
+                            <span>{`Player Id ${leftId}\n${this.props.playerInfo.length > 0 ? this.props.playerInfo[leftIdx].role : ""}`}</span>
                         </div>
-                        <div className="player-hand-up">
-                            <div className="playingCards">
-                                <ul className="hand">
-                                    <li>
-                                        <a className="card rank-7 diams" href="/#">
-                                            <span className="rank">7</span>
-                                            <span className="suit">&diams;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-8 hearts" href="/#">
-                                            <span className="rank">8</span>
-                                            <span className="suit">&hearts;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-9 spades" href="/#">
-                                            <span className="rank">9</span>
-                                            <span className="suit">&spades;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-10 clubs" href="/#">
-                                            <span className="rank">10</span>
-                                            <span className="suit">&clubs;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-j diams" href="/#">
-                                            <span className="rank">J</span>
-                                            <span className="suit">&diams;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-5 clubs" href="/#">
-                                            <span className="rank">5</span>
-                                            <span className="suit">&clubs;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-6 diams" href="/#">
-                                            <span className="rank">6</span>
-                                            <span className="suit">&diams;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-q hearts" href="/#">
-                                            <span className="rank">Q</span>
-                                            <span className="suit">&hearts;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-k spades" href="/#">
-                                            <span className="rank">K</span>
-                                            <span className="suit">&spades;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-k spades" href="/#">
-                                            <span className="rank">K</span>
-                                            <span className="suit">&spades;</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div className="player-hand-down">
-                            <div className="playingCards">
-                                <ul className="hand">
-                                    <li>
-                                        <a className="card rank-7 diams" href="/#">
-                                            <span className="rank">7</span>
-                                            <span className="suit">&diams;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-8 hearts" href="/#">
-                                            <span className="rank">8</span>
-                                            <span className="suit">&hearts;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-9 spades" href="/#">
-                                            <span className="rank">9</span>
-                                            <span className="suit">&spades;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-10 clubs" href="/#">
-                                            <span className="rank">10</span>
-                                            <span className="suit">&clubs;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-j diams" href="/#">
-                                            <span className="rank">J</span>
-                                            <span className="suit">&diams;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-5 clubs" href="/#">
-                                            <span className="rank">5</span>
-                                            <span className="suit">&clubs;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-6 diams" href="/#">
-                                            <span className="rank">6</span>
-                                            <span className="suit">&diams;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-q hearts" href="/#">
-                                            <span className="rank">Q</span>
-                                            <span className="suit">&hearts;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-k spades" href="/#">
-                                            <span className="rank">K</span>
-                                            <span className="suit">&spades;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-k spades" href="/#">
-                                            <span className="rank">K</span>
-                                            <span className="suit">&spades;</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                        {leftIdx >= 0 ? this.computeSideHand(this.props.hand[leftIdx]) : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
                     </div>
                     <div className="played-card-area">
-                        <div className="playingCards">
-                            <ul className="hand">
-                                <li>
-                                    <a className="card rank-7 diams" href="/#">
-                                        <span className="rank">7</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-8 hearts" href="/#">
-                                        <span className="rank">8</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-9 spades" href="/#">
-                                        <span className="rank">9</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-10 clubs" href="/#">
-                                        <span className="rank">10</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-j diams" href="/#">
-                                        <span className="rank">J</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-5 clubs" href="/#">
-                                        <span className="rank">5</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-6 diams" href="/#">
-                                        <span className="rank">6</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-q hearts" href="/#">
-                                        <span className="rank">Q</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-7 diams" href="/#">
-                                        <span className="rank">7</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-8 hearts" href="/#">
-                                        <span className="rank">8</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-9 spades" href="/#">
-                                        <span className="rank">9</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-10 clubs" href="/#">
-                                        <span className="rank">10</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-j diams" href="/#">
-                                        <span className="rank">J</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-5 clubs" href="/#">
-                                        <span className="rank">5</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-6 diams" href="/#">
-                                        <span className="rank">6</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-q hearts" href="/#">
-                                        <span className="rank">Q</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                        {leftIdx >= 0 ? this.computeSingleLineHand(this.props.latestAction[leftIdx]) : ""}
                     </div>
                 </div>
                 <div id={"right-player"}>
                     <div className="player-main-area">
                         <div className="player-info">
-                            <span>{`Player Id ${rightId}`}</span>
+                            <span>{`Player Id ${rightId}\n${this.props.playerInfo.length > 0 ? this.props.playerInfo[rightIdx].role : ""}`}</span>
                         </div>
-                        <div className="player-hand-up">
-                            <div className="playingCards">
-                                <ul className="hand">
-                                    <li>
-                                        <a className="card rank-7 diams" href="/#">
-                                            <span className="rank">7</span>
-                                            <span className="suit">&diams;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-8 hearts" href="/#">
-                                            <span className="rank">8</span>
-                                            <span className="suit">&hearts;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-9 spades" href="/#">
-                                            <span className="rank">9</span>
-                                            <span className="suit">&spades;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-10 clubs" href="/#">
-                                            <span className="rank">10</span>
-                                            <span className="suit">&clubs;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-j diams" href="/#">
-                                            <span className="rank">J</span>
-                                            <span className="suit">&diams;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-5 clubs" href="/#">
-                                            <span className="rank">5</span>
-                                            <span className="suit">&clubs;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-6 diams" href="/#">
-                                            <span className="rank">6</span>
-                                            <span className="suit">&diams;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-q hearts" href="/#">
-                                            <span className="rank">Q</span>
-                                            <span className="suit">&hearts;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-k spades" href="/#">
-                                            <span className="rank">K</span>
-                                            <span className="suit">&spades;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-k spades" href="/#">
-                                            <span className="rank">K</span>
-                                            <span className="suit">&spades;</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div className="player-hand-down">
-                            <div className="playingCards">
-                                <ul className="hand">
-                                    <li>
-                                        <a className="card rank-7 diams" href="/#">
-                                            <span className="rank">7</span>
-                                            <span className="suit">&diams;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-8 hearts" href="/#">
-                                            <span className="rank">8</span>
-                                            <span className="suit">&hearts;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-9 spades" href="/#">
-                                            <span className="rank">9</span>
-                                            <span className="suit">&spades;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-10 clubs" href="/#">
-                                            <span className="rank">10</span>
-                                            <span className="suit">&clubs;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-j diams" href="/#">
-                                            <span className="rank">J</span>
-                                            <span className="suit">&diams;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-5 clubs" href="/#">
-                                            <span className="rank">5</span>
-                                            <span className="suit">&clubs;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-6 diams" href="/#">
-                                            <span className="rank">6</span>
-                                            <span className="suit">&diams;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-q hearts" href="/#">
-                                            <span className="rank">Q</span>
-                                            <span className="suit">&hearts;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-k spades" href="/#">
-                                            <span className="rank">K</span>
-                                            <span className="suit">&spades;</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="card rank-k spades" href="/#">
-                                            <span className="rank">K</span>
-                                            <span className="suit">&spades;</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                        {rightIdx >= 0 ? this.computeSideHand(this.props.hand[rightIdx]) : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
                     </div>
                     <div className="played-card-area">
-                        <div className="playingCards">
-                            <ul className="hand">
-                                <li>
-                                    <a className="card rank-7 diams" href="/#">
-                                        <span className="rank">7</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-8 hearts" href="/#">
-                                        <span className="rank">8</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-9 spades" href="/#">
-                                        <span className="rank">9</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-10 clubs" href="/#">
-                                        <span className="rank">10</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-j diams" href="/#">
-                                        <span className="rank">J</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-5 clubs" href="/#">
-                                        <span className="rank">5</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-6 diams" href="/#">
-                                        <span className="rank">6</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-q hearts" href="/#">
-                                        <span className="rank">Q</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-7 diams" href="/#">
-                                        <span className="rank">7</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-8 hearts" href="/#">
-                                        <span className="rank">8</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-9 spades" href="/#">
-                                        <span className="rank">9</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-10 clubs" href="/#">
-                                        <span className="rank">10</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-j diams" href="/#">
-                                        <span className="rank">J</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-5 clubs" href="/#">
-                                        <span className="rank">5</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-6 diams" href="/#">
-                                        <span className="rank">6</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-q hearts" href="/#">
-                                        <span className="rank">Q</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                        {rightIdx >= 0 ? this.computeSingleLineHand(this.props.latestAction[rightIdx]) : ""}
                     </div>
                 </div>
                 <div id={"bottom-player"}>
                     <div className="played-card-area">
-                        <div style={{width: "280px", marginLeft: "auto", marginRight: "auto", textAlign: "center"}}>
-                            <div className="playingCards">
-                            <ul className="hand">
-                                <li>
-                                    <a className="card rank-7 diams" href="/#">
-                                        <span className="rank">7</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-8 hearts" href="/#">
-                                        <span className="rank">8</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-9 spades" href="/#">
-                                        <span className="rank">9</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-10 clubs" href="/#">
-                                        <span className="rank">10</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-j diams" href="/#">
-                                        <span className="rank">J</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-5 clubs" href="/#">
-                                        <span className="rank">5</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-6 diams" href="/#">
-                                        <span className="rank">6</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-q hearts" href="/#">
-                                        <span className="rank">Q</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-7 diams" href="/#">
-                                        <span className="rank">7</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-8 hearts" href="/#">
-                                        <span className="rank">8</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-9 spades" href="/#">
-                                        <span className="rank">9</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-10 clubs" href="/#">
-                                        <span className="rank">10</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-j diams" href="/#">
-                                        <span className="rank">J</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-5 clubs" href="/#">
-                                        <span className="rank">5</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-6 diams" href="/#">
-                                        <span className="rank">6</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-q hearts" href="/#">
-                                        <span className="rank">Q</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        </div>
+                        {bottomIdx >= 0 ? this.computeSingleLineHand(this.props.latestAction[bottomIdx]) : ""}
                     </div>
                     <div className="player-main-area">
                         <div className="player-info">
-                            <span>{`Player Id ${bottomId}`}</span>
+                            <span>{`Player Id ${bottomId}\n${this.props.playerInfo.length > 0 ? this.props.playerInfo[bottomIdx].role : ""}`}</span>
                         </div>
-                        <div className="player-hand">
-                            <div className="playingCards">
-                                <ul className="hand">
-                                <li>
-                                    <a className="card rank-7 diams" href="/#">
-                                        <span className="rank">7</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-8 hearts" href="/#">
-                                        <span className="rank">8</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-9 spades" href="/#">
-                                        <span className="rank">9</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-10 clubs" href="/#">
-                                        <span className="rank">10</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-j diams" href="/#">
-                                        <span className="rank">J</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-5 clubs" href="/#">
-                                        <span className="rank">5</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-6 diams" href="/#">
-                                        <span className="rank">6</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-q hearts" href="/#">
-                                        <span className="rank">Q</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-7 diams" href="/#">
-                                        <span className="rank">7</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-8 hearts" href="/#">
-                                        <span className="rank">8</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-9 spades" href="/#">
-                                        <span className="rank">9</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-10 clubs" href="/#">
-                                        <span className="rank">10</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-j diams" href="/#">
-                                        <span className="rank">J</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-5 clubs" href="/#">
-                                        <span className="rank">5</span>
-                                        <span className="suit">&clubs;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-6 diams" href="/#">
-                                        <span className="rank">6</span>
-                                        <span className="suit">&diams;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-q hearts" href="/#">
-                                        <span className="rank">Q</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-q hearts" href="/#">
-                                        <span className="rank">Q</span>
-                                        <span className="suit">&hearts;</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a className="card rank-k spades" href="/#">
-                                        <span className="rank">K</span>
-                                        <span className="suit">&spades;</span>
-                                    </a>
-                                </li>
-                            </ul>
-                            </div>
-                        </div>
+                        {bottomIdx >= 0 ? <div className="player-hand">{this.computeSingleLineHand(this.props.hand[bottomIdx])}</div> : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
                     </div>
-
                 </div>
             </div>
         );

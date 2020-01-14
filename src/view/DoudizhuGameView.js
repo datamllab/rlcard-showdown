@@ -13,7 +13,7 @@ class DoudizhuGameView extends React.Component {
             gameInfo: {
                 playerInfo: [],
                 hand: [],
-                latestAction: [],
+                latestAction: [[], [], []],
                 mainViewerId: mainViewerId
             }
         };
@@ -31,14 +31,16 @@ class DoudizhuGameView extends React.Component {
     connectWebSocket() {
         let ws = webSocket("http://localhost:10080");
         ws.on("getMessage", message => {
-            console.log(message);
+            // console.log(message);
             if(message){
                 switch(message.type){
                     case 0:
                         // init replay info
                         let gameInfo = JSON.parse(JSON.stringify(this.state.gameInfo));
                         gameInfo.playerInfo = message.message.playerInfo;
-                        gameInfo.hand = message.message.initHand;
+                        gameInfo.hand = message.message.initHand.map(element => {
+                            return element.split(" ");
+                        });
                         this.setState({gameInfo: gameInfo});
                         break;
                 }

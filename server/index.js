@@ -22,10 +22,8 @@ io.on("connection", socket => {
     socket.emit("getMessage", "successfully connected to rlcard showdown node server");
     socket.on("getMessage", message => {
         if(message){
-            console.log(message.type);
             switch(message.type){
                 case(0):
-                    console.log("going");
                     const res = {
                         type: 0,
                         message: {

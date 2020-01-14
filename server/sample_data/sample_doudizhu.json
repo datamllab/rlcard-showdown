@@ -23,127 +23,127 @@
   ],
   "moveHistory": [
     {
-      "playerId": 2,
+      "playerIdx": 2,
       "move": "H3 S3 D3 D5"
     },
     {
-      "playerId": 0,
+      "playerIdx": 0,
       "move": "S9 H9 D9 S3"
     },
     {
-      "playerId": 1,
+      "playerIdx": 1,
       "move": "P"
     },
     {
-      "playerId": 2,
+      "playerIdx": 2,
       "move": "SJ HJ DJ D7"
     },
     {
-      "playerId": 0,
+      "playerIdx": 0,
       "move": "HQ CQ DQ C7"
     },
     {
-      "playerId": 1,
+      "playerIdx": 1,
       "move": "P"
     },
     {
-      "playerId": 2,
+      "playerIdx": 2,
       "move": "P"
     },
     {
-      "playerId": 0,
+      "playerIdx": 0,
       "move": "C4 D4"
     },
     {
-      "playerId": 1,
+      "playerIdx": 1,
       "move": "ST HT"
     },
     {
-      "playerId": 2,
+      "playerIdx": 2,
       "move": "SK CK"
     },
     {
-      "playerId": 0,
+      "playerIdx": 0,
       "move": "S2 H2"
     },
     {
-      "playerId": 1,
+      "playerIdx": 1,
       "move": "P"
     },
     {
-      "playerId": 2,
+      "playerIdx": 2,
       "move": "P"
     },
     {
-      "playerId": 0,
+      "playerIdx": 0,
       "move": "S6 H6"
     },
     {
-      "playerId": 1,
+      "playerIdx": 1,
       "move": "P"
     },
     {
-      "playerId": 2,
+      "playerIdx": 2,
       "move": "CT DT"
     },
     {
-      "playerId": 0,
+      "playerIdx": 0,
       "move": "HK DK"
     },
     {
-      "playerId": 1,
+      "playerIdx": 1,
       "move": "P"
     },
     {
-      "playerId": 2,
+      "playerIdx": 2,
       "move": "RJ BJ"
     },
     {
-      "playerId": 0,
+      "playerIdx": 0,
       "move": "P"
     },
     {
-      "playerId": 1,
+      "playerIdx": 1,
       "move": "P"
     },
     {
-      "playerId": 2,
+      "playerIdx": 2,
       "move": "S8 H8 C8 C9"
     },
     {
-      "playerId": 0,
+      "playerIdx": 0,
       "move": "P"
     },
     {
-      "playerId": 1,
+      "playerIdx": 1,
       "move": "HA CA DA H5"
     },
     {
-      "playerId": 2,
+      "playerIdx": 2,
       "move": "P"
     },
     {
-      "playerId": 0,
+      "playerIdx": 0,
       "move": "P"
     },
     {
-      "playerId": 1,
+      "playerIdx": 1,
       "move": "SQ"
     },
     {
-      "playerId": 2,
+      "playerIdx": 2,
       "move": "D2"
     },
     {
-      "playerId": 0,
+      "playerIdx": 0,
       "move": "P"
     },
     {
-      "playerId": 1,
+      "playerIdx": 1,
       "move": "P"
     },
     {
-      "playerId": 2,
+      "playerIdx": 2,
       "move": "SA"
     }
   ]

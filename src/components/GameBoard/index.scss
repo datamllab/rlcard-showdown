@@ -4,19 +4,30 @@
     font-size: 12px;
 }
 
+.player-hand-placeholder {
+    font-size: 16px;
+    display: table;
+
+    span {
+        display: table-cell;
+        vertical-align: middle;
+        text-align: center;
+    }
+}
+
 .player-info {
-    text-align: center;
-    line-height: 130px;
+
+    //line-height: 130px;
     font-size: 16px;
     width: 130px;
     height: 130px;
     background-color: green;
+    display: table;
 
     span {
+        display: table-cell;
         vertical-align: middle;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        text-align: center;
     }
 }
 
@@ -36,7 +47,7 @@
 
         .player-hand-up {
             position: absolute;
-            top: 0px;
+            top: 0;
             margin-left: 130px;
             width: 150px;
         }
@@ -46,6 +57,14 @@
             top: 50px;
             margin-left: 130px;
             width: 150px;
+        }
+
+        .player-hand-placeholder {
+            width: 150px;
+            height: 130px;
+            position: absolute;
+            top: 0;
+            margin-left: 130px;
         }
     }
 
@@ -72,7 +91,7 @@
 
         .player-hand-up {
             position: absolute;
-            top: 0px;
+            top: 0;
             margin-right: 130px;
             width: 150px;
         }
@@ -82,6 +101,14 @@
             top: 50px;
             margin-right: 130px;
             width: 150px;
+        }
+
+        .player-hand-placeholder {
+            width: 150px;
+            height: 130px;
+            position: absolute;
+            top: 0;
+            margin-right: 130px;
         }
     }
 
@@ -105,15 +132,29 @@
 
         .player-hand {
             position: absolute;
-            top: 0px;
+            top: 0;
+            padding-left: 20px;
             margin-left: 130px;
             width: 450px;
+        }
+
+        .player-hand-placeholder {
+            width: 150px;
+            height: 130px;
+            position: absolute;
+            top: 0;
+            padding-left: 20px;
+            margin-left: 130px;
         }
     }
 
     .played-card-area {
         position: relative;
         transform: translateY(30px);
+        width: 280px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
     }
 }
 

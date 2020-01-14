@@ -127,7 +127,7 @@ class DoudizhuGameBoard extends React.Component {
                         <div className="player-info">
                             <span>{`Player Id ${leftId}\n${this.props.playerInfo.length > 0 ? this.props.playerInfo[leftIdx].role : ""}`}</span>
                         </div>
-                        {leftIdx >= 0 ? this.computeSideHand(this.props.hand[leftIdx]) : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
+                        {leftIdx >= 0 ? this.computeSideHand(this.props.hands[leftIdx]) : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
                     </div>
                     <div className="played-card-area">
                         {leftIdx >= 0 ? this.computeSingleLineHand(this.props.latestAction[leftIdx]) : ""}
@@ -138,7 +138,7 @@ class DoudizhuGameBoard extends React.Component {
                         <div className="player-info">
                             <span>{`Player Id ${rightId}\n${this.props.playerInfo.length > 0 ? this.props.playerInfo[rightIdx].role : ""}`}</span>
                         </div>
-                        {rightIdx >= 0 ? this.computeSideHand(this.props.hand[rightIdx]) : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
+                        {rightIdx >= 0 ? this.computeSideHand(this.props.hands[rightIdx]) : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
                     </div>
                     <div className="played-card-area">
                         {rightIdx >= 0 ? this.computeSingleLineHand(this.props.latestAction[rightIdx]) : ""}
@@ -152,7 +152,7 @@ class DoudizhuGameBoard extends React.Component {
                         <div className="player-info">
                             <span>{`Player Id ${bottomId}\n${this.props.playerInfo.length > 0 ? this.props.playerInfo[bottomIdx].role : ""}`}</span>
                         </div>
-                        {bottomIdx >= 0 ? <div className="player-hand">{this.computeSingleLineHand(this.props.hand[bottomIdx])}</div> : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
+                        {bottomIdx >= 0 ? <div className="player-hand">{this.computeSingleLineHand(this.props.hands[bottomIdx])}</div> : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
                     </div>
                 </div>
             </div>

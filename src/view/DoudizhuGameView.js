@@ -1,6 +1,7 @@
 import React from 'react';
 import DoudizhuGameBoard from '../components/GameBoard';
 import webSocket from "socket.io-client";
+import {removeCards} from "../utils";
 
 class DoudizhuGameView extends React.Component {
     constructor(props) {
@@ -13,7 +14,7 @@ class DoudizhuGameView extends React.Component {
             ws: null,
             gameInfo: {
                 playerInfo: [],
-                hand: [],
+                hands: [],
                 latestAction: [[], [], []],
                 mainViewerId: mainViewerId,
                 turn: 0,
@@ -67,7 +68,7 @@ class DoudizhuGameView extends React.Component {
                         // init replay info
                         let gameInfo = JSON.parse(JSON.stringify(this.state.gameInfo));
                         gameInfo.playerInfo = message.message.playerInfo;
-                        gameInfo.hand = message.message.initHand.map(element => {
+                        gameInfo.hands = message.message.initHands.map(element => {
                             return element.split(" ");
                         });
                         // the first player should be landlord
@@ -83,8 +84,13 @@ class DoudizhuGameView extends React.Component {
                             gameInfo.latestAction[res.playerIdx] = res.move === "P" ? "P" : res.move.split(" ");
                             gameInfo.turn++;
                             gameInfo.currentPlayer = (gameInfo.currentPlayer+1)%3;
-                            // todo: take away played cards from player's hand
-
+                            // take away played cards from player's hands
+                            const remainedCards = removeCards(gameInfo.latestAction[res.playerIdx], gameInfo.hands[res.playerIdx]);
+                            if(remainedCards !== false){
+                                gameInfo.hands[res.playerIdx] = remainedCards;
+                            }else{
+                                console.log("Cannot find cards in move from player's hand");
+                            }
                             this.setState({gameInfo: gameInfo});
                             this.gameStateTimer();
                         }else{
@@ -106,7 +112,7 @@ class DoudizhuGameView extends React.Component {
                 <div style={{width: "960px", height: "540px"}}>
                     <DoudizhuGameBoard
                         playerInfo={this.state.gameInfo.playerInfo}
-                        hand={this.state.gameInfo.hand}
+                        hands={this.state.gameInfo.hands}
                         latestAction={this.state.gameInfo.latestAction}
                         mainPlayerId={this.state.gameInfo.mainViewerId}
                         currentPlayer={this.state.gameInfo.currentPlayer}

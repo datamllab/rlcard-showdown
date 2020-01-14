@@ -29,7 +29,7 @@ io.on("connection", socket => {
                         type: 0,
                         message: {
                             playerInfo: testDoudizhuData.playerInfo,
-                            initHand: testDoudizhuData.initHand
+                            initHands: testDoudizhuData.initHands
                         }
                     };
                     socket.emit("getMessage", res);

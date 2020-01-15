@@ -53,11 +53,11 @@ class DoudizhuGameBoard extends React.Component {
     computeSingleLineHand(cards) {
         console.log(cards);
         if(cards === "P"){
-            return <span>Pass</span>
+            return <div className="non-card"><span>Pass</span></div>
         }else{
             return (
                 <div className="playingCards">
-                    <ul className="hand">
+                    <ul className="hand" style={{width: this.computeHandCardsWidth(cards.length, 12)}}>
                         {cards.map(card=>{
                             return this.translateCardData(card);
                         })}
@@ -96,6 +96,25 @@ class DoudizhuGameBoard extends React.Component {
         )
     }
 
+    computeHandCardsWidth(num, emWidth) {
+        if(num === 0)
+            return 0;
+        return (num-1)*1.1*emWidth + 4.3*emWidth*1.2 + 2;
+    }
+
+    millisecond2Second(t){
+        return Math.round(t/1000);
+    }
+
+    playerDecisionArea(playerIdx){
+        console.log(this.props.currentPlayer, playerIdx);
+        if(this.props.currentPlayer === playerIdx){
+            return <div className="non-card"><span>{`Consideration Time: ${this.millisecond2Second(this.props.considerationTime)}s`}</span></div>
+        }else{
+            return this.computeSingleLineHand(this.props.latestAction[playerIdx])
+        }
+    }
+
     render() {
         // compute the id as well as index in list for every player
         const bottomId = this.props.mainPlayerId;
@@ -130,7 +149,7 @@ class DoudizhuGameBoard extends React.Component {
                         {leftIdx >= 0 ? this.computeSideHand(this.props.hands[leftIdx]) : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
                     </div>
                     <div className="played-card-area">
-                        {leftIdx >= 0 ? this.computeSingleLineHand(this.props.latestAction[leftIdx]) : ""}
+                        {leftIdx >= 0 ? this.playerDecisionArea(leftIdx) : ""}
                     </div>
                 </div>
                 <div id={"right-player"}>
@@ -141,12 +160,12 @@ class DoudizhuGameBoard extends React.Component {
                         {rightIdx >= 0 ? this.computeSideHand(this.props.hands[rightIdx]) : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
                     </div>
                     <div className="played-card-area">
-                        {rightIdx >= 0 ? this.computeSingleLineHand(this.props.latestAction[rightIdx]) : ""}
+                        {rightIdx >= 0 ? this.playerDecisionArea(rightIdx) : ""}
                     </div>
                 </div>
                 <div id={"bottom-player"}>
                     <div className="played-card-area">
-                        {bottomIdx >= 0 ? this.computeSingleLineHand(this.props.latestAction[bottomIdx]) : ""}
+                        {bottomIdx >= 0 ? this.playerDecisionArea(bottomIdx) : ""}
                     </div>
                     <div className="player-main-area">
                         <div className="player-info">

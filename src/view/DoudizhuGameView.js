@@ -8,7 +8,9 @@ class DoudizhuGameView extends React.Component {
         super(props);
 
         const mainViewerId = 0;     // Id of the player at the bottom of screen
-        this.initConsiderationTime = 0;
+        this.initConsiderationTime = 2000;
+        this.considerationTimeDeduction = 1000;
+        this.gameStateTimeout = null;
 
         this.initGameState = {
             playerInfo: [],
@@ -28,10 +30,10 @@ class DoudizhuGameView extends React.Component {
     }
 
     gameStateTimer() {
-        setTimeout(()=>{
+        this.gameStateTimeout = setTimeout(()=>{
             let currentConsiderationTime = this.state.gameInfo.considerationTime;
             if(currentConsiderationTime > 0) {
-                currentConsiderationTime--;
+                currentConsiderationTime -= this.considerationTimeDeduction;
                 let gameInfo = JSON.parse(JSON.stringify(this.state.gameInfo));
                 gameInfo.considerationTime = currentConsiderationTime;
                 this.setState({gameInfo: gameInfo});
@@ -43,11 +45,10 @@ class DoudizhuGameView extends React.Component {
                     message: {turn: turn}
                 };
                 let gameInfo = JSON.parse(JSON.stringify(this.state.gameInfo));
-                gameInfo.considerationTime = this.initConsiderationTime;
                 this.setState({gameInfo: gameInfo});
                 this.state.ws.emit("getMessage", gameStateReq);
             }
-        }, 1000);
+        }, this.considerationTimeDeduction);
     }
 
     startReplay() {
@@ -56,6 +57,10 @@ class DoudizhuGameView extends React.Component {
             this.state.ws.emit("getMessage", replayReq);
             // init game state
             this.setState({gameInfo: this.initGameState});
+            if(this.gameStateTimeout){
+                window.clearTimeout(this.gameStateTimeout);
+                this.gameStateTimeout = null;
+            }
             // loop to update game state
             this.gameStateTimer();
         }else{
@@ -95,6 +100,7 @@ class DoudizhuGameView extends React.Component {
                             }else{
                                 console.log("Cannot find cards in move from player's hand");
                             }
+                            gameInfo.considerationTime = this.initConsiderationTime;
                             this.setState({gameInfo: gameInfo});
                             this.gameStateTimer();
                         }else{

@@ -24,14 +24,22 @@
   "moveHistory": [
     {
       "playerIdx": 2,
-      "move": "P"
+      "move": "H3 S3 D3 D5"
     },
     {
       "playerIdx": 0,
-      "move": "P"
+      "move": "S9 H9 D9 S3"
     },
     {
       "playerIdx": 1,
+      "move": "P"
+    },
+    {
+      "playerIdx": 2,
+      "move": "SJ HJ DJ D7"
+    },
+    {
+      "playerIdx": 0,
       "move": "P"
     }
   ]

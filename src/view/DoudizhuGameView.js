@@ -8,19 +8,21 @@ class DoudizhuGameView extends React.Component {
         super(props);
 
         const mainViewerId = 0;     // Id of the player at the bottom of screen
-        this.initConsiderationTime = 2;
+        this.initConsiderationTime = 0;
+
+        this.initGameState = {
+            playerInfo: [],
+            hands: [],
+            latestAction: [[], [], []],
+            mainViewerId: mainViewerId,
+            turn: 0,
+            currentPlayer: null,
+            considerationTime: this.initConsiderationTime,
+        }
 
         this.state = {
             ws: null,
-            gameInfo: {
-                playerInfo: [],
-                hands: [],
-                latestAction: [[], [], []],
-                mainViewerId: mainViewerId,
-                turn: 0,
-                currentPlayer: null,
-                considerationTime: this.initConsiderationTime,
-            },
+            gameInfo: this.initGameState,
             gameStateLoop: null
         };
     }
@@ -52,6 +54,8 @@ class DoudizhuGameView extends React.Component {
         if(this.state.ws !== null){
             const replayReq = {type: 0};
             this.state.ws.emit("getMessage", replayReq);
+            // init game state
+            this.setState({gameInfo: this.initGameState});
             // loop to update game state
             this.gameStateTimer();
         }else{

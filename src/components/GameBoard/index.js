@@ -53,7 +53,7 @@ class DoudizhuGameBoard extends React.Component {
     computeSingleLineHand(cards) {
         console.log(cards);
         if(cards === "P"){
-            return <div>Pass</div>
+            return <span>Pass</span>
         }else{
             return (
                 <div className="playingCards">

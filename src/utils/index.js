@@ -19,3 +19,10 @@ export function removeCards(cards, hands){     // remove cards from hands, retur
         return remainedHands;
 }
 
+export function doubleRaf (callback) {
+    // secure all the animation got rendered before callback function gets executed
+    requestAnimationFrame(() => {
+        requestAnimationFrame(callback)
+    })
+}
+

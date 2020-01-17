@@ -1,15 +1,15 @@
 import React from 'react';
 import DoudizhuGameBoard from '../components/GameBoard';
 import webSocket from "socket.io-client";
-import {removeCards} from "../utils";
+import {removeCards, doubleRaf} from "../utils";
 
 class DoudizhuGameView extends React.Component {
     constructor(props) {
         super(props);
 
         const mainViewerId = 0;     // Id of the player at the bottom of screen
-        this.initConsiderationTime = 2000;
-        this.considerationTimeDeduction = 1000;
+        this.initConsiderationTime = 0;
+        this.considerationTimeDeduction = 100;
         this.gameStateTimeout = null;
 
         this.initGameState = {
@@ -20,7 +20,7 @@ class DoudizhuGameView extends React.Component {
             turn: 0,
             currentPlayer: null,
             considerationTime: this.initConsiderationTime,
-        }
+        };
 
         this.state = {
             ws: null,
@@ -86,7 +86,6 @@ class DoudizhuGameView extends React.Component {
                         break;
                     case 1:
                         // getting player actions
-                        console.log(message.message);
                         let res = message.message;
                         if(res.turn === this.state.gameInfo.turn && res.playerIdx === this.state.gameInfo.currentPlayer){
                             let gameInfo = JSON.parse(JSON.stringify(this.state.gameInfo));
@@ -101,8 +100,9 @@ class DoudizhuGameView extends React.Component {
                                 console.log("Cannot find cards in move from player's hand");
                             }
                             gameInfo.considerationTime = this.initConsiderationTime;
-                            this.setState({gameInfo: gameInfo});
-                            this.gameStateTimer();
+                            this.setState({gameInfo: gameInfo}, ()=>{
+
+                            });
                         }else{
                             console.log("Mismatched game turn or current player index", message);
                         }
@@ -116,6 +116,26 @@ class DoudizhuGameView extends React.Component {
         this.setState({ws: ws});
     };
 
+    runNewTurn(prevTurn){
+        // check if the game ends
+        if(this.state.gameInfo.hands[prevTurn.currentPlayer].length === 0){
+            doubleRaf(()=>{
+                const winner = this.state.gameInfo.playerInfo.find(element => {
+                    return element.index === prevTurn.currentPlayer;
+                });
+                if(winner){
+                    if(winner.role === "landlord")
+                        alert("Landlord Wins");
+                    else
+                        alert("Peasants Win");
+                }else{
+                    console.log("Error in finding winner");
+                }
+            });
+        }else
+            this.gameStateTimer();
+    }
+
     render(){
         return (
             <div>
@@ -127,11 +147,16 @@ class DoudizhuGameView extends React.Component {
                         mainPlayerId={this.state.gameInfo.mainViewerId}
                         currentPlayer={this.state.gameInfo.currentPlayer}
                         considerationTime={this.state.gameInfo.considerationTime}
+                        turn={this.state.gameInfo.turn}
+                        runNewTurn={(prevTurn)=>this.runNewTurn(prevTurn)}
                     />
                 </div>
                 <div style={{marginTop: "10px"}}>
                     <input type='button' value='Connect' onClick={()=>{this.connectWebSocket()}} />
                     <input style={{marginLeft: "10px"}} type='button' value='Start Replay' onClick={()=>{this.startReplay()}} />
+                </div>
+                <div style={{marginTop: "10px"}}>
+                    {`Current Player: ${this.state.gameInfo.currentPlayer} , Consideration Time: ${this.state.gameInfo.considerationTime}, Turn: ${this.state.gameInfo.turn}`}
                 </div>
             </div>
         )

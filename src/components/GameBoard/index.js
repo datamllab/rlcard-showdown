@@ -1,6 +1,6 @@
 import React from 'react';
 
-import './index.scss';
+import '../../assets/doudizhu.scss';
 
 class DoudizhuGameBoard extends React.Component {
     constructor(props) {
@@ -15,9 +15,9 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     translateCardData(card) {
-        let rankClass = "";
+        let rankClass;
         let suitClass = "";
-        let rankText = "";
+        let rankText;
         let suitText = "";
         // translate rank
         if(card === "RJ"){
@@ -51,7 +51,6 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     computeSingleLineHand(cards) {
-        console.log(cards);
         if(cards === "P"){
             return <div className="non-card"><span>Pass</span></div>
         }else{
@@ -68,7 +67,7 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     computeSideHand(cards) {
-        let upCards = [];
+        let upCards;
         let downCards = [];
         if(cards.length > 10){
             upCards = cards.slice(0, 10);
@@ -107,11 +106,17 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     playerDecisionArea(playerIdx){
-        console.log(this.props.currentPlayer, playerIdx);
         if(this.props.currentPlayer === playerIdx){
             return <div className="non-card"><span>{`Consideration Time: ${this.millisecond2Second(this.props.considerationTime)}s`}</span></div>
         }else{
             return this.computeSingleLineHand(this.props.latestAction[playerIdx])
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(prevProps.turn !== this.props.turn){
+            // new turn starts
+            this.props.runNewTurn(prevProps);
         }
     }
 
@@ -140,7 +145,6 @@ class DoudizhuGameBoard extends React.Component {
         }
         return (
             <div style={{width: "100%", height: "100%", backgroundColor: "#ffcc99", position: "relative"}}>
-                <div>{`Current Player: ${this.props.currentPlayer} , Consideration Time: ${this.props.considerationTime}`}</div>
                 <div id={"left-player"}>
                     <div className="player-main-area">
                         <div className="player-info">

@@ -1,14 +1,17 @@
 import React from 'react';
+import '../assets/gameview.scss';
 import DoudizhuGameBoard from '../components/GameBoard';
 import webSocket from "socket.io-client";
 import {removeCards, doubleRaf} from "../utils";
+
+import { Button, Layout, Slider } from 'element-react';
 
 class DoudizhuGameView extends React.Component {
     constructor(props) {
         super(props);
 
         const mainViewerId = 0;     // Id of the player at the bottom of screen
-        this.initConsiderationTime = 0;
+        this.initConsiderationTime = 1000;
         this.considerationTimeDeduction = 100;
         this.gameStateTimeout = null;
 
@@ -25,7 +28,8 @@ class DoudizhuGameView extends React.Component {
         this.state = {
             ws: null,
             gameInfo: this.initGameState,
-            gameStateLoop: null
+            gameStateLoop: null,
+            considerationTime: this.initConsiderationTime
         };
     }
 
@@ -99,10 +103,8 @@ class DoudizhuGameView extends React.Component {
                             }else{
                                 console.log("Cannot find cards in move from player's hand");
                             }
-                            gameInfo.considerationTime = this.initConsiderationTime;
-                            this.setState({gameInfo: gameInfo}, ()=>{
-
-                            });
+                            gameInfo.considerationTime = this.state.considerationTime;
+                            this.setState({gameInfo: gameInfo});
                         }else{
                             console.log("Mismatched game turn or current player index", message);
                         }
@@ -151,12 +153,26 @@ class DoudizhuGameView extends React.Component {
                         runNewTurn={(prevTurn)=>this.runNewTurn(prevTurn)}
                     />
                 </div>
-                <div style={{marginTop: "10px"}}>
-                    <input type='button' value='Connect' onClick={()=>{this.connectWebSocket()}} />
-                    <input style={{marginLeft: "10px"}} type='button' value='Start Replay' onClick={()=>{this.startReplay()}} />
-                </div>
-                <div style={{marginTop: "10px"}}>
-                    {`Current Player: ${this.state.gameInfo.currentPlayer} , Consideration Time: ${this.state.gameInfo.considerationTime}, Turn: ${this.state.gameInfo.turn}`}
+                <div className="game-controller">
+                    <Layout.Row>
+                        <Layout.Col span="24">
+                            <Button type="primary" onClick={()=>{this.connectWebSocket()}}>Connect</Button>
+                            <Button type="primary" onClick={()=>{this.startReplay()}}>Start Replay</Button>
+                        </Layout.Col>
+                    </Layout.Row>
+                    <Layout.Row>
+                        <Layout.Col span="24">
+                            <div className="block">
+                                <span className="demonstration">不显示间断点</span>
+                                <Slider value={this.state.considerationTime} step={100} min={0} max={10000} onChange={(newVal)=>{console.log('slider val', newVal);this.setState({considerationTime: newVal})}} />
+                            </div>
+                        </Layout.Col>
+                    </Layout.Row>
+                    <Layout.Row>
+                        <Layout.Col span="24">
+                            {`Current Player: ${this.state.gameInfo.currentPlayer} , Consideration Time: ${this.state.gameInfo.considerationTime}, Turn: ${this.state.gameInfo.turn}`}
+                        </Layout.Col>
+                    </Layout.Row>
                 </div>
             </div>
         )

@@ -4,7 +4,8 @@ import DoudizhuGameBoard from '../components/GameBoard';
 import webSocket from "socket.io-client";
 import {removeCards, doubleRaf} from "../utils";
 
-import { Button, Layout, Slider } from 'element-react';
+import { Button, Layout, Slider as elSlider } from 'element-react';
+import Slider from '@material-ui/core/Slider';
 
 class DoudizhuGameView extends React.Component {
     constructor(props) {
@@ -160,12 +161,23 @@ class DoudizhuGameView extends React.Component {
                             <Button type="primary" onClick={()=>{this.startReplay()}}>Start Replay</Button>
                         </Layout.Col>
                     </Layout.Row>
-                    <Layout.Row>
-                        <Layout.Col span="24">
-                            <div className="block">
-                                <span className="demonstration">不显示间断点</span>
-                                <Slider value={this.state.considerationTime} step={100} min={0} max={10000} onChange={(newVal)=>{console.log('slider val', newVal);this.setState({considerationTime: newVal})}} />
+                    <Layout.Row style={{height: "31px"}}>
+                        <Layout.Col span="8" style={{height: "100%"}}>
+                            <div style={{display: "table", height: "100%"}}>
+                                <span style={{display: "table-cell", verticalAlign: "middle"}}>Consideration Time</span>
                             </div>
+                        </Layout.Col>
+                        <Layout.Col span="16">
+                            <Slider
+                                value={this.state.considerationTime}
+                                onChange={(e, newVal)=>{console.log('slider val', newVal);this.setState({considerationTime: newVal})}}
+                                aria-labelledby="discrete-slider"
+                                valueLabelDisplay="auto"
+                                step={1000}
+                                marks
+                                min={0}
+                                max={10000}
+                            />
                         </Layout.Col>
                     </Layout.Row>
                     <Layout.Row>

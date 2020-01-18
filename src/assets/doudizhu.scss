@@ -2,6 +2,7 @@
 
 .played-card-area {
     font-size: 12px;
+    width: 300px;
     display: flex;
     justify-content: center;
     .non-card {
@@ -97,10 +98,6 @@
         height: 130px;
         font-size: 10px;
 
-        .player-info {
-            float: right;
-        }
-
         .player-hand-up {
             position: absolute;
             top: 0;
@@ -121,6 +118,10 @@
             position: absolute;
             top: 0;
             margin-right: 130px;
+        }
+
+        .player-info {
+            float: right;
         }
     }
 
@@ -161,6 +162,7 @@
     }
 
     .played-card-area {
+        width: 100%;
         position: relative;
         transform: translateY(25px);
         .non-card {

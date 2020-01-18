@@ -102,7 +102,7 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     millisecond2Second(t){
-        return Math.round(t/1000);
+        return Math.ceil(t/1000);
     }
 
     playerDecisionArea(playerIdx){

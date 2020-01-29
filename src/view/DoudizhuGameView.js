@@ -1,6 +1,6 @@
 import React from 'react';
 import '../assets/gameview.scss';
-import DoudizhuGameBoard from '../components/GameBoard';
+import { DoudizhuGameBoard } from '../components/GameBoard';
 import webSocket from "socket.io-client";
 import {removeCards, doubleRaf} from "../utils";
 

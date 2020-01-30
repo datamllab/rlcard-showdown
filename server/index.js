@@ -1,4 +1,5 @@
 const express = require("express");
+const router = require("express").Router();
 const cors = require("cors");
 const fs = require("fs");
 
@@ -15,7 +16,7 @@ const server = app.listen(port, () => {
 const socket = require("socket.io");
 const io = socket(server);
 
-let testDoudizhuData = null;
+let testDoudizhuData = null, testLeducHoldemData = null;
 
 io.on("connection", socket => {
     console.log("successfully connected to rlcard showdown frontend");
@@ -55,12 +56,30 @@ io.on("connection", socket => {
     })
 });
 
+router.get('/replay/leduc_holdem/:id', (req, res)=>{
+    res.json(testLeducHoldemData);
+});
+
+router.get('/replay/doudizhu/:id', (req, res)=>{
+    res.json(testDoudizhuData);
+});
+
+app.use(router);
+
 function getGameHistory(){
     fs.readFile("./sample_data/sample_doudizhu.json", (err, data) => {
         if (err) throw err;
         testDoudizhuData = JSON.parse(data);
         console.log(testDoudizhuData);
     });
+
+    fs.readFile("./sample_data/sample_leduc_holdem.json", (err, data) => {
+        if (err) throw err;
+        testLeducHoldemData = JSON.parse(data);
+        console.log(testLeducHoldemData);
+    });
 }
 
 getGameHistory();
+
+module.exports = router;

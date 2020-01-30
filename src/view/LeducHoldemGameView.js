@@ -1,6 +1,6 @@
 import React from 'react';
 import '../assets/gameview.scss';
-import { LeducHoldemGameBoard } from '../components/GameBoard';
+import {DoudizhuGameBoard, LeducHoldemGameBoard} from '../components/GameBoard';
 import {removeCards, doubleRaf} from "../utils";
 
 import { Button, Layout, Slider as elSlider } from 'element-react';
@@ -13,7 +13,18 @@ class LeducHoldemGameView extends React.Component {
 
     render(){
         return (
-            <div>Leduc Holdem Placeholder <LeducHoldemGameBoard /></div>
+            <div style={{width: "960px", height: "540px"}}>
+                <LeducHoldemGameBoard
+                    playerInfo={this.state.gameInfo.playerInfo}
+                    hands={this.state.gameInfo.hands}
+                    latestAction={this.state.gameInfo.latestAction}
+                    mainPlayerId={this.state.gameInfo.mainViewerId}
+                    currentPlayer={this.state.gameInfo.currentPlayer}
+                    considerationTime={this.state.gameInfo.considerationTime}
+                    turn={this.state.gameInfo.turn}
+                    runNewTurn={(prevTurn)=>this.runNewTurn(prevTurn)}
+                />
+            </div>
         );
     }
 }

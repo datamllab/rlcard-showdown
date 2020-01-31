@@ -2,9 +2,9 @@ import React from 'react';
 import '../assets/gameview.scss';
 import { DoudizhuGameBoard } from '../components/GameBoard';
 import webSocket from "socket.io-client";
-import {removeCards, doubleRaf} from "../utils";
+import { removeCards, doubleRaf, deepCopy } from "../utils";
 
-import { Button, Layout, Slider as elSlider } from 'element-react';
+import { Button, Layout } from 'element-react';
 import Slider from '@material-ui/core/Slider';
 
 class DoudizhuGameView extends React.Component {
@@ -30,7 +30,7 @@ class DoudizhuGameView extends React.Component {
             ws: null,
             gameInfo: this.initGameState,
             gameStateLoop: null,
-            considerationTime: this.initConsiderationTime
+            considerationTimeSetting: this.initConsiderationTime
         };
     }
 
@@ -39,7 +39,7 @@ class DoudizhuGameView extends React.Component {
             let currentConsiderationTime = this.state.gameInfo.considerationTime;
             if(currentConsiderationTime > 0) {
                 currentConsiderationTime -= this.considerationTimeDeduction;
-                let gameInfo = JSON.parse(JSON.stringify(this.state.gameInfo));
+                let gameInfo = deepCopy(this.state.gameInfo);
                 gameInfo.considerationTime = currentConsiderationTime;
                 this.setState({gameInfo: gameInfo});
                 this.gameStateTimer();
@@ -49,7 +49,7 @@ class DoudizhuGameView extends React.Component {
                     type: 1,
                     message: {turn: turn}
                 };
-                let gameInfo = JSON.parse(JSON.stringify(this.state.gameInfo));
+                let gameInfo = deepCopy(this.state.gameInfo);
                 this.setState({gameInfo: gameInfo});
                 this.state.ws.emit("getMessage", gameStateReq);
             }
@@ -80,7 +80,7 @@ class DoudizhuGameView extends React.Component {
                 switch(message.type){
                     case 0:
                         // init replay info
-                        let gameInfo = JSON.parse(JSON.stringify(this.state.gameInfo));
+                        let gameInfo = deepCopy(this.state.gameInfo);
                         gameInfo.playerInfo = message.message.playerInfo;
                         gameInfo.hands = message.message.initHands.map(element => {
                             return element.split(" ");
@@ -93,7 +93,7 @@ class DoudizhuGameView extends React.Component {
                         // getting player actions
                         let res = message.message;
                         if(res.turn === this.state.gameInfo.turn && res.playerIdx === this.state.gameInfo.currentPlayer){
-                            let gameInfo = JSON.parse(JSON.stringify(this.state.gameInfo));
+                            let gameInfo = deepCopy(this.state.gameInfo);
                             gameInfo.latestAction[res.playerIdx] = res.move === "P" ? "P" : res.move.split(" ");
                             gameInfo.turn++;
                             gameInfo.currentPlayer = (gameInfo.currentPlayer+1)%3;
@@ -104,7 +104,7 @@ class DoudizhuGameView extends React.Component {
                             }else{
                                 console.log("Cannot find cards in move from player's hand");
                             }
-                            gameInfo.considerationTime = this.state.considerationTime;
+                            gameInfo.considerationTime = this.state.considerationTimeSetting;
                             this.setState({gameInfo: gameInfo});
                         }else{
                             console.log("Mismatched game turn or current player index", message);
@@ -140,6 +140,7 @@ class DoudizhuGameView extends React.Component {
     }
 
     render(){
+        // todo: reset game state timer when considerationTimeSetting changes
         return (
             <div>
                 <div style={{width: "960px", height: "540px"}}>
@@ -169,8 +170,8 @@ class DoudizhuGameView extends React.Component {
                         </Layout.Col>
                         <Layout.Col span="16">
                             <Slider
-                                value={this.state.considerationTime}
-                                onChange={(e, newVal)=>{console.log('slider val', newVal);this.setState({considerationTime: newVal})}}
+                                value={this.state.considerationTimeSetting}
+                                onChange={(e, newVal)=>{console.log('slider val', newVal);this.setState({considerationTimeSetting: newVal})}}
                                 aria-labelledby="discrete-slider"
                                 valueLabelDisplay="auto"
                                 step={1000}

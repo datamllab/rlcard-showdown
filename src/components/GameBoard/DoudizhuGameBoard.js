@@ -1,4 +1,5 @@
 import React from 'react';
+import { translateCardData, millisecond2Second } from '../../utils'
 
 import '../../assets/doudizhu.scss';
 
@@ -6,48 +7,6 @@ class DoudizhuGameBoard extends React.Component {
     constructor(props) {
         super(props);
 
-        this.suitMap = new Map(
-            [["H", "hearts"], ["D", "diams"], ["S", "spades"], ["C", "clubs"]]
-        );
-        this.suitMapSymbol = new Map(
-            [["H", "\u2665"], ["D", "\u2666"], ["S", "\u2660"], ["C", "\u2663"]]
-        )
-    }
-
-    translateCardData(card) {
-        let rankClass;
-        let suitClass = "";
-        let rankText;
-        let suitText = "";
-        // translate rank
-        if(card === "RJ"){
-            rankClass = "big";
-            rankText = "+";
-            suitClass = "joker";
-            suitText = "Joker";
-        }else if(card === "BJ"){
-            rankClass = "little";
-            rankText = "-";
-            suitClass = "joker";
-            suitText = "Joker";
-        }else{
-            rankClass = card.charAt(1) === "T" ? `10` : card.charAt(1).toLowerCase();
-            rankClass = `rank-${rankClass}`;
-            rankText = card.charAt(1) === "T" ? `10` : card.charAt(1);
-        }
-        // translate suitClass
-        if(card !== "RJ" && card !== "BJ"){
-            suitClass = this.suitMap.get(card.charAt(0));
-            suitText = this.suitMapSymbol.get(card.charAt(0));
-        }
-        return (
-            <li key={`handCard-${card}`}>
-                <a className={`card ${rankClass} ${suitClass}`} href="/#">
-                    <span className="rank">{rankText}</span>
-                    <span className="suit">{suitText}</span>
-                </a>
-            </li>
-        )
     }
 
     computeSingleLineHand(cards) {
@@ -58,7 +17,15 @@ class DoudizhuGameBoard extends React.Component {
                 <div className="playingCards">
                     <ul className="hand" style={{width: this.computeHandCardsWidth(cards.length, 12)}}>
                         {cards.map(card=>{
-                            return this.translateCardData(card);
+                            const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
+                            return (
+                                <li key={`handCard-${card}`}>
+                                    <a className={`card ${rankClass} ${suitClass}`} href="/#">
+                                        <span className="rank">{rankText}</span>
+                                        <span className="suit">{suitText}</span>
+                                    </a>
+                                </li>
+                            );
                         })}
                     </ul>
                 </div>
@@ -80,14 +47,34 @@ class DoudizhuGameBoard extends React.Component {
                 <div className="player-hand-up">
                     <div className="playingCards">
                         <ul className="hand">
-                            {upCards.map(element => {return this.translateCardData(element)})}
+                            {upCards.map(card => {
+                                const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
+                                return (
+                                    <li key={`handCard-${card}`}>
+                                        <a className={`card ${rankClass} ${suitClass}`} href="/#">
+                                            <span className="rank">{rankText}</span>
+                                            <span className="suit">{suitText}</span>
+                                        </a>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </div>
                 </div>
                 <div className="player-hand-down">
                     <div className="playingCards">
                         <ul className="hand">
-                            {downCards.map(element => {return this.translateCardData(element)})}
+                            {downCards.map(card => {
+                                const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
+                                return (
+                                    <li key={`handCard-${card}`}>
+                                        <a className={`card ${rankClass} ${suitClass}`} href="/#">
+                                            <span className="rank">{rankText}</span>
+                                            <span className="suit">{suitText}</span>
+                                        </a>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </div>
                 </div>
@@ -101,13 +88,9 @@ class DoudizhuGameBoard extends React.Component {
         return (num-1)*1.1*emWidth + 4.3*emWidth*1.2 + 2;
     }
 
-    millisecond2Second(t){
-        return Math.ceil(t/1000);
-    }
-
     playerDecisionArea(playerIdx){
         if(this.props.currentPlayer === playerIdx){
-            return <div className="non-card"><span>{`Consideration Time: ${this.millisecond2Second(this.props.considerationTime)}s`}</span></div>
+            return <div className="non-card"><span>{`Consideration Time: ${millisecond2Second(this.props.considerationTime)}s`}</span></div>
         }else{
             return this.computeSingleLineHand(this.props.latestAction[playerIdx])
         }
@@ -144,7 +127,7 @@ class DoudizhuGameBoard extends React.Component {
                 leftId = found.id;
         }
         return (
-            <div style={{width: "100%", height: "100%", backgroundColor: "#ffcc99", position: "relative"}}>
+            <div className="doudizhu-wrapper" style={{width: "100%", height: "100%", backgroundColor: "#ffcc99", position: "relative"}}>
                 <div id={"left-player"}>
                     <div className="player-main-area">
                         <div className="player-info">

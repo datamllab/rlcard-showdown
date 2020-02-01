@@ -4,14 +4,14 @@ import '../assets/gameview.scss';
 import {LeducHoldemGameBoard} from '../components/GameBoard';
 import {doubleRaf, deepCopy} from "../utils";
 
-import { Button, Layout, Slider as elSlider } from 'element-react';
+import { Button, Layout } from 'element-react';
 import Slider from '@material-ui/core/Slider';
 
 class LeducHoldemGameView extends React.Component {
     constructor(props) {
         super(props);
         const mainViewerId = 0;     // Id of the player at the bottom of screen
-        this.initConsiderationTime = 1000;
+        this.initConsiderationTime = 2000;
         this.considerationTimeDeduction = 100;
         this.gameStateTimeout = null;
         this.apiUrl = window.g.apiUrl;
@@ -38,6 +38,9 @@ class LeducHoldemGameView extends React.Component {
     retrieveReplayData(){
         // for test use
         const replayId = 0;
+
+        // reset game state
+        this.setState({gameInfo: this.initGameState});
 
         axios.get(`${this.apiUrl}/replay/leduc_holdem/${replayId}`)
             .then(res => {
@@ -91,16 +94,37 @@ class LeducHoldemGameView extends React.Component {
                             this.gameStateTimer();
                         });
                     }else{
-                        // todo: if it's the second round, game ends
-                        console.log("game ends");
+                        alert('Game Ends!');
                     }
                 }else{
                     let gameInfo = deepCopy(this.state.gameInfo);
-                    // debugger;
                     if(gameInfo.currentPlayer === this.moveHistory[gameInfo.round][gameInfo.turn].playerIdx){
                         gameInfo.latestAction[gameInfo.currentPlayer] = this.moveHistory[gameInfo.round][gameInfo.turn].move;
-                        // todo: check if the player choose to fold in this turn
-
+                        switch (gameInfo.latestAction[gameInfo.currentPlayer]) {
+                            case "Check":
+                                break;
+                            case "Raise":
+                                gameInfo.pot[gameInfo.currentPlayer] += (gameInfo.round+1) * 2;
+                                break;
+                            case "Call":
+                                // the upstream player must have bet more
+                                if(gameInfo.pot[(gameInfo.currentPlayer+2-1)%2] > gameInfo.pot[gameInfo.currentPlayer]){
+                                    gameInfo.pot[gameInfo.currentPlayer] = gameInfo.pot[(gameInfo.currentPlayer+2-1)%2];
+                                }else{
+                                    console.log("Current player choose call but has bet more or equal to the upstream player");
+                                }
+                                break;
+                            case "Fold":
+                                // if one player folds, game ends
+                                const foldedFound = gameInfo.playerInfo.find(element=>{return element.index === gameInfo.currentPlayer});
+                                const foldedId = foldedFound ? foldedFound.id : -1;
+                                const winnerFound = gameInfo.playerInfo.find(element=>{return element.index === (gameInfo.currentPlayer+1)%2});
+                                const winnerId = winnerFound ? winnerFound.id : -1;
+                                alert(`Player ${foldedId} folded, player ${winnerId} wins!`);
+                                return ;
+                            default:
+                                console.log("Error in player's latest action");
+                        }
                         gameInfo.turn++;
                         gameInfo.currentPlayer = (gameInfo.currentPlayer+1)%2;
                         gameInfo.considerationTime = this.state.considerationTimeSetting;
@@ -119,21 +143,23 @@ class LeducHoldemGameView extends React.Component {
         return (
             <div>
                 <div style={{width: "960px", height: "540px"}}>
-                    {/*<LeducHoldemGameBoard*/}
-                    {/*    playerInfo={this.state.gameInfo.playerInfo}*/}
-                    {/*    hands={this.state.gameInfo.hands}*/}
-                    {/*    latestAction={this.state.gameInfo.latestAction}*/}
-                    {/*    mainPlayerId={this.state.gameInfo.mainViewerId}*/}
-                    {/*    currentPlayer={this.state.gameInfo.currentPlayer}*/}
-                    {/*    considerationTime={this.state.gameInfo.considerationTime}*/}
-                    {/*    turn={this.state.gameInfo.turn}*/}
-                    {/*    runNewTurn={(prevTurn)=>this.runNewTurn(prevTurn)}*/}
-                    {/*/>*/}
+                    <LeducHoldemGameBoard
+                        playerInfo={this.state.gameInfo.playerInfo}
+                        hands={this.state.gameInfo.hands}
+                        latestAction={this.state.gameInfo.latestAction}
+                        mainPlayerId={this.state.gameInfo.mainViewerId}
+                        currentPlayer={this.state.gameInfo.currentPlayer}
+                        considerationTime={this.state.gameInfo.considerationTime}
+                        round={this.state.gameInfo.round}
+                        turn={this.state.gameInfo.turn}
+                        pot={this.state.gameInfo.pot}
+                        publicCard={this.state.gameInfo.publicCard}
+                    />
                 </div>
                 <div className="game-controller">
                     <Layout.Row>
                         <Layout.Col span="24">
-                            <Button type="primary" onClick={()=>{this.retrieveReplayData()}}>Connect</Button>
+                            <Button type="primary" onClick={()=>{this.retrieveReplayData()}}>Start</Button>
                         </Layout.Col>
                     </Layout.Row>
                 </div>

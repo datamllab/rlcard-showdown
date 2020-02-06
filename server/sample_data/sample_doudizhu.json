@@ -8,143 +8,469 @@
     {
       "id": 0,
       "index": 0,
-      "role": "peasant"
+      "role": "peasant",
+      "agentInfo": {
+        "name": "random",
+        "winRate": 0.333
+      }
     },
     {
       "id": 1,
       "index": 1,
-      "role": "peasant"
+      "role": "peasant",
+      "agentInfo": {
+        "name": "DQN",
+        "winRate": 0.555
+      }
     },
     {
       "id": 2,
       "index": 2,
-      "role": "landlord"
+      "role": "landlord",
+      "agentInfo": {
+        "name": "CFR",
+        "winRate": 0.666
+      }
     }
   ],
   "moveHistory": [
     {
       "playerIdx": 2,
-      "move": "H3 S3 D3 D5"
+      "move": "H3 S3 D3 D5",
+      "probabilities": [
+        {
+          "move": "H3 S3 D3 D5",
+          "probability": 0.9
+        },
+        {
+          "move": "H3",
+          "probability": 0.05
+        },
+        {
+          "move": "D5",
+          "probability": 0.02
+        }
+      ]
     },
     {
       "playerIdx": 0,
-      "move": "S9 H9 D9 S3"
+      "move": "S9 H9 D9 S3",
+      "probabilities": [
+        {
+          "move": "S9 H9 D9 S3",
+          "probability": 0.9
+        },
+        {
+          "move": "HQ CQ DQ S3",
+          "probability": 0.05
+        },
+        {
+          "move": "HQ CQ DQ C3",
+          "probability": 0.02
+        }
+      ]
     },
     {
       "playerIdx": 1,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 1
+        }
+      ]
     },
     {
       "playerIdx": 2,
-      "move": "SJ HJ DJ D7"
+      "move": "SJ HJ DJ D7",
+      "probabilities": [
+        {
+          "move": "SJ HJ DJ D7",
+          "probability": 0.9
+        },
+        {
+          "move": "SJ HJ DJ C9",
+          "probability": 0.05
+        },
+        {
+          "move": "BJ RJ",
+          "probability": 0.02
+        }
+      ]
     },
     {
       "playerIdx": 0,
-      "move": "HQ CQ DQ C7"
+      "move": "HQ CQ DQ C7",
+      "probabilities": [
+        {
+          "move": "HQ CQ DQ C7",
+          "probability": 0.9
+        },
+        {
+          "move": "HQ CQ DQ CJ",
+          "probability": 0.05
+        },
+        {
+          "move": "P",
+          "probability": 0.02
+        }
+      ]
     },
     {
       "playerIdx": 1,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 1
+        }
+      ]
     },
     {
       "playerIdx": 2,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 1
+        }
+      ]
     },
     {
       "playerIdx": 0,
-      "move": "C4 D4"
+      "move": "C4 D4",
+      "probabilities": [
+        {
+          "move": "HK DK",
+          "probability": 0.5
+        },
+        {
+          "move": "C4 D4",
+          "probability": 0.2
+        },
+        {
+          "move": "S2 H2",
+          "probability": 0.1
+        }
+      ]
     },
     {
       "playerIdx": 1,
-      "move": "ST HT"
+      "move": "ST HT",
+      "probabilities": [
+        {
+          "move": "S6 D6",
+          "probability": 0.5
+        },
+        {
+          "move": "ST HT",
+          "probability": 0.2
+        },
+        {
+          "move": "HA CA",
+          "probability": 0.1
+        }
+      ]
     },
     {
       "playerIdx": 2,
-      "move": "SK CK"
+      "move": "SK CK",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 0.5
+        },
+        {
+          "move": "RJ BJ",
+          "probability": 0.3
+        },
+        {
+          "move": "SK CK",
+          "probability": 0.2
+        }
+      ]
     },
     {
       "playerIdx": 0,
-      "move": "S2 H2"
+      "move": "S2 H2",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 0.5
+        },
+        {
+          "move": "HK DK",
+          "probability": 0.5
+        }
+      ]
     },
     {
       "playerIdx": 1,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 1
+        }
+      ]
     },
     {
       "playerIdx": 2,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 1
+        }
+      ]
     },
     {
       "playerIdx": 0,
-      "move": "S6 H6"
+      "move": "S6 H6",
+      "probabilities": [
+        {
+          "move": "S6 H6",
+          "probability": 0.6
+        },
+        {
+          "move": "HK DK",
+          "probability": 0.2
+        },
+        {
+          "move": "CJ",
+          "probability": 0.1
+        }
+      ]
     },
     {
       "playerIdx": 1,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 0.8
+        },
+        {
+          "move": "S7 H7",
+          "probability": 0.1
+        },
+        {
+          "move": "HA CA",
+          "probability": 0.05
+        }
+      ]
     },
     {
       "playerIdx": 2,
-      "move": "CT DT"
+      "move": "CT DT",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 0.5
+        },
+        {
+          "move": "S7 H7",
+          "probability": 0.1
+        },
+        {
+          "move": "HA CA",
+          "probability": 0.05
+        }
+      ]
     },
     {
       "playerIdx": 0,
-      "move": "HK DK"
+      "move": "HK DK",
+      "probabilities": [
+        {
+          "move": "HK DK",
+          "probability": 0.9
+        },
+        {
+          "move": "P",
+          "probability": 0.1
+        }
+      ]
     },
     {
       "playerIdx": 1,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 0.9
+        },
+        {
+          "move": "HA CA",
+          "probability": 0.1
+        }
+      ]
     },
     {
       "playerIdx": 2,
-      "move": "RJ BJ"
+      "move": "RJ BJ",
+      "probabilities": [
+        {
+          "move": "RJ BJ",
+          "probability": 0.9
+        },
+        {
+          "move": "P",
+          "probability": 0.1
+        }
+      ]
     },
     {
       "playerIdx": 0,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 1
+        }
+      ]
     },
     {
       "playerIdx": 1,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 1
+        }
+      ]
     },
     {
       "playerIdx": 2,
-      "move": "S8 H8 C8 C9"
+      "move": "S8 H8 C8 C9",
+      "probabilities": [
+        {
+          "move": "S8 H8 C8 C9",
+          "probability": 0.7
+        },
+        {
+          "move": "SA",
+          "probability": 0.1
+        },
+        {
+          "move": "D2",
+          "probability": 0.1
+        }
+      ]
     },
     {
       "playerIdx": 0,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 1
+        }
+      ]
     },
     {
       "playerIdx": 1,
-      "move": "HA CA DA H5"
+      "move": "HA CA DA H5",
+      "probabilities": [
+        {
+          "move": "HA CA DA H5",
+          "probability": 0.5
+        },
+        {
+          "move": "P",
+          "probability": 0.1
+        },
+        {
+          "move": "HA CA DA D6",
+          "probability": 0.1
+        }
+      ]
     },
     {
       "playerIdx": 2,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 1
+        }
+      ]
     },
     {
       "playerIdx": 0,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 1
+        }
+      ]
     },
     {
       "playerIdx": 1,
-      "move": "SQ"
+      "move": "SQ",
+      "probabilities": [
+        {
+          "move": "SQ",
+          "probability": 0.5
+        },
+        {
+          "move": "S4 H4",
+          "probability": 0.2
+        },
+        {
+          "move": "D6",
+          "probability": 0.1
+        }
+      ]
     },
     {
       "playerIdx": 2,
-      "move": "D2"
+      "move": "D2",
+      "probabilities": [
+        {
+          "move": "D2",
+          "probability": 0.5
+        },
+        {
+          "move": "SA",
+          "probability": 0.3
+        },
+        {
+          "move": "P",
+          "probability": 0.2
+        }
+      ]
     },
     {
       "playerIdx": 0,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 1
+        }
+      ]
     },
     {
       "playerIdx": 1,
-      "move": "P"
+      "move": "P",
+      "probabilities": [
+        {
+          "move": "P",
+          "probability": 1
+        }
+      ]
     },
     {
       "playerIdx": 2,
-      "move": "SA"
+      "move": "SA",
+      "probabilities": [
+        {
+          "move": "SA",
+          "probability": 1
+        }
+      ]
     }
   ]
 }

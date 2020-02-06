@@ -2,21 +2,26 @@ import React from 'react';
 import '../assets/gameview.scss';
 import { DoudizhuGameBoard } from '../components/GameBoard';
 import webSocket from "socket.io-client";
-import { removeCards, doubleRaf, deepCopy } from "../utils";
+import { removeCards, doubleRaf, deepCopy, debounce } from "../utils";
 
-import { Button, Layout } from 'element-react';
+import { Layout } from 'element-react';
 import Slider from '@material-ui/core/Slider';
+import Button from '@material-ui/core/Button';
+import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
+import PauseCircleOutlineRoundedIcon from '@material-ui/icons/PauseCircleOutlineRounded';
+import ReplayRoundedIcon from '@material-ui/icons/ReplayRounded';
 
 class DoudizhuGameView extends React.Component {
     constructor(props) {
         super(props);
 
         const mainViewerId = 0;     // Id of the player at the bottom of screen
-        this.initConsiderationTime = 1000;
+        this.initConsiderationTime = 2000;
         this.considerationTimeDeduction = 100;
         this.gameStateTimeout = null;
 
         this.initGameState = {
+            gameStatus: "ready", // "ready", "playing", "paused", "over"
             playerInfo: [],
             hands: [],
             latestAction: [[], [], []],
@@ -30,15 +35,21 @@ class DoudizhuGameView extends React.Component {
             ws: null,
             gameInfo: this.initGameState,
             gameStateLoop: null,
-            considerationTimeSetting: this.initConsiderationTime
+            gameSpeed: 0
         };
     }
 
     gameStateTimer() {
         this.gameStateTimeout = setTimeout(()=>{
             let currentConsiderationTime = this.state.gameInfo.considerationTime;
+            // for test use
+            // console.log(currentConsiderationTime);
+            // if(currentConsiderationTime === 1000){
+            //     debugger;
+            // }
             if(currentConsiderationTime > 0) {
-                currentConsiderationTime -= this.considerationTimeDeduction;
+                currentConsiderationTime -= this.considerationTimeDeduction * Math.pow(2, this.state.gameSpeed);
+                currentConsiderationTime = currentConsiderationTime < 0 ? 0 : currentConsiderationTime;
                 let gameInfo = deepCopy(this.state.gameInfo);
                 gameInfo.considerationTime = currentConsiderationTime;
                 this.setState({gameInfo: gameInfo});
@@ -53,7 +64,7 @@ class DoudizhuGameView extends React.Component {
                 this.setState({gameInfo: gameInfo});
                 this.state.ws.emit("getMessage", gameStateReq);
             }
-        }, this.considerationTimeDeduction);
+        }, 100);
     }
 
     startReplay() {
@@ -61,7 +72,11 @@ class DoudizhuGameView extends React.Component {
             const replayReq = {type: 0};
             this.state.ws.emit("getMessage", replayReq);
             // init game state
-            this.setState({gameInfo: this.initGameState});
+            let initGameState = deepCopy(this.initGameState);
+            // set game status to playing
+            initGameState.gameStatus = "playing";
+            this.setState({gameInfo: initGameState});
+
             if(this.gameStateTimeout){
                 window.clearTimeout(this.gameStateTimeout);
                 this.gameStateTimeout = null;
@@ -104,7 +119,7 @@ class DoudizhuGameView extends React.Component {
                             }else{
                                 console.log("Cannot find cards in move from player's hand");
                             }
-                            gameInfo.considerationTime = this.state.considerationTimeSetting;
+                            gameInfo.considerationTime = this.initConsiderationTime;
                             this.setState({gameInfo: gameInfo});
                         }else{
                             console.log("Mismatched game turn or current player index", message);
@@ -127,6 +142,9 @@ class DoudizhuGameView extends React.Component {
                     return element.index === prevTurn.currentPlayer;
                 });
                 if(winner){
+                    let gameInfo = deepCopy(this.state.gameInfo);
+                    gameInfo.gameStatus = "over";
+                    this.setState({ gameInfo: gameInfo });
                     if(winner.role === "landlord")
                         alert("Landlord Wins");
                     else
@@ -139,8 +157,79 @@ class DoudizhuGameView extends React.Component {
             this.gameStateTimer();
     }
 
+    pauseReplay(){
+        if(this.gameStateTimeout){
+            window.clearTimeout(this.gameStateTimeout);
+            this.gameStateTimeout = null;
+        }
+        let gameInfo = deepCopy(this.state.gameInfo);
+        gameInfo.gameStatus = "paused";
+        this.setState({ gameInfo: gameInfo });
+    }
+
+    resumeReplay(){
+        this.gameStateTimer();
+        let gameInfo = deepCopy(this.state.gameInfo);
+        gameInfo.gameStatus = "playing";
+        this.setState({ gameInfo: gameInfo });
+    }
+
+    changeGameSpeed(newVal){
+        console.log('wdnmd');
+        this.setState({gameSpeed: newVal});
+    }
+
+    gameStatusButton(status){
+        switch (status) {
+            case "ready":
+                return <Button variant={"contained"} startIcon={<PlayArrowRoundedIcon />} color="primary" onClick={()=>{this.startReplay()}}>Start Replay</Button>;
+            case "playing":
+                return <Button variant={"contained"} startIcon={<PauseCircleOutlineRoundedIcon />} color="secondary" onClick={()=>{this.pauseReplay()}}>Pause</Button>;
+            case "paused":
+                return <Button variant={"contained"} startIcon={<PlayArrowRoundedIcon />} color="primary" onClick={()=>{this.resumeReplay()}}>Resume</Button>;
+            case "over":
+                return <Button variant={"contained"} startIcon={<ReplayRoundedIcon />} color="primary" onClick={()=>{this.startReplay()}}>Resume</Button>;
+            default:
+                alert(`undefined game status: ${status}`);
+        }
+        return ;
+    }
+
     render(){
-        // todo: reset game state timer when considerationTimeSetting changes
+        let sliderValueText = (value) => {
+            return `${value}°C`;
+        };
+        const gameSpeedMarks = [
+            {
+                value: -3,
+                label: 'x0.125',
+            },
+            {
+                value: -2,
+                label: 'x0.25',
+            },
+            {
+                value: -1,
+                label: 'x0.5',
+            },
+            {
+                value: 0,
+                label: 'x1',
+            },
+            {
+                value: 1,
+                label: 'x2',
+            },
+            {
+                value: 2,
+                label: 'x4',
+            },
+            {
+                value: 3,
+                label: 'x8',
+            }
+        ];
+
         return (
             <div>
                 <div style={{width: "960px", height: "540px"}}>
@@ -158,8 +247,8 @@ class DoudizhuGameView extends React.Component {
                 <div className="game-controller">
                     <Layout.Row>
                         <Layout.Col span="24">
-                            <Button type="primary" onClick={()=>{this.connectWebSocket()}}>Connect</Button>
-                            <Button type="primary" onClick={()=>{this.startReplay()}}>Start Replay</Button>
+                            <Button variant={"contained"} color="primary" onClick={()=>{this.connectWebSocket()}}>Connect</Button>
+                            { this.gameStatusButton(this.state.gameInfo.gameStatus) }
                         </Layout.Col>
                     </Layout.Row>
                     <Layout.Row style={{height: "31px"}}>
@@ -170,14 +259,16 @@ class DoudizhuGameView extends React.Component {
                         </Layout.Col>
                         <Layout.Col span="16">
                             <Slider
-                                value={this.state.considerationTimeSetting}
-                                onChange={(e, newVal)=>{console.log('slider val', newVal);this.setState({considerationTimeSetting: newVal})}}
-                                aria-labelledby="discrete-slider"
-                                valueLabelDisplay="auto"
-                                step={1000}
-                                marks
-                                min={0}
-                                max={10000}
+                                value={this.state.gameSpeed}
+                                getAriaValueText={sliderValueText}
+                                onChange={(e, newVal)=>{this.changeGameSpeed(newVal)}}
+                                aria-labelledby="discrete-slider-custom"
+                                step={1}
+                                min={-3}
+                                max={3}
+                                track={false}
+                                valueLabelDisplay="off"
+                                marks={gameSpeedMarks}
                             />
                         </Layout.Col>
                     </Layout.Row>

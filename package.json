@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/icons": "^4.9.1",
     "@material-ui/core": "^4.9.0",
     "element-react": "^1.4.34",
     "element-theme-default": "^1.4.13",

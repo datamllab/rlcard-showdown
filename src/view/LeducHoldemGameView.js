@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import '../assets/gameview.scss';
 import {LeducHoldemGameBoard} from '../components/GameBoard';
-import {doubleRaf, deepCopy} from "../utils";
+import {deepCopy} from "../utils";
 
 import { Button, Layout } from 'element-react';
 import Slider from '@material-ui/core/Slider';
@@ -10,12 +10,14 @@ import Slider from '@material-ui/core/Slider';
 class LeducHoldemGameView extends React.Component {
     constructor(props) {
         super(props);
+
         const mainViewerId = 0;     // Id of the player at the bottom of screen
         this.initConsiderationTime = 2000;
         this.considerationTimeDeduction = 100;
         this.gameStateTimeout = null;
         this.apiUrl = window.g.apiUrl;
         this.moveHistory = [];
+
         this.initGameState = {
             playerInfo: [],
             hands: [],

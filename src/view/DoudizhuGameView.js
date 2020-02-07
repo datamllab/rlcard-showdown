@@ -1,8 +1,8 @@
 import React from 'react';
+import axios from 'axios';
 import '../assets/gameview.scss';
 import { DoudizhuGameBoard } from '../components/GameBoard';
-import webSocket from "socket.io-client";
-import { removeCards, doubleRaf, deepCopy, debounce } from "../utils";
+import { removeCards, doubleRaf, deepCopy } from "../utils";
 
 import { Layout } from 'element-react';
 import Slider from '@material-ui/core/Slider';
@@ -19,6 +19,8 @@ class DoudizhuGameView extends React.Component {
         this.initConsiderationTime = 2000;
         this.considerationTimeDeduction = 100;
         this.gameStateTimeout = null;
+        this.apiUrl = window.g.apiUrl;
+        this.moveHistory = [];
 
         this.initGameState = {
             gameStatus: "ready", // "ready", "playing", "paused", "over"
@@ -32,7 +34,6 @@ class DoudizhuGameView extends React.Component {
         };
 
         this.state = {
-            ws: null,
             gameInfo: this.initGameState,
             gameStateLoop: null,
             gameSpeed: 0
@@ -42,11 +43,6 @@ class DoudizhuGameView extends React.Component {
     gameStateTimer() {
         this.gameStateTimeout = setTimeout(()=>{
             let currentConsiderationTime = this.state.gameInfo.considerationTime;
-            // for test use
-            // console.log(currentConsiderationTime);
-            // if(currentConsiderationTime === 1000){
-            //     debugger;
-            // }
             if(currentConsiderationTime > 0) {
                 currentConsiderationTime -= this.considerationTimeDeduction * Math.pow(2, this.state.gameSpeed);
                 currentConsiderationTime = currentConsiderationTime < 0 ? 0 : currentConsiderationTime;
@@ -55,83 +51,55 @@ class DoudizhuGameView extends React.Component {
                 this.setState({gameInfo: gameInfo});
                 this.gameStateTimer();
             }else{
-                const turn = this.state.gameInfo.turn;
-                const gameStateReq = {
-                    type: 1,
-                    message: {turn: turn}
-                };
-                let gameInfo = deepCopy(this.state.gameInfo);
-                this.setState({gameInfo: gameInfo});
-                this.state.ws.emit("getMessage", gameStateReq);
+                let res = this.moveHistory[this.state.gameInfo.turn];
+                if(res.playerIdx === this.state.gameInfo.currentPlayer){
+                    let gameInfo = deepCopy(this.state.gameInfo);
+                    gameInfo.latestAction[res.playerIdx] = res.move === "P" ? "P" : res.move.split(" ");
+                    gameInfo.turn++;
+                    gameInfo.currentPlayer = (gameInfo.currentPlayer+1)%3;
+                    // take away played cards from player's hands
+                    const remainedCards = removeCards(gameInfo.latestAction[res.playerIdx], gameInfo.hands[res.playerIdx]);
+                    if(remainedCards !== false){
+                        gameInfo.hands[res.playerIdx] = remainedCards;
+                    }else{
+                        console.log("Cannot find cards in move from player's hand");
+                    }
+                    gameInfo.considerationTime = this.initConsiderationTime;
+                    this.setState({gameInfo: gameInfo});
+                }else{
+                    console.log("Mismatched current player index");
+                }
             }
         }, 100);
     }
 
     startReplay() {
-        if(this.state.ws !== null){
-            const replayReq = {type: 0};
-            this.state.ws.emit("getMessage", replayReq);
-            // init game state
-            let initGameState = deepCopy(this.initGameState);
-            // set game status to playing
-            initGameState.gameStatus = "playing";
-            this.setState({gameInfo: initGameState});
+        // for test use
+        const replayId  = 0;
 
-            if(this.gameStateTimeout){
-                window.clearTimeout(this.gameStateTimeout);
-                this.gameStateTimeout = null;
-            }
-            // loop to update game state
-            this.gameStateTimer();
-        }else{
-            console.log("websocket not connected");
-        }
-    };
+        axios.get(`${this.apiUrl}/replay/doudizhu/${replayId}`)
+            .then(res => {
+                res = res.data;
+                // init replay info
+                this.moveHistory = res.moveHistory;
+                let gameInfo = deepCopy(this.initGameState);
+                gameInfo.gameStatus = "playing";
+                gameInfo.playerInfo = res.playerInfo;
+                gameInfo.hands = res.initHands.map(element => {
+                    return element.split(" ");
+                });
+                // the first player should be landlord
+                gameInfo.currentPlayer = res.playerInfo.find(element=>{return element.role === "landlord"}).index;
+                this.setState({gameInfo: gameInfo}, ()=>{
+                    if(this.gameStateTimeout){
+                        window.clearTimeout(this.gameStateTimeout);
+                        this.gameStateTimeout = null;
+                    }
+                    // loop to update game state
+                    this.gameStateTimer();
+                });
+            });
 
-    connectWebSocket() {
-        let ws = webSocket("http://localhost:10080");
-        ws.on("getMessage", message => {
-            if(message){
-                switch(message.type){
-                    case 0:
-                        // init replay info
-                        let gameInfo = deepCopy(this.state.gameInfo);
-                        gameInfo.playerInfo = message.message.playerInfo;
-                        gameInfo.hands = message.message.initHands.map(element => {
-                            return element.split(" ");
-                        });
-                        // the first player should be landlord
-                        gameInfo.currentPlayer = message.message.playerInfo.find(element=>{return element.role === "landlord"}).index;
-                        this.setState({gameInfo: gameInfo});
-                        break;
-                    case 1:
-                        // getting player actions
-                        let res = message.message;
-                        if(res.turn === this.state.gameInfo.turn && res.playerIdx === this.state.gameInfo.currentPlayer){
-                            let gameInfo = deepCopy(this.state.gameInfo);
-                            gameInfo.latestAction[res.playerIdx] = res.move === "P" ? "P" : res.move.split(" ");
-                            gameInfo.turn++;
-                            gameInfo.currentPlayer = (gameInfo.currentPlayer+1)%3;
-                            // take away played cards from player's hands
-                            const remainedCards = removeCards(gameInfo.latestAction[res.playerIdx], gameInfo.hands[res.playerIdx]);
-                            if(remainedCards !== false){
-                                gameInfo.hands[res.playerIdx] = remainedCards;
-                            }else{
-                                console.log("Cannot find cards in move from player's hand");
-                            }
-                            gameInfo.considerationTime = this.initConsiderationTime;
-                            this.setState({gameInfo: gameInfo});
-                        }else{
-                            console.log("Mismatched game turn or current player index", message);
-                        }
-                        break;
-                    default:
-                        console.log("Wrong message type ", message);
-                        break;
-                }
-            }
-        });
-        this.setState({ws: ws});
     };
 
     runNewTurn(prevTurn){
@@ -175,7 +143,6 @@ class DoudizhuGameView extends React.Component {
     }
 
     changeGameSpeed(newVal){
-        console.log('wdnmd');
         this.setState({gameSpeed: newVal});
     }
 
@@ -188,11 +155,10 @@ class DoudizhuGameView extends React.Component {
             case "paused":
                 return <Button variant={"contained"} startIcon={<PlayArrowRoundedIcon />} color="primary" onClick={()=>{this.resumeReplay()}}>Resume</Button>;
             case "over":
-                return <Button variant={"contained"} startIcon={<ReplayRoundedIcon />} color="primary" onClick={()=>{this.startReplay()}}>Resume</Button>;
+                return <Button variant={"contained"} startIcon={<ReplayRoundedIcon />} color="primary" onClick={()=>{this.startReplay()}}>Restart</Button>;
             default:
                 alert(`undefined game status: ${status}`);
         }
-        return ;
     }
 
     render(){
@@ -247,14 +213,14 @@ class DoudizhuGameView extends React.Component {
                 <div className="game-controller">
                     <Layout.Row>
                         <Layout.Col span="24">
-                            <Button variant={"contained"} color="primary" onClick={()=>{this.connectWebSocket()}}>Connect</Button>
+                            {/*<Button variant={"contained"} color="primary" onClick={()=>{this.connectWebSocket()}}>Connect</Button>*/}
                             { this.gameStatusButton(this.state.gameInfo.gameStatus) }
                         </Layout.Col>
                     </Layout.Row>
                     <Layout.Row style={{height: "31px"}}>
                         <Layout.Col span="8" style={{height: "100%"}}>
                             <div style={{display: "table", height: "100%"}}>
-                                <span style={{display: "table-cell", verticalAlign: "middle"}}>Consideration Time</span>
+                                <span style={{display: "table-cell", verticalAlign: "middle"}}>Game Speed</span>
                             </div>
                         </Layout.Col>
                         <Layout.Col span="16">

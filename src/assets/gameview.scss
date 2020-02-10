@@ -5,3 +5,99 @@
         margin-bottom: 10px;
     }
 }
+
+.doudizhu-view-container {
+    width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+
+
+
+    .doudizhu-gameboard-paper {
+        height: calc(100% - 7px*2);
+        margin: 5px;
+        padding: 2px;
+    }
+
+    .doudizhu-probability-paper {
+        height: calc(100% - 5px*2);
+        margin: 5px;
+
+        .probability-player {
+            height: calc(72px - 16px*2);
+            padding: 16px;
+        }
+
+        .probability-table {
+            display: table;
+            border-collapse: collapse;
+
+            width: 100%;
+            height: calc(100% - 72px);
+
+            .probability-item {
+                display: table-row;
+
+                &:not(:first-child) {
+                    border-top: 1px solid rgba(0, 0, 0, 0.12);
+                }
+                .waiting {
+                    display: table-cell;
+                    vertical-align: middle;
+                    text-align: center;
+                }
+                .playing {
+                    -webkit-transition: background-color 250ms ease;
+                    -ms-transition: background-color 250ms ease;
+                    transition: background-color 250ms ease;
+                    display: table-cell;
+                    height: 152px;
+                    vertical-align: middle;
+                    .playingCards {
+                        visibility: visible;
+                        transition: visibility 0s, opacity 0.5s;
+                        opacity: 1;
+                    }
+                    .playingCards.hide {
+                        visibility: hidden;
+                        transition: visibility 0.1s, opacity 0.05s;
+                        opacity: 0;
+                        pointer-events:none;
+                    }
+                    .playingCards > ul.hand {
+                        margin-bottom: 0;
+                    }
+                    .probability-move {
+                        font-size: 10px;
+                        width: 100%;
+                        display: flex;
+                        justify-content: center;
+                    }
+                    .non-card {
+                        visibility: visible;
+                        transition: visibility 0s, opacity 0.5s;
+                        opacity: 1;
+                        display: table;
+                        width: 100%;
+                        margin-top: 5%;
+                        height: 25px;
+
+                        span {
+                            display: table-cell;
+                            vertical-align: middle;
+                            text-align: center;
+                            font-size: 16px;
+                        }
+                    }
+                    .non-card.hide {
+                        visibility: hidden;
+                        transition: visibility 0.1s, opacity 0.05s;
+                        opacity: 0;
+                        pointer-events:none;
+                    }
+                }
+
+            }
+        }
+    }
+}

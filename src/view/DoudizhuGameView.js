@@ -2,11 +2,13 @@ import React from 'react';
 import axios from 'axios';
 import '../assets/gameview.scss';
 import { DoudizhuGameBoard } from '../components/GameBoard';
-import { removeCards, doubleRaf, deepCopy } from "../utils";
+import {removeCards, doubleRaf, deepCopy, computeHandCardsWidth, translateCardData} from "../utils";
 
 import { Layout } from 'element-react';
 import Slider from '@material-ui/core/Slider';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
+import Divider from '@material-ui/core/Divider';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseCircleOutlineRoundedIcon from '@material-ui/icons/PauseCircleOutlineRounded';
 import ReplayRoundedIcon from '@material-ui/icons/ReplayRounded';
@@ -29,6 +31,7 @@ class DoudizhuGameView extends React.Component {
             latestAction: [[], [], []],
             mainViewerId: mainViewerId,
             turn: 0,
+            toggleFadeIn: "",
             currentPlayer: null,
             considerationTime: this.initConsiderationTime,
         };
@@ -40,12 +43,21 @@ class DoudizhuGameView extends React.Component {
         };
     }
 
+    cardStr2Arr(cardStr){
+        return cardStr === "P" ? cardStr : cardStr.split(" ");
+    }
+
     gameStateTimer() {
         this.gameStateTimeout = setTimeout(()=>{
             let currentConsiderationTime = this.state.gameInfo.considerationTime;
             if(currentConsiderationTime > 0) {
                 currentConsiderationTime -= this.considerationTimeDeduction * Math.pow(2, this.state.gameSpeed);
                 currentConsiderationTime = currentConsiderationTime < 0 ? 0 : currentConsiderationTime;
+                if(currentConsiderationTime === 0 && this.state.gameSpeed < 2){
+                    let gameInfo = deepCopy(this.state.gameInfo);
+                    gameInfo.toggleFadeIn = "hide";
+                    this.setState({gameInfo: gameInfo});
+                }
                 let gameInfo = deepCopy(this.state.gameInfo);
                 gameInfo.considerationTime = currentConsiderationTime;
                 this.setState({gameInfo: gameInfo});
@@ -54,8 +66,9 @@ class DoudizhuGameView extends React.Component {
                 let res = this.moveHistory[this.state.gameInfo.turn];
                 if(res.playerIdx === this.state.gameInfo.currentPlayer){
                     let gameInfo = deepCopy(this.state.gameInfo);
-                    gameInfo.latestAction[res.playerIdx] = res.move === "P" ? "P" : res.move.split(" ");
+                    gameInfo.latestAction[res.playerIdx] = this.cardStr2Arr(res.move);
                     gameInfo.turn++;
+
                     gameInfo.currentPlayer = (gameInfo.currentPlayer+1)%3;
                     // take away played cards from player's hands
                     const remainedCards = removeCards(gameInfo.latestAction[res.playerIdx], gameInfo.hands[res.playerIdx]);
@@ -65,7 +78,16 @@ class DoudizhuGameView extends React.Component {
                         console.log("Cannot find cards in move from player's hand");
                     }
                     gameInfo.considerationTime = this.initConsiderationTime;
-                    this.setState({gameInfo: gameInfo});
+                    this.setState({gameInfo: gameInfo}, ()=>{
+                        // toggle fade in
+                        if(this.state.gameInfo.toggleFadeIn !== ""){
+                            setTimeout(()=>{
+                                let gameInfo = deepCopy(this.state.gameInfo);
+                                gameInfo.toggleFadeIn = "";
+                                this.setState({gameInfo: gameInfo});
+                            }, 50);
+                        }
+                    });
                 }else{
                     console.log("Mismatched current player index");
                 }
@@ -86,7 +108,7 @@ class DoudizhuGameView extends React.Component {
                 gameInfo.gameStatus = "playing";
                 gameInfo.playerInfo = res.playerInfo;
                 gameInfo.hands = res.initHands.map(element => {
-                    return element.split(" ");
+                    return this.cardStr2Arr(element);
                 });
                 // the first player should be landlord
                 gameInfo.currentPlayer = res.playerInfo.find(element=>{return element.role === "landlord"}).index;
@@ -161,6 +183,53 @@ class DoudizhuGameView extends React.Component {
         }
     }
 
+    computeSingleLineHand(cards) {
+        if(cards === "P"){
+            return <div className={"non-card "+this.state.gameInfo.toggleFadeIn}><span>Pass</span></div>
+        }else{
+            return (
+                <div className={"playingCards "+this.state.gameInfo.toggleFadeIn}>
+                    <ul className="hand" style={{width: computeHandCardsWidth(cards.length, 10)}}>
+                        {cards.map(card=>{
+                            const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
+                            return (
+                                <li key={`handCard-${card}`}>
+                                    <a className={`card ${rankClass} ${suitClass}`} href="/#">
+                                        <span className="rank">{rankText}</span>
+                                        <span className="suit">{suitText}</span>
+                                    </a>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            )
+        }
+    }
+
+    computeProbabilityItem(idx){
+        if(this.state.gameInfo.gameStatus !== "ready" && this.state.gameInfo.turn < this.moveHistory.length){
+            let style = {};
+            style["backgroundColor"] = this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `rgba(255, 193, 7,${this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability})` : "#bdbdbd";
+            return (
+                <div className={"playing"} style={style}>
+                    <div className="probability-move">
+                        {this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ?
+                            this.computeSingleLineHand(this.cardStr2Arr(this.moveHistory[this.state.gameInfo.turn].probabilities[idx].move))
+                            :
+                            '\u00A0'
+                        }
+                    </div>
+                    <div className={"non-card"}>
+                        <span>{ this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `Probability: ${(this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability*100).toFixed(2)}%` : ""}</span>
+                    </div>
+                </div>
+            )
+        }else {
+            return <span className={"waiting"}>Waiting...</span>
+        }
+    }
+
     render(){
         let sliderValueText = (value) => {
             return `${value}°C`;
@@ -197,19 +266,42 @@ class DoudizhuGameView extends React.Component {
         ];
 
         return (
-            <div>
-                <div style={{width: "960px", height: "540px"}}>
-                    <DoudizhuGameBoard
-                        playerInfo={this.state.gameInfo.playerInfo}
-                        hands={this.state.gameInfo.hands}
-                        latestAction={this.state.gameInfo.latestAction}
-                        mainPlayerId={this.state.gameInfo.mainViewerId}
-                        currentPlayer={this.state.gameInfo.currentPlayer}
-                        considerationTime={this.state.gameInfo.considerationTime}
-                        turn={this.state.gameInfo.turn}
-                        runNewTurn={(prevTurn)=>this.runNewTurn(prevTurn)}
-                    />
-                </div>
+            <div className={"doudizhu-view-container"}>
+                <Layout.Row style={{"height": "540px"}}>
+                    <Layout.Col style={{"height": "100%"}} span="17">
+                        <div style={{"height": "100%"}}>
+                            <Paper className={"doudizhu-gameboard-paper"} elevation={3}>
+                                <DoudizhuGameBoard
+                                    playerInfo={this.state.gameInfo.playerInfo}
+                                    hands={this.state.gameInfo.hands}
+                                    latestAction={this.state.gameInfo.latestAction}
+                                    mainPlayerId={this.state.gameInfo.mainViewerId}
+                                    currentPlayer={this.state.gameInfo.currentPlayer}
+                                    considerationTime={this.state.gameInfo.considerationTime}
+                                    turn={this.state.gameInfo.turn}
+                                    runNewTurn={(prevTurn)=>this.runNewTurn(prevTurn)}
+                                />
+                            </Paper>
+                        </div>
+                    </Layout.Col>
+                    <Layout.Col span="7" style={{"height": "100%"}}>
+                        <Paper className={"doudizhu-probability-paper"} elevation={3}>
+                            <div className={"probability-player"}>Current: 0</div>
+                            <Divider />
+                            <div className={"probability-table"}>
+                                <div className={"probability-item"}>
+                                    {this.computeProbabilityItem(0)}
+                                </div>
+                                <div className={"probability-item"}>
+                                    {this.computeProbabilityItem(1)}
+                                </div>
+                                <div className={"probability-item"}>
+                                    {this.computeProbabilityItem(2)}
+                                </div>
+                            </div>
+                        </Paper>
+                    </Layout.Col>
+                </Layout.Row>
                 <div className="game-controller">
                     <Layout.Row>
                         <Layout.Col span="24">

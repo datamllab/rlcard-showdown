@@ -88,3 +88,9 @@ export function debounce(func, wait, immediate) {
         if (callNow) func.apply(context, args);
     };
 }
+
+export function computeHandCardsWidth(num, emWidth) {
+    if(num === 0)
+        return 0;
+    return (num-1)*1.1*emWidth + 4.3*emWidth*1.2 + 2;
+}

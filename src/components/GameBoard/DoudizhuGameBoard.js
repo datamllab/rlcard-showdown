@@ -1,5 +1,5 @@
 import React from 'react';
-import { translateCardData, millisecond2Second } from '../../utils'
+import { translateCardData, millisecond2Second, computeHandCardsWidth } from '../../utils'
 
 import '../../assets/doudizhu.scss';
 
@@ -15,7 +15,7 @@ class DoudizhuGameBoard extends React.Component {
         }else{
             return (
                 <div className="playingCards">
-                    <ul className="hand" style={{width: this.computeHandCardsWidth(cards.length, 12)}}>
+                    <ul className="hand" style={{width: computeHandCardsWidth(cards.length, 12)}}>
                         {cards.map(card=>{
                             const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
                             return (
@@ -80,12 +80,6 @@ class DoudizhuGameBoard extends React.Component {
                 </div>
             </div>
         )
-    }
-
-    computeHandCardsWidth(num, emWidth) {
-        if(num === 0)
-            return 0;
-        return (num-1)*1.1*emWidth + 4.3*emWidth*1.2 + 2;
     }
 
     playerDecisionArea(playerIdx){

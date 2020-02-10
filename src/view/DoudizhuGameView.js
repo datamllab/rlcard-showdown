@@ -12,6 +12,7 @@ import Divider from '@material-ui/core/Divider';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseCircleOutlineRoundedIcon from '@material-ui/icons/PauseCircleOutlineRounded';
 import ReplayRoundedIcon from '@material-ui/icons/ReplayRounded';
+import NotInterestedIcon from '@material-ui/icons/NotInterested';
 
 class DoudizhuGameView extends React.Component {
     constructor(props) {
@@ -210,19 +211,23 @@ class DoudizhuGameView extends React.Component {
     computeProbabilityItem(idx){
         if(this.state.gameInfo.gameStatus !== "ready" && this.state.gameInfo.turn < this.moveHistory.length){
             let style = {};
-            style["backgroundColor"] = this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `rgba(255, 193, 7,${this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability})` : "#bdbdbd";
+            style["backgroundColor"] = this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `rgba(189,183,107,${this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability})` : "#bdbdbd";
             return (
                 <div className={"playing"} style={style}>
                     <div className="probability-move">
                         {this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ?
                             this.computeSingleLineHand(this.cardStr2Arr(this.moveHistory[this.state.gameInfo.turn].probabilities[idx].move))
                             :
-                            '\u00A0'
+                            <NotInterestedIcon fontSize="large" />
                         }
                     </div>
-                    <div className={"non-card"}>
-                        <span>{ this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `Probability: ${(this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability*100).toFixed(2)}%` : ""}</span>
-                    </div>
+                    {this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ?
+                        <div className={"non-card"}>
+                            <span>{this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `Probability: ${(this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability * 100).toFixed(2)}%` : ""}</span>
+                        </div>
+                        :
+                        ""
+                    }
                 </div>
             )
         }else {

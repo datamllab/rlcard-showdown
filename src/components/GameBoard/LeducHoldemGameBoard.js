@@ -11,7 +11,7 @@ class LeducHoldemGameBoard extends React.Component {
     computeHand(card) {
         const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
         return (
-            <div className="playingCards">
+            <div className="playingCards faceImages">
                 <div className={`card ${rankClass} ${suitClass}`}>
                     <span className="rank">{rankText}</span>
                     <span className="suit">{suitText}</span>
@@ -31,14 +31,14 @@ class LeducHoldemGameBoard extends React.Component {
     displayPublicCard(){
         if(this.props.round === 0){
             return (
-                <div className="playingCards">
+                <div className="playingCards faceImages">
                     <div className="card back">*</div>
                 </div>
             )
         }else{
             const [rankClass, suitClass, rankText, suitText] = translateCardData(this.props.publicCard);
             return (
-                <div className="playingCards">
+                <div className="playingCards faceImages">
                     <div className={`card ${rankClass} ${suitClass}`}>
                         <span className="rank">{rankText}</span>
                         <span className="suit">{suitText}</span>

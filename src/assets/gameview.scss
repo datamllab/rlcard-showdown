@@ -1,8 +1,14 @@
 .game-controller {
-    width: 500px;
+    width: 100%;
     padding: 20px;
     .el-row {
         margin-bottom: 10px;
+    }
+
+    .status-button {
+        margin-left: 5px;
+        margin-right: 5px;
+        width: 125px;
     }
 }
 
@@ -82,7 +88,7 @@
                     }
                     .non-card.hide {
                         visibility: hidden;
-                        transition: visibility 0.1s, opacity 0.05s;
+                        transition: visibility 0.2s, opacity 0.15s;
                         opacity: 0;
                         pointer-events:none;
                     }

@@ -9,10 +9,14 @@ import Slider from '@material-ui/core/Slider';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseCircleOutlineRoundedIcon from '@material-ui/icons/PauseCircleOutlineRounded';
 import ReplayRoundedIcon from '@material-ui/icons/ReplayRounded';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import SkipNextIcon from '@material-ui/icons/SkipNext';
+import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 
 class DoudizhuGameView extends React.Component {
     constructor(props) {
@@ -20,11 +24,11 @@ class DoudizhuGameView extends React.Component {
 
         const mainViewerId = 0;     // Id of the player at the bottom of screen
         this.initConsiderationTime = 2000;
-        this.considerationTimeDeduction = 100;
+        this.considerationTimeDeduction = 200;
         this.gameStateTimeout = null;
         this.apiUrl = window.g.apiUrl;
         this.moveHistory = [];
-
+        this.gameStateHistory = [];
         this.initGameState = {
             gameStatus: "ready", // "ready", "playing", "paused", "over"
             playerInfo: [],
@@ -49,6 +53,38 @@ class DoudizhuGameView extends React.Component {
         return cardStr === "P" ? cardStr : cardStr.split(" ");
     }
 
+    generateNewState(){
+        let gameInfo = deepCopy(this.state.gameInfo);
+        // check if the game state of next turn is already in game state history
+        if(this.state.gameInfo.turn+1 < this.gameStateHistory.length){
+            gameInfo = deepCopy(this.gameStateHistory[this.state.gameInfo.turn+1]);
+        }else{
+            let newMove = this.moveHistory[this.state.gameInfo.turn];
+            if(newMove.playerIdx === this.state.gameInfo.currentPlayer) {
+                gameInfo.latestAction[newMove.playerIdx] = this.cardStr2Arr(newMove.move);
+                gameInfo.turn++;
+                gameInfo.currentPlayer = (gameInfo.currentPlayer + 1) % 3;
+                // take away played cards from player's hands
+                const remainedCards = removeCards(gameInfo.latestAction[newMove.playerIdx], gameInfo.hands[newMove.playerIdx]);
+                if (remainedCards !== false) {
+                    gameInfo.hands[newMove.playerIdx] = remainedCards;
+                } else {
+                    console.log("Cannot find cards in move from player's hand");
+                }
+                gameInfo.considerationTime = this.initConsiderationTime;
+            }else {
+                console.log("Mismatched current player index");
+            }
+        }
+        // if current state is new to game state history, push it to the game state history array
+        if(gameInfo.turn === this.gameStateHistory.length){
+            this.gameStateHistory.push(gameInfo);
+        }else{
+            console.log("inconsistent game state history length and turn number");
+        }
+        return gameInfo;
+    }
+
     gameStateTimer() {
         this.gameStateTimeout = setTimeout(()=>{
             let currentConsiderationTime = this.state.gameInfo.considerationTime;
@@ -65,39 +101,21 @@ class DoudizhuGameView extends React.Component {
                 this.setState({gameInfo: gameInfo});
                 this.gameStateTimer();
             }else{
-                let res = this.moveHistory[this.state.gameInfo.turn];
-                if(res.playerIdx === this.state.gameInfo.currentPlayer){
-                    let gameInfo = deepCopy(this.state.gameInfo);
-                    gameInfo.latestAction[res.playerIdx] = this.cardStr2Arr(res.move);
-                    gameInfo.turn++;
+                let gameInfo = this.generateNewState();
+                gameInfo.gameStatus = "playing";
+                if(this.state.gameInfo.toggleFade === "fade-out") {
                     gameInfo.toggleFade = "fade-in";
-                    gameInfo.currentPlayer = (gameInfo.currentPlayer+1)%3;
-                    // take away played cards from player's hands
-                    const remainedCards = removeCards(gameInfo.latestAction[res.playerIdx], gameInfo.hands[res.playerIdx]);
-                    if(remainedCards !== false){
-                        gameInfo.hands[res.playerIdx] = remainedCards;
-                    }else{
-                        console.log("Cannot find cards in move from player's hand");
-                    }
-                    gameInfo.considerationTime = this.initConsiderationTime;
-                    this.setState({gameInfo: gameInfo}, ()=>{
-                        // toggle fade in
-                        if(this.state.gameInfo.toggleFade !== ""){
-                            // doubleRaf(()=>{
-                            //     let gameInfo = deepCopy(this.state.gameInfo);
-                            //     gameInfo.toggleFade = "";
-                            //     this.setState({gameInfo: gameInfo});
-                            // });
-                            setTimeout(()=>{
-                                let gameInfo = deepCopy(this.state.gameInfo);
-                                gameInfo.toggleFade = "";
-                                this.setState({gameInfo: gameInfo});
-                            }, 200);
-                        }
-                    });
-                }else{
-                    console.log("Mismatched current player index");
                 }
+                this.setState({gameInfo: gameInfo}, ()=>{
+                    // toggle fade in
+                    if(this.state.gameInfo.toggleFade !== ""){
+                        setTimeout(()=>{
+                            let gameInfo = deepCopy(this.state.gameInfo);
+                            gameInfo.toggleFade = "";
+                            this.setState({gameInfo: gameInfo});
+                        }, 200);
+                    }
+                });
             }
         }, this.considerationTimeDeduction);
     }
@@ -119,6 +137,7 @@ class DoudizhuGameView extends React.Component {
                 });
                 // the first player should be landlord
                 gameInfo.currentPlayer = res.playerInfo.find(element=>{return element.role === "landlord"}).index;
+                this.gameStateHistory.push(gameInfo);
                 this.setState({gameInfo: gameInfo}, ()=>{
                     if(this.gameStateTimeout){
                         window.clearTimeout(this.gameStateTimeout);
@@ -182,13 +201,13 @@ class DoudizhuGameView extends React.Component {
     gameStatusButton(status){
         switch (status) {
             case "ready":
-                return <Button variant={"contained"} startIcon={<PlayArrowRoundedIcon />} color="primary" onClick={()=>{this.startReplay()}}>Start Replay</Button>;
+                return <Button className={"status-button"} variant={"contained"} startIcon={<PlayArrowRoundedIcon />} color="primary" onClick={()=>{this.startReplay()}}>Start</Button>;
             case "playing":
-                return <Button variant={"contained"} startIcon={<PauseCircleOutlineRoundedIcon />} color="secondary" onClick={()=>{this.pauseReplay()}}>Pause</Button>;
+                return <Button className={"status-button"} variant={"contained"} startIcon={<PauseCircleOutlineRoundedIcon />} color="secondary" onClick={()=>{this.pauseReplay()}}>Pause</Button>;
             case "paused":
-                return <Button variant={"contained"} startIcon={<PlayArrowRoundedIcon />} color="primary" onClick={()=>{this.resumeReplay()}}>Resume</Button>;
+                return <Button className={"status-button"} variant={"contained"} startIcon={<PlayArrowRoundedIcon />} color="primary" onClick={()=>{this.resumeReplay()}}>Resume</Button>;
             case "over":
-                return <Button variant={"contained"} startIcon={<ReplayRoundedIcon />} color="primary" onClick={()=>{this.startReplay()}}>Restart</Button>;
+                return <Button className={"status-button"} variant={"contained"} startIcon={<ReplayRoundedIcon />} color="primary" onClick={()=>{this.startReplay()}}>Restart</Button>;
             default:
                 alert(`undefined game status: ${status}`);
         }
@@ -245,6 +264,20 @@ class DoudizhuGameView extends React.Component {
         }
     }
 
+    go2PrevGameState() {
+        let gameInfo = deepCopy(this.gameStateHistory[this.state.gameInfo.turn - 1]);
+        gameInfo.gameStatus = "paused";
+        gameInfo.toggleFade = "";
+        this.setState({gameInfo: gameInfo});
+    }
+
+    go2NextGameState() {
+        let gameInfo = this.generateNewState();
+        gameInfo.gameStatus = "paused";
+        gameInfo.toggleFade = "";
+        this.setState({gameInfo: gameInfo});
+    }
+
     render(){
         let sliderValueText = (value) => {
             return `${value}°C`;
@@ -296,6 +329,7 @@ class DoudizhuGameView extends React.Component {
                                     turn={this.state.gameInfo.turn}
                                     runNewTurn={(prevTurn)=>this.runNewTurn(prevTurn)}
                                     toggleFade={this.state.gameInfo.toggleFade}
+                                    gameStatus={this.state.gameInfo.gameStatus}
                                 />
                             </Paper>
                         </div>
@@ -320,9 +354,28 @@ class DoudizhuGameView extends React.Component {
                 </Layout.Row>
                 <div className="game-controller">
                     <Layout.Row>
-                        <Layout.Col span="24">
+                        <Layout.Col span="12">
                             {/*<Button variant={"contained"} color="primary" onClick={()=>{this.connectWebSocket()}}>Connect</Button>*/}
-                            { this.gameStatusButton(this.state.gameInfo.gameStatus) }
+
+                        </Layout.Col>
+                        <Layout.Col span="12">
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={this.state.gameInfo.gameStatus !== "paused" || this.state.gameInfo.turn === 0}
+                                    onClick={()=>{this.go2PrevGameState()}}
+                                >
+                                    <SkipPreviousIcon />
+                                </Button>
+                                { this.gameStatusButton(this.state.gameInfo.gameStatus) }
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={this.state.gameInfo.gameStatus !== "paused"}
+                                    onClick={()=>{this.go2NextGameState()}}
+                                >
+                                    <SkipNextIcon />
+                                </Button>
                         </Layout.Col>
                     </Layout.Row>
                     <Layout.Row style={{height: "31px"}}>

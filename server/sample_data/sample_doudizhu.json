@@ -269,11 +269,11 @@
           "probability": 0.5
         },
         {
-          "move": "S7 H7",
+          "move": "CT DT",
           "probability": 0.1
         },
         {
-          "move": "HA CA",
+          "move": "RJ BJ",
           "probability": 0.05
         }
       ]

@@ -32,7 +32,7 @@ function getGameHistory(){
         console.log(testDoudizhuData);
     });
 
-    fs.readFile("./sample_data/sample_leduc_holdem-test.json", (err, data) => {
+    fs.readFile("./sample_data/sample_leduc_holdem.json", (err, data) => {
         if (err) throw err;
         testLeducHoldemData = JSON.parse(data);
         console.log(testLeducHoldemData);

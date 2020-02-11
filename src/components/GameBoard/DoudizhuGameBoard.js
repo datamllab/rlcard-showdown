@@ -2,6 +2,7 @@ import React from 'react';
 import { translateCardData, millisecond2Second, computeHandCardsWidth } from '../../utils'
 
 import '../../assets/doudizhu.scss';
+import {fade} from "@material-ui/core";
 
 class DoudizhuGameBoard extends React.Component {
     constructor(props) {
@@ -97,7 +98,7 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if(prevProps.turn !== this.props.turn && this.props.turn !== 0){
+        if(prevProps.turn !== this.props.turn && this.props.turn !== 0 && this.props.gameStatus === "playing"){
             // new turn starts
             this.props.runNewTurn(prevProps);
         }

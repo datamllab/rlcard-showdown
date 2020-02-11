@@ -9,12 +9,12 @@ class DoudizhuGameBoard extends React.Component {
 
     }
 
-    computeSingleLineHand(cards) {
+    computeSingleLineHand(cards, fadeClassName="") {
         if(cards === "P"){
             return <div className="non-card"><span>Pass</span></div>
         }else{
             return (
-                <div className="playingCards">
+                <div className={"playingCards unselectable "+fadeClassName}>
                     <ul className="hand" style={{width: computeHandCardsWidth(cards.length, 12)}}>
                         {cards.map(card=>{
                             const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
@@ -45,7 +45,7 @@ class DoudizhuGameBoard extends React.Component {
         return (
             <div>
                 <div className="player-hand-up">
-                    <div className="playingCards">
+                    <div className="playingCards unselectable">
                         <ul className="hand">
                             {upCards.map(card => {
                                 const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
@@ -62,7 +62,7 @@ class DoudizhuGameBoard extends React.Component {
                     </div>
                 </div>
                 <div className="player-hand-down">
-                    <div className="playingCards">
+                    <div className="playingCards unselectable">
                         <ul className="hand">
                             {downCards.map(card => {
                                 const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
@@ -86,7 +86,13 @@ class DoudizhuGameBoard extends React.Component {
         if(this.props.currentPlayer === playerIdx){
             return <div className="non-card"><span>{`Consideration Time: ${millisecond2Second(this.props.considerationTime)}s`}</span></div>
         }else{
-            return this.computeSingleLineHand(this.props.latestAction[playerIdx])
+
+            let fadeClassName = "";
+            if(this.props.toggleFade === "fade-out" && (playerIdx+2)%3 === this.props.currentPlayer)
+                fadeClassName = this.props.toggleFade;
+            else if(this.props.toggleFade === "fade-in" && (playerIdx+1)%3 === this.props.currentPlayer)
+                fadeClassName = this.props.toggleFade;
+            return this.computeSingleLineHand(this.props.latestAction[playerIdx], fadeClassName)
         }
     }
 

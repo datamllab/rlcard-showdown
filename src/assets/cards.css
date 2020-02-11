@@ -10,6 +10,34 @@
 /* card itself
 ********************************************************************/
 
+.playingCards.unselectable {
+    pointer-events: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.playingCards {
+    visibility: visible;
+    transform: translateY(0);
+    transition: visibility 0s, opacity 0.2s, transform 0.3s;
+    opacity: 1;
+}
+
+.playingCards.fade-in {
+    visibility: hidden;
+    transform: translateY(-10px);
+    /*transition: visibility 0.1s, opacity 0.05s;*/
+    opacity: 0;
+}
+
+.playingCards.fade-out {
+    visibility: hidden;
+    transform: translateY(0);
+    transition: visibility 0.1s, opacity 0.05s;
+    opacity: 0;
+}
+
 .playingCards .card {
     display: inline-block;
     width: 3.3em;

@@ -32,7 +32,8 @@ class DoudizhuGameView extends React.Component {
             latestAction: [[], [], []],
             mainViewerId: mainViewerId,
             turn: 0,
-            toggleFadeIn: "",
+            toggleFade: "",
+
             currentPlayer: null,
             considerationTime: this.initConsiderationTime,
         };
@@ -56,7 +57,7 @@ class DoudizhuGameView extends React.Component {
                 currentConsiderationTime = currentConsiderationTime < 0 ? 0 : currentConsiderationTime;
                 if(currentConsiderationTime === 0 && this.state.gameSpeed < 2){
                     let gameInfo = deepCopy(this.state.gameInfo);
-                    gameInfo.toggleFadeIn = "hide";
+                    gameInfo.toggleFade = "fade-out";
                     this.setState({gameInfo: gameInfo});
                 }
                 let gameInfo = deepCopy(this.state.gameInfo);
@@ -69,7 +70,7 @@ class DoudizhuGameView extends React.Component {
                     let gameInfo = deepCopy(this.state.gameInfo);
                     gameInfo.latestAction[res.playerIdx] = this.cardStr2Arr(res.move);
                     gameInfo.turn++;
-
+                    gameInfo.toggleFade = "fade-in";
                     gameInfo.currentPlayer = (gameInfo.currentPlayer+1)%3;
                     // take away played cards from player's hands
                     const remainedCards = removeCards(gameInfo.latestAction[res.playerIdx], gameInfo.hands[res.playerIdx]);
@@ -81,19 +82,24 @@ class DoudizhuGameView extends React.Component {
                     gameInfo.considerationTime = this.initConsiderationTime;
                     this.setState({gameInfo: gameInfo}, ()=>{
                         // toggle fade in
-                        if(this.state.gameInfo.toggleFadeIn !== ""){
+                        if(this.state.gameInfo.toggleFade !== ""){
+                            // doubleRaf(()=>{
+                            //     let gameInfo = deepCopy(this.state.gameInfo);
+                            //     gameInfo.toggleFade = "";
+                            //     this.setState({gameInfo: gameInfo});
+                            // });
                             setTimeout(()=>{
                                 let gameInfo = deepCopy(this.state.gameInfo);
-                                gameInfo.toggleFadeIn = "";
+                                gameInfo.toggleFade = "";
                                 this.setState({gameInfo: gameInfo});
-                            }, 50);
+                            }, 200);
                         }
                     });
                 }else{
                     console.log("Mismatched current player index");
                 }
             }
-        }, 100);
+        }, this.considerationTimeDeduction);
     }
 
     startReplay() {
@@ -137,9 +143,13 @@ class DoudizhuGameView extends React.Component {
                     gameInfo.gameStatus = "over";
                     this.setState({ gameInfo: gameInfo });
                     if(winner.role === "landlord")
-                        alert("Landlord Wins");
+                        setTimeout(()=>{
+                            alert("Landlord Wins");
+                        }, 200);
                     else
-                        alert("Peasants Win");
+                        setTimeout(()=>{
+                            alert("Peasants Win");
+                        }, 200);
                 }else{
                     console.log("Error in finding winner");
                 }
@@ -186,10 +196,10 @@ class DoudizhuGameView extends React.Component {
 
     computeSingleLineHand(cards) {
         if(cards === "P"){
-            return <div className={"non-card "+this.state.gameInfo.toggleFadeIn}><span>Pass</span></div>
+            return <div className={"non-card "+this.state.gameInfo.toggleFade}><span>Pass</span></div>
         }else{
             return (
-                <div className={"playingCards "+this.state.gameInfo.toggleFadeIn}>
+                <div className={"unselectable playingCards "+this.state.gameInfo.toggleFade}>
                     <ul className="hand" style={{width: computeHandCardsWidth(cards.length, 10)}}>
                         {cards.map(card=>{
                             const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
@@ -285,6 +295,7 @@ class DoudizhuGameView extends React.Component {
                                     considerationTime={this.state.gameInfo.considerationTime}
                                     turn={this.state.gameInfo.turn}
                                     runNewTurn={(prevTurn)=>this.runNewTurn(prevTurn)}
+                                    toggleFade={this.state.gameInfo.toggleFade}
                                 />
                             </Paper>
                         </div>

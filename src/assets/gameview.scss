@@ -47,26 +47,17 @@
                     text-align: center;
                 }
                 .playing {
-                    -webkit-transition: background-color 250ms ease;
-                    -ms-transition: background-color 250ms ease;
-                    transition: background-color 250ms ease;
+                    -webkit-transition: background-color 0.3s ease;
+                    -ms-transition: background-color 0.3s ease;
+                    transition: background-color 0.3s ease;
                     display: table-cell;
                     height: 152px;
                     vertical-align: middle;
-                    .playingCards {
-                        visibility: visible;
-                        transition: visibility 0s, opacity 0.5s;
-                        opacity: 1;
-                    }
-                    .playingCards.hide {
-                        visibility: hidden;
-                        transition: visibility 0.1s, opacity 0.05s;
-                        opacity: 0;
-                        pointer-events:none;
-                    }
-                    .playingCards > ul.hand {
+
+                    .playingCards ul.hand {
                         margin-bottom: 0;
                     }
+
                     .probability-move {
                         font-size: 10px;
                         width: 100%;

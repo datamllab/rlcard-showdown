@@ -89,9 +89,9 @@ class DoudizhuGameBoard extends React.Component {
 
             let fadeClassName = "";
             if(this.props.toggleFade === "fade-out" && (playerIdx+2)%3 === this.props.currentPlayer)
-                fadeClassName = this.props.toggleFade;
+                fadeClassName = "fade-out";
             else if(this.props.toggleFade === "fade-in" && (playerIdx+1)%3 === this.props.currentPlayer)
-                fadeClassName = this.props.toggleFade;
+                fadeClassName = "scale-fade-in";
             return this.computeSingleLineHand(this.props.latestAction[playerIdx], fadeClassName)
         }
     }

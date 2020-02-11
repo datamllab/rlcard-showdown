@@ -19,15 +19,19 @@
 
 .playingCards {
     visibility: visible;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
     transition: visibility 0s, opacity 0.2s, transform 0.3s;
     opacity: 1;
 }
 
+.playingCards.scale-fade-in {
+    visibility: hidden;
+    transform: translateY(-10px) scale(1.2);
+    opacity: 0;
+}
+
 .playingCards.fade-in {
     visibility: hidden;
-    transform: translateY(-10px);
-    /*transition: visibility 0.1s, opacity 0.05s;*/
     opacity: 0;
 }
 

@@ -336,7 +336,14 @@ class DoudizhuGameView extends React.Component {
                     </Layout.Col>
                     <Layout.Col span="7" style={{"height": "100%"}}>
                         <Paper className={"doudizhu-probability-paper"} elevation={3}>
-                            <div className={"probability-player"}>Current: 0</div>
+                            <div className={"probability-player"}>
+                                {
+                                    this.state.gameInfo.playerInfo.length > 0 ?
+                                    <span>Current Player: {this.state.gameInfo.currentPlayer}<br/>Role: {this.state.gameInfo.playerInfo[this.state.gameInfo.currentPlayer].role}</span>
+                                    :
+                                    <span>Waiting...</span>
+                                }
+                            </div>
                             <Divider />
                             <div className={"probability-table"}>
                                 <div className={"probability-item"}>
@@ -353,12 +360,10 @@ class DoudizhuGameView extends React.Component {
                     </Layout.Col>
                 </Layout.Row>
                 <div className="game-controller">
-                    <Layout.Row>
-                        <Layout.Col span="12">
-                            {/*<Button variant={"contained"} color="primary" onClick={()=>{this.connectWebSocket()}}>Connect</Button>*/}
-
-                        </Layout.Col>
-                        <Layout.Col span="12">
+                    <Paper className={"game-controller-paper"} elevation={3}>
+                        <Layout.Row style={{"height": "51px"}}>
+                            <Layout.Col span="7" style={{"height": "51px", "lineHeight": "48px"}}>
+                            <div>
                                 <Button
                                     variant="contained"
                                     color="primary"
@@ -376,34 +381,43 @@ class DoudizhuGameView extends React.Component {
                                 >
                                     <SkipNextIcon />
                                 </Button>
-                        </Layout.Col>
-                    </Layout.Row>
-                    <Layout.Row style={{height: "31px"}}>
-                        <Layout.Col span="8" style={{height: "100%"}}>
-                            <div style={{display: "table", height: "100%"}}>
-                                <span style={{display: "table-cell", verticalAlign: "middle"}}>Game Speed</span>
                             </div>
-                        </Layout.Col>
-                        <Layout.Col span="16">
-                            <Slider
-                                value={this.state.gameSpeed}
-                                getAriaValueText={sliderValueText}
-                                onChange={(e, newVal)=>{this.changeGameSpeed(newVal)}}
-                                aria-labelledby="discrete-slider-custom"
-                                step={1}
-                                min={-3}
-                                max={3}
-                                track={false}
-                                valueLabelDisplay="off"
-                                marks={gameSpeedMarks}
-                            />
-                        </Layout.Col>
-                    </Layout.Row>
-                    <Layout.Row>
-                        <Layout.Col span="24">
-                            {`Current Player: ${this.state.gameInfo.currentPlayer} , Consideration Time: ${this.state.gameInfo.considerationTime}, Turn: ${this.state.gameInfo.turn}`}
-                        </Layout.Col>
-                    </Layout.Row>
+                            </Layout.Col>
+                            <Layout.Col span="1" style={{"height": "100%", "width": "1px"}}>
+                                <Divider orientation="vertical" />
+                            </Layout.Col>
+                            <Layout.Col span="3" style={{"height": "51px", "lineHeight": "51px", "marginLeft": "-1px", "marginRight": "-1px"}}>
+                                <div style={{"textAlign": "center"}}>{`Turn: ${this.state.gameInfo.turn}`}</div>
+                            </Layout.Col>
+                            <Layout.Col span="1" style={{"height": "100%", "width": "1px"}}>
+                                <Divider orientation="vertical" />
+                            </Layout.Col>
+                            <Layout.Col span="14">
+                                <div>
+                                    <label className={"form-label-left"}>Game Speed</label>
+                                    <div style={{"marginLeft": "100px", "marginRight": "10px"}}>
+                                        <Slider
+                                            value={this.state.gameSpeed}
+                                            getAriaValueText={sliderValueText}
+                                            onChange={(e, newVal)=>{this.changeGameSpeed(newVal)}}
+                                            aria-labelledby="discrete-slider-custom"
+                                            step={1}
+                                            min={-3}
+                                            max={3}
+                                            track={false}
+                                            valueLabelDisplay="off"
+                                            marks={gameSpeedMarks}
+                                        />
+                                    </div>
+                                </div>
+                            </Layout.Col>
+                        </Layout.Row>
+                    </Paper>
+                    {/*<Layout.Row>*/}
+                    {/*    <Layout.Col span="24">*/}
+                    {/*        {`Current Player: ${this.state.gameInfo.currentPlayer} , Consideration Time: ${this.state.gameInfo.considerationTime}, Turn: ${this.state.gameInfo.turn}`}*/}
+                    {/*    </Layout.Col>*/}
+                    {/*</Layout.Row>*/}
                 </div>
             </div>
         )

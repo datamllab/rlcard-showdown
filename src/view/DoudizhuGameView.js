@@ -9,6 +9,7 @@ import Slider from '@material-ui/core/Slider';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseCircleOutlineRoundedIcon from '@material-ui/icons/PauseCircleOutlineRounded';
@@ -40,6 +41,7 @@ class DoudizhuGameView extends React.Component {
 
             currentPlayer: null,
             considerationTime: this.initConsiderationTime,
+            completedPercent: 0,
         };
 
         this.state = {
@@ -72,6 +74,7 @@ class DoudizhuGameView extends React.Component {
                     console.log("Cannot find cards in move from player's hand");
                 }
                 gameInfo.considerationTime = this.initConsiderationTime;
+                gameInfo.completedPercent = (this.state.gameInfo.turn + 1) * 100.0 / this.moveHistory.length;
             }else {
                 console.log("Mismatched current player index");
             }
@@ -359,6 +362,9 @@ class DoudizhuGameView extends React.Component {
                         </Paper>
                     </Layout.Col>
                 </Layout.Row>
+                <div className="progress-bar">
+                    <LinearProgress variant="determinate" value={this.state.gameInfo.completedPercent} />
+                </div>
                 <div className="game-controller">
                     <Paper className={"game-controller-paper"} elevation={3}>
                         <Layout.Row style={{"height": "51px"}}>

@@ -1,3 +1,6 @@
+.progress-bar {
+    margin: 5px;
+}
 .game-controller {
     //width: calc(100% - 20px*2);
     //padding: 20px;
@@ -40,6 +43,97 @@
     }
 
     .doudizhu-probability-paper {
+        height: calc(100% - 5px*2);
+        margin: 5px;
+
+        .probability-player {
+            height: calc(72px - 16px*2);
+            padding: 16px;
+
+            span {
+                vertical-align: middle;
+            }
+        }
+
+        .probability-table {
+            display: table;
+            border-collapse: collapse;
+
+            width: 100%;
+            height: calc(100% - 72px);
+
+            .probability-item {
+                display: table-row;
+
+                &:not(:first-child) {
+                    border-top: 1px solid rgba(0, 0, 0, 0.12);
+                }
+                .waiting {
+                    display: table-cell;
+                    vertical-align: middle;
+                    text-align: center;
+                }
+                .playing {
+                    -webkit-transition: background-color 0.3s ease;
+                    -ms-transition: background-color 0.3s ease;
+                    transition: background-color 0.3s ease;
+                    display: table-cell;
+                    height: 152px;
+                    vertical-align: middle;
+
+                    .playingCards ul.hand {
+                        margin-bottom: 0;
+                    }
+
+                    .probability-move {
+                        font-size: 10px;
+                        width: 100%;
+                        display: flex;
+                        justify-content: center;
+                    }
+                    .non-card {
+                        visibility: visible;
+                        transition: visibility 0s, opacity 0.5s;
+                        opacity: 1;
+                        display: table;
+                        width: 100%;
+                        margin-top: 5%;
+                        height: 25px;
+
+                        span {
+                            display: table-cell;
+                            vertical-align: middle;
+                            text-align: center;
+                            font-size: 16px;
+                        }
+                    }
+                    .non-card.hide {
+                        visibility: hidden;
+                        transition: visibility 0.2s, opacity 0.15s;
+                        opacity: 0;
+                        pointer-events:none;
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+.leduc-view-container {
+    width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+
+
+
+    .leduc-gameboard-paper {
+        height: calc(100% - 7px*2);
+        margin: 5px;
+        padding: 2px;
+    }
+
+    .leduc-probability-paper {
         height: calc(100% - 5px*2);
         margin: 5px;
 

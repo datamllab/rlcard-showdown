@@ -140,8 +140,9 @@
         .probability-player {
             height: calc(72px - 16px*2);
             padding: 16px;
-
+            display:table;
             span {
+                display: table-cell;
                 vertical-align: middle;
             }
         }
@@ -169,7 +170,6 @@
                     -ms-transition: background-color 0.3s ease;
                     transition: background-color 0.3s ease;
                     display: table-cell;
-                    height: 152px;
                     vertical-align: middle;
 
                     .playingCards ul.hand {
@@ -177,7 +177,8 @@
                     }
 
                     .probability-move {
-                        font-size: 10px;
+                        font-size: 20px;
+                        font-weight: bold;
                         width: 100%;
                         display: flex;
                         justify-content: center;

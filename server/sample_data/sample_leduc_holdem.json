@@ -18,37 +18,181 @@
     [
       {
         "playerIdx": 0,
-        "move": "Check"
+        "move": "Check",
+        "probabilities": [
+          {
+            "move": "Check",
+            "probability": 0.9
+          },
+          {
+            "move": "Raise",
+            "probability": 0.05
+          },
+          {
+            "move": "Call",
+            "probability": 0.02
+          },
+          {
+            "move": "Fold",
+            "probability": 0.01
+          }
+        ]
       },
       {
         "playerIdx": 1,
-        "move": "Raise"
+        "move": "Raise",
+        "probabilities": [
+          {
+            "move": "Raise",
+            "probability": 0.9
+          },
+          {
+            "move": "Check",
+            "probability": 0.05
+          },
+          {
+            "move": "Call",
+            "probability": 0.02
+          },
+          {
+            "move": "Fold",
+            "probability": 0.01
+          }
+        ]
       },
       {
         "playerIdx": 0,
-        "move": "Call"
+        "move": "Call",
+        "probabilities": [
+          {
+            "move": "Call",
+            "probability": 0.9
+          },
+          {
+            "move": "Check",
+            "probability": 0.05
+          },
+          {
+            "move": "Raise",
+            "probability": 0.02
+          },
+          {
+            "move": "Fold",
+            "probability": 0.01
+          }
+        ]
       },
       {
         "playerIdx": 1,
-        "move": "Check"
+        "move": "Check",
+        "probabilities": [
+          {
+            "move": "Check",
+            "probability": 0.9
+          },
+          {
+            "move": "Raise",
+            "probability": 0.05
+          },
+          {
+            "move": "Call",
+            "probability": 0.02
+          },
+          {
+            "move": "Fold",
+            "probability": 0.01
+          }
+        ]
       }
     ],
     [
       {
         "playerIdx": 0,
-        "move": "Raise"
+        "move": "Raise",
+        "probabilities": [
+          {
+            "move": "Raise",
+            "probability": 0.9
+          },
+          {
+            "move": "Check",
+            "probability": 0.05
+          },
+          {
+            "move": "Call",
+            "probability": 0.02
+          },
+          {
+            "move": "Fold",
+            "probability": 0.01
+          }
+        ]
       },
       {
         "playerIdx": 1,
-        "move": "Call"
+        "move": "Call",
+        "probabilities": [
+          {
+            "move": "Call",
+            "probability": 0.9
+          },
+          {
+            "move": "Check",
+            "probability": 0.05
+          },
+          {
+            "move": "Raise",
+            "probability": 0.02
+          },
+          {
+            "move": "Fold",
+            "probability": 0.01
+          }
+        ]
       },
       {
         "playerIdx": 0,
-        "move": "Raise"
+        "move": "Raise",
+        "probabilities": [
+          {
+            "move": "Raise",
+            "probability": 0.9
+          },
+          {
+            "move": "Check",
+            "probability": 0.05
+          },
+          {
+            "move": "Call",
+            "probability": 0.02
+          },
+          {
+            "move": "Fold",
+            "probability": 0.01
+          }
+        ]
       },
       {
         "playerIdx": 1,
-        "move": "Call"
+        "move": "Call",
+        "probabilities": [
+          {
+            "move": "Call",
+            "probability": 0.9
+          },
+          {
+            "move": "Check",
+            "probability": 0.05
+          },
+          {
+            "move": "Raise",
+            "probability": 0.02
+          },
+          {
+            "move": "Fold",
+            "probability": 0.01
+          }
+        ]
       }
     ]
   ]

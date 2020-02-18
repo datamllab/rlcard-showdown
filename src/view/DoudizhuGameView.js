@@ -74,7 +74,7 @@ class DoudizhuGameView extends React.Component {
                     console.log("Cannot find cards in move from player's hand");
                 }
                 gameInfo.considerationTime = this.initConsiderationTime;
-                gameInfo.completedPercent = (this.state.gameInfo.turn + 1) * 100.0 / this.moveHistory.length;
+                gameInfo.completedPercent += 100.0 / this.moveHistory.length;
             }else {
                 console.log("Mismatched current player index");
             }
@@ -283,7 +283,7 @@ class DoudizhuGameView extends React.Component {
 
     render(){
         let sliderValueText = (value) => {
-            return `${value}°C`;
+            return value;
         };
         const gameSpeedMarks = [
             {

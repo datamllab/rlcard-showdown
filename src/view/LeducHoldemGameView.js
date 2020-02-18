@@ -226,7 +226,31 @@ class LeducHoldemGameView extends React.Component {
                 alert(`undefined game status: ${status}`);
         }
     }
-    
+
+    computeProbabilityItem(idx){
+        if(this.state.gameInfo.gameStatus !== "ready"){
+            let currentMove = null;
+            if(this.state.gameInfo.turn !== this.moveHistory[this.state.gameInfo.round].length){
+                currentMove = this.moveHistory[this.state.gameInfo.round][this.state.gameInfo.turn];
+            }
+            let style = {};
+            style["backgroundColor"] = currentMove !== null ? `rgba(189,183,107,${currentMove.probabilities[idx].probability})` : "#bdbdbd";;
+            return (
+                <div className={"playing"} style={style}>
+                    <div className="probability-move">
+                        {currentMove !== null ? currentMove.probabilities[idx].move : <NotInterestedIcon fontSize="large" />}
+                    </div>
+                    {currentMove !== null ?
+                        (<div className={"non-card"}>
+                            <span>{`Probability: ${(currentMove.probabilities[idx].probability * 100).toFixed(2)}%`}</span>
+                        </div>) : ""}
+                </div>
+            )
+        }else {
+            return <span className={"waiting"}>Waiting...</span>
+        }
+    }
+
     go2PrevGameState() {
         let gameInfo = null;
         if(this.state.gameInfo.turn === 0 && this.state.gameInfo.round !== 0){
@@ -320,13 +344,16 @@ class LeducHoldemGameView extends React.Component {
                             <Divider />
                             <div className={"probability-table"}>
                                 <div className={"probability-item"}>
-                                    {/* {this.computeProbabilityItem(0)} */}
+                                    {this.computeProbabilityItem(0)}
                                 </div>
                                 <div className={"probability-item"}>
-                                    {/* {this.computeProbabilityItem(1)} */}
+                                    {this.computeProbabilityItem(1)}
                                 </div>
                                 <div className={"probability-item"}>
-                                    {/* {this.computeProbabilityItem(2)} */}
+                                    {this.computeProbabilityItem(2)}
+                                </div>
+                                <div className={"probability-item"}>
+                                    {this.computeProbabilityItem(3)}
                                 </div>
                             </div>
                         </Paper>

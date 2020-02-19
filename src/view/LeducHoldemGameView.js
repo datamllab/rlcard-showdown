@@ -76,6 +76,11 @@ class LeducHoldemGameView extends React.Component {
                 return gameInfo;
             }
         }else{
+            // check if the game state of next turn is already in game state history
+            if(turn+1 < this.gameStateHistory[gameInfo.round].length){
+                gameInfo = deepCopy(this.gameStateHistory[gameInfo.round][gameInfo.turn+1]);
+                return gameInfo;
+            }
             if(gameInfo.currentPlayer === this.moveHistory[gameInfo.round][gameInfo.turn].playerIdx){
                 gameInfo.latestAction[gameInfo.currentPlayer] = this.moveHistory[gameInfo.round][gameInfo.turn].move;
                 switch (gameInfo.latestAction[gameInfo.currentPlayer]) {

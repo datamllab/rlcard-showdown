@@ -57,24 +57,17 @@ class LeducHoldemGameView extends React.Component {
         let gameInfo = deepCopy(this.state.gameInfo);
         const turn = this.state.gameInfo.turn;
         if(turn >= this.moveHistory[this.state.gameInfo.round].length){
-            if(this.state.gameInfo.round === 0){
-                // todo: if it's the first round, then reveal the public card and start the second round
-                gameInfo.turn = 0;
-                gameInfo.round = 1;
-                gameInfo.latestAction = ["", ""];
-                gameInfo.currentPlayer = this.moveHistory[1][0].playerIdx;
-                gameInfo.considerationTime = this.initConsiderationTime;
-                // gameInfo.completedPercent += 100.0 / this.moveHistoryTotalLength;
-                this.setState({ gameInfo: gameInfo });
-            }else{
-                gameInfo.gameStatus = "over";
-                this.setState({ gameInfo: gameInfo });
-                setTimeout(()=>{
-                    // TODO: show winner
-                    alert("Game Ends!");
-                }, 200);
+            gameInfo.turn = 0;
+            gameInfo.round = 1;
+            // check if the game state of next turn is already in game state history
+            if(gameInfo.turn < this.gameStateHistory[gameInfo.round].length){
+                gameInfo = deepCopy(this.gameStateHistory[gameInfo.round][gameInfo.turn]);
                 return gameInfo;
             }
+            gameInfo.latestAction = ["", ""];
+            gameInfo.currentPlayer = this.moveHistory[1][0].playerIdx;
+            gameInfo.considerationTime = this.initConsiderationTime;
+            this.setState({ gameInfo: gameInfo });
         }else{
             // check if the game state of next turn is already in game state history
             if(turn+1 < this.gameStateHistory[gameInfo.round].length){
@@ -113,9 +106,19 @@ class LeducHoldemGameView extends React.Component {
                         console.log("Error in player's latest action");
                 }
                 gameInfo.turn++;
+                if(gameInfo.round !== 0 && gameInfo.turn == this.moveHistory[gameInfo.round].length){
+                    gameInfo.gameStatus = "over";
+                    this.setState({gameInfo: gameInfo});
+                    setTimeout(()=>{
+                        // TODO: show winner
+                        alert("Game Ends!");
+                    }, 200);
+                    return gameInfo;
+                }
                 gameInfo.currentPlayer = (gameInfo.currentPlayer+1)%2;
                 gameInfo.considerationTime = this.initConsiderationTime;
                 gameInfo.completedPercent += 100.0 / this.moveHistoryTotalLength;
+                gameInfo.gameStatus = "playing";
                 this.setState({ gameInfo: gameInfo });
             }else{
                 console.log("Mismatch in current player & move history");
@@ -176,14 +179,16 @@ class LeducHoldemGameView extends React.Component {
                 res = res.data;
                 // init replay info
                 this.moveHistory = res.moveHistory;
-                this.moveHistoryTotalLength = this.moveHistory.reduce((count, round) => count + round.length, 0);
+                this.moveHistoryTotalLength = this.moveHistory.reduce((count, round) => count + round.length, 0) - 1;
                 let gameInfo = deepCopy(this.initGameState);
                 gameInfo.gameStatus = "playing";
                 gameInfo.playerInfo = res.playerInfo;
                 gameInfo.hands = res.initHands;
                 gameInfo.currentPlayer = res.moveHistory[0][0].playerIdx;
                 gameInfo.publicCard = res.publicCard;
-                this.gameStateHistory[gameInfo.round].push(gameInfo);
+                if(this.gameStateHistory.length !== 0 && this.gameStateHistory[0].length === 0){
+                    this.gameStateHistory[gameInfo.round].push(gameInfo);
+                }
                 this.setState({gameInfo: gameInfo}, ()=>{
                     if(this.gameStateTimeout){
                         window.clearTimeout(this.gameStateTimeout);
@@ -271,13 +276,10 @@ class LeducHoldemGameView extends React.Component {
 
     go2NextGameState() {
         let gameInfo = this.generateNewState();
-        if(gameInfo.gameStatus === "over") {
-            this.setState({gameInfo: gameInfo});
-        }else{
-            gameInfo.gameStatus = "paused";
-            gameInfo.toggleFade = "";
-            this.setState({gameInfo: gameInfo});    
-        }
+        if(gameInfo.gameStatus === "over") return;
+        gameInfo.gameStatus = "paused";
+        gameInfo.toggleFade = "";
+        this.setState({gameInfo: gameInfo});
     }
 
     render(){

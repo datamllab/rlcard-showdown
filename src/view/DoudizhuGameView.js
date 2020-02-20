@@ -57,6 +57,7 @@ class DoudizhuGameView extends React.Component {
 
     generateNewState(){
         let gameInfo = deepCopy(this.state.gameInfo);
+        if(this.state.gameInfo.turn === this.moveHistory.length) return gameInfo;
         // check if the game state of next turn is already in game state history
         if(this.state.gameInfo.turn+1 < this.gameStateHistory.length){
             gameInfo = deepCopy(this.gameStateHistory[this.state.gameInfo.turn+1]);
@@ -73,17 +74,40 @@ class DoudizhuGameView extends React.Component {
                 } else {
                     console.log("Cannot find cards in move from player's hand");
                 }
+                // check if game ends
+                if(remainedCards.length === 0){
+                    doubleRaf(()=>{
+                        const winner = this.state.gameInfo.playerInfo.find(element => {
+                            return element.index === newMove.playerIdx;
+                        });
+                        if(winner){
+                            gameInfo.gameStatus = "over";
+                            this.setState({ gameInfo: gameInfo });
+                            if(winner.role === "landlord")
+                                setTimeout(()=>{
+                                    alert("Landlord Wins");
+                                }, 200);
+                            else
+                                setTimeout(()=>{
+                                    alert("Peasants Win");
+                                }, 200);
+                        }else{
+                            console.log("Error in finding winner");
+                        }
+                    });
+                    return gameInfo;
+                }
                 gameInfo.considerationTime = this.initConsiderationTime;
-                gameInfo.completedPercent += 100.0 / this.moveHistory.length;
+                gameInfo.completedPercent += 100.0 / (this.moveHistory.length - 1);
             }else {
                 console.log("Mismatched current player index");
             }
-        }
-        // if current state is new to game state history, push it to the game state history array
-        if(gameInfo.turn === this.gameStateHistory.length){
-            this.gameStateHistory.push(gameInfo);
-        }else{
-            console.log("inconsistent game state history length and turn number");
+            // if current state is new to game state history, push it to the game state history array
+            if(gameInfo.turn === this.gameStateHistory.length){
+                this.gameStateHistory.push(gameInfo);
+            }else{
+                console.log("inconsistent game state history length and turn number");
+            }
         }
         return gameInfo;
     }
@@ -105,6 +129,7 @@ class DoudizhuGameView extends React.Component {
                 this.gameStateTimer();
             }else{
                 let gameInfo = this.generateNewState();
+                if(gameInfo.gameStatus == "over") return;
                 gameInfo.gameStatus = "playing";
                 if(this.state.gameInfo.toggleFade === "fade-out") {
                     gameInfo.toggleFade = "fade-in";
@@ -140,7 +165,9 @@ class DoudizhuGameView extends React.Component {
                 });
                 // the first player should be landlord
                 gameInfo.currentPlayer = res.playerInfo.find(element=>{return element.role === "landlord"}).index;
-                this.gameStateHistory.push(gameInfo);
+                if(this.gameStateHistory.length === 0){ // fix replay bug
+                    this.gameStateHistory.push(gameInfo);
+                }
                 this.setState({gameInfo: gameInfo}, ()=>{
                     if(this.gameStateTimeout){
                         window.clearTimeout(this.gameStateTimeout);
@@ -154,30 +181,7 @@ class DoudizhuGameView extends React.Component {
     };
 
     runNewTurn(prevTurn){
-        // check if the game ends
-        if(this.state.gameInfo.hands[prevTurn.currentPlayer].length === 0){
-            doubleRaf(()=>{
-                const winner = this.state.gameInfo.playerInfo.find(element => {
-                    return element.index === prevTurn.currentPlayer;
-                });
-                if(winner){
-                    let gameInfo = deepCopy(this.state.gameInfo);
-                    gameInfo.gameStatus = "over";
-                    this.setState({ gameInfo: gameInfo });
-                    if(winner.role === "landlord")
-                        setTimeout(()=>{
-                            alert("Landlord Wins");
-                        }, 200);
-                    else
-                        setTimeout(()=>{
-                            alert("Peasants Win");
-                        }, 200);
-                }else{
-                    console.log("Error in finding winner");
-                }
-            });
-        }else
-            this.gameStateTimer();
+        this.gameStateTimer();
     }
 
     pauseReplay(){
@@ -276,6 +280,7 @@ class DoudizhuGameView extends React.Component {
 
     go2NextGameState() {
         let gameInfo = this.generateNewState();
+        if(gameInfo.gameStatus === "over") return;
         gameInfo.gameStatus = "paused";
         gameInfo.toggleFade = "";
         this.setState({gameInfo: gameInfo});

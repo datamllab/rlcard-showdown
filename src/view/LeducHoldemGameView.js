@@ -2,9 +2,10 @@ import React from 'react';
 import axios from 'axios';
 import '../assets/gameview.scss';
 import {LeducHoldemGameBoard} from '../components/GameBoard';
+import Navbar from '../components/Navbar';
 import {deepCopy} from "../utils";
 
-import { Layout } from 'element-react';
+import { Layout, Message, Loading } from 'element-react';
 import Slider from '@material-ui/core/Slider';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
@@ -46,12 +47,12 @@ class LeducHoldemGameView extends React.Component {
         this.state = {
             gameInfo: this.initGameState,
             gameStateLoop: null,
-            gameSpeed: 0
+            gameSpeed: 0,
+            fullScreenLoading: false
         }
     }
 
     generateNewState(){
-        // console.log(this.state.gameInfo.latestAction);
         let gameInfo = deepCopy(this.state.gameInfo);
         const turn = this.state.gameInfo.turn;
         if(turn >= this.moveHistory[this.state.gameInfo.round].length){
@@ -85,7 +86,11 @@ class LeducHoldemGameView extends React.Component {
                         if(gameInfo.pot[(gameInfo.currentPlayer+2-1)%2] > gameInfo.pot[gameInfo.currentPlayer]){
                             gameInfo.pot[gameInfo.currentPlayer] = gameInfo.pot[(gameInfo.currentPlayer+2-1)%2];
                         }else{
-                            console.log("Current player choose call but has bet more or equal to the upstream player");
+                            Message({
+                                message: "Current player choose call but has bet more or equal to the upstream player",
+                                type: "error",
+                                showClose: true
+                            });        
                         }
                         break;
                     case "Fold":
@@ -101,7 +106,11 @@ class LeducHoldemGameView extends React.Component {
                         }, 200);
                         return gameInfo;  
                     default:
-                        console.log("Error in player's latest action");
+                        Message({
+                            message: "Error in player's latest action",
+                            type: "error",
+                            showClose: true
+                        });        
                 }
                 gameInfo.turn++;
                 if(gameInfo.round !== 0 && gameInfo.turn === this.moveHistory[gameInfo.round].length){
@@ -119,14 +128,22 @@ class LeducHoldemGameView extends React.Component {
                 gameInfo.gameStatus = "playing";
                 this.setState({ gameInfo: gameInfo });
             }else{
-                console.log("Mismatch in current player & move history");
+                Message({
+                    message: "Mismatch in current player & move history",
+                    type: "error",
+                    showClose: true
+                });        
             }
         }
         // if current state is new to game state history, push it to the game state history array
         if(gameInfo.turn === this.gameStateHistory[gameInfo.round].length){
             this.gameStateHistory[gameInfo.round].push(gameInfo);
         }else{
-            console.log("inconsistent game state history length and turn number");
+            Message({
+                message: "Inconsistent game state history length and turn number",
+                type: "error",
+                showClose: true
+            });        
         }
         return gameInfo;
     }
@@ -172,6 +189,8 @@ class LeducHoldemGameView extends React.Component {
         // for test use
         const replayId  = 0;
 
+        // start full screen loading
+        this.setState({fullScreenLoading: true});
         axios.get(`${this.apiUrl}/replay/leduc_holdem/${replayId}`)
             .then(res => {
                 res = res.data;
@@ -187,7 +206,7 @@ class LeducHoldemGameView extends React.Component {
                 if(this.gameStateHistory.length !== 0 && this.gameStateHistory[0].length === 0){
                     this.gameStateHistory[gameInfo.round].push(gameInfo);
                 }
-                this.setState({gameInfo: gameInfo}, ()=>{
+                this.setState({gameInfo: gameInfo, fullScreenLoading: false}, ()=>{
                     if(this.gameStateTimeout){
                         window.clearTimeout(this.gameStateTimeout);
                         this.gameStateTimeout = null;
@@ -242,11 +261,14 @@ class LeducHoldemGameView extends React.Component {
                 currentMove = this.moveHistory[this.state.gameInfo.round][this.state.gameInfo.turn];
             }
             let style = {};
-            style["backgroundColor"] = currentMove !== null ? `rgba(189,183,107,${currentMove.probabilities[idx].probability})` : "#bdbdbd";
+            style["backgroundColor"] = currentMove !== null ? `rgba(130, 151, 255, ${currentMove.probabilities[idx].probability})` : "#bdbdbd";
             return (
                 <div className={"playing"} style={style}>
                     <div className="probability-move">
-                        {currentMove !== null ? currentMove.probabilities[idx].move : <NotInterestedIcon fontSize="large" />}
+                    {currentMove !== null ?
+                        <img src={require('../assets/images/Actions/' + currentMove.probabilities[idx].move + '.png')} alt={currentMove.probabilities[idx].move} height="30%" width="30%" />
+                        :
+                        <NotInterestedIcon fontSize="large" />}
                     </div>
                     {currentMove !== null ?
                         (<div className={"non-card"}>
@@ -316,111 +338,116 @@ class LeducHoldemGameView extends React.Component {
         ];
 
         return (
-            <div className={"leduc-view-container"}>
-                <Layout.Row style={{"height": "540px"}}>
-                    <Layout.Col style={{"height": "100%"}} span="17">
-                        <div style={{"height": "100%"}}>
-                            <Paper className={"leduc-gameboard-paper"} elevation={3}>
-                                <LeducHoldemGameBoard
-                                    playerInfo={this.state.gameInfo.playerInfo}
-                                    hands={this.state.gameInfo.hands}
-                                    latestAction={this.state.gameInfo.latestAction}
-                                    mainPlayerId={this.state.gameInfo.mainViewerId}
-                                    currentPlayer={this.state.gameInfo.currentPlayer}
-                                    considerationTime={this.state.gameInfo.considerationTime}
-                                    round={this.state.gameInfo.round}
-                                    turn={this.state.gameInfo.turn}
-                                    pot={this.state.gameInfo.pot}
-                                    publicCard={this.state.gameInfo.publicCard}
-                                />
-                            </Paper>
-                        </div>
-                    </Layout.Col>
-                    <Layout.Col span="7" style={{"height": "100%"}}>
-                        <Paper className={"leduc-probability-paper"} elevation={3}>
-                            <div className={"probability-player"}>
-                                {
-                                    this.state.gameInfo.playerInfo.length > 0 ?
-                                    <span>Current Player: {this.state.gameInfo.currentPlayer}</span>
-                                    :
-                                    <span>Waiting...</span>
-                                }
+            <div>
+                <Navbar gameName="Leduc Hold'em" />
+                <div className={"leduc-view-container"}>
+                    <Layout.Row style={{"height": "540px"}}>
+                        <Layout.Col style={{"height": "100%"}} span="17">
+                            <div style={{"height": "100%"}}>
+                                <Paper className={"leduc-gameboard-paper"} elevation={3}>
+                                    <LeducHoldemGameBoard
+                                        playerInfo={this.state.gameInfo.playerInfo}
+                                        hands={this.state.gameInfo.hands}
+                                        latestAction={this.state.gameInfo.latestAction}
+                                        mainPlayerId={this.state.gameInfo.mainViewerId}
+                                        currentPlayer={this.state.gameInfo.currentPlayer}
+                                        considerationTime={this.state.gameInfo.considerationTime}
+                                        round={this.state.gameInfo.round}
+                                        turn={this.state.gameInfo.turn}
+                                        pot={this.state.gameInfo.pot}
+                                        publicCard={this.state.gameInfo.publicCard}
+                                    />
+                                </Paper>
                             </div>
-                            <Divider />
-                            <div className={"probability-table"}>
-                                <div className={"probability-item"}>
-                                    {this.computeProbabilityItem(0)}
+                        </Layout.Col>
+                        <Layout.Col span="7" style={{"height": "100%"}}>
+                            <Paper className={"leduc-probability-paper"} elevation={3}>
+                                <div className={"probability-player"}>
+                                    {
+                                        this.state.gameInfo.playerInfo.length > 0 ?
+                                        <span>Current Player: {this.state.gameInfo.currentPlayer}</span>
+                                        :
+                                        <span>Waiting...</span>
+                                    }
                                 </div>
-                                <div className={"probability-item"}>
-                                    {this.computeProbabilityItem(1)}
-                                </div>
-                                <div className={"probability-item"}>
-                                    {this.computeProbabilityItem(2)}
-                                </div>
-                                <div className={"probability-item"}>
-                                    {this.computeProbabilityItem(3)}
-                                </div>
-                            </div>
-                        </Paper>
-                    </Layout.Col>
-                </Layout.Row>
-                <div className="progress-bar">
-                    <LinearProgress variant="determinate" value={this.state.gameInfo.completedPercent} />
-                </div>
-                <div className="game-controller">
-                    <Paper className={"game-controller-paper"} elevation={3}>
-                        <Layout.Row style={{"height": "51px"}}>
-                            <Layout.Col span="7" style={{"height": "51px", "lineHeight": "48px"}}>
-                            <div>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={this.state.gameInfo.gameStatus !== "paused" || (this.state.gameInfo.round === 0 && this.state.gameInfo.turn === 0)}
-                                    onClick={()=>{this.go2PrevGameState()}}
-                                >
-                                    <SkipPreviousIcon />
-                                </Button>
-                                { this.gameStatusButton(this.state.gameInfo.gameStatus) }
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={this.state.gameInfo.gameStatus !== "paused"}
-                                    onClick={()=>{this.go2NextGameState()}}
-                                >
-                                    <SkipNextIcon />
-                                </Button>
-                            </div>
-                            </Layout.Col>
-                            <Layout.Col span="1" style={{"height": "100%", "width": "1px"}}>
-                                <Divider orientation="vertical" />
-                            </Layout.Col>
-                            <Layout.Col span="3" style={{"height": "51px", "lineHeight": "51px", "marginLeft": "-1px", "marginRight": "-1px"}}>
-                                <div style={{"textAlign": "center"}}>{`Turn: ${this.state.gameInfo.turn}`}</div>
-                            </Layout.Col>
-                            <Layout.Col span="1" style={{"height": "100%", "width": "1px"}}>
-                                <Divider orientation="vertical" />
-                            </Layout.Col>
-                            <Layout.Col span="14">
-                                <div>
-                                    <label className={"form-label-left"}>Game Speed</label>
-                                    <div style={{"marginLeft": "100px", "marginRight": "10px"}}>
-                                        <Slider
-                                            value={this.state.gameSpeed}
-                                            getAriaValueText={sliderValueText}
-                                            onChange={(e, newVal)=>{this.changeGameSpeed(newVal)}}
-                                            aria-labelledby="discrete-slider-custom"
-                                            step={1}
-                                            min={-3}
-                                            max={3}
-                                            track={false}
-                                            valueLabelDisplay="off"
-                                            marks={gameSpeedMarks}
-                                        />
+                                <Divider />
+                                <div className={"probability-table"}>
+                                    <div className={"probability-item"}>
+                                        {this.computeProbabilityItem(0)}
+                                    </div>
+                                    <div className={"probability-item"}>
+                                        {this.computeProbabilityItem(1)}
+                                    </div>
+                                    <div className={"probability-item"}>
+                                        {this.computeProbabilityItem(2)}
+                                    </div>
+                                    <div className={"probability-item"}>
+                                        {this.computeProbabilityItem(3)}
                                     </div>
                                 </div>
-                            </Layout.Col>
-                        </Layout.Row>
-                    </Paper>
+                            </Paper>
+                        </Layout.Col>
+                    </Layout.Row>
+                    <div className="progress-bar">
+                        <LinearProgress variant="determinate" value={this.state.gameInfo.completedPercent} />
+                    </div>
+                    <Loading loading={this.state.fullScreenLoading}>
+                        <div className="game-controller">
+                        <Paper className={"game-controller-paper"} elevation={3}>
+                            <Layout.Row style={{"height": "51px"}}>
+                                <Layout.Col span="7" style={{"height": "51px", "lineHeight": "48px"}}>
+                                <div>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        disabled={this.state.gameInfo.gameStatus !== "paused" || (this.state.gameInfo.round === 0 && this.state.gameInfo.turn === 0)}
+                                        onClick={()=>{this.go2PrevGameState()}}
+                                    >
+                                        <SkipPreviousIcon />
+                                    </Button>
+                                    { this.gameStatusButton(this.state.gameInfo.gameStatus) }
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        disabled={this.state.gameInfo.gameStatus !== "paused"}
+                                        onClick={()=>{this.go2NextGameState()}}
+                                    >
+                                        <SkipNextIcon />
+                                    </Button>
+                                </div>
+                                </Layout.Col>
+                                <Layout.Col span="1" style={{"height": "100%", "width": "1px"}}>
+                                    <Divider orientation="vertical" />
+                                </Layout.Col>
+                                <Layout.Col span="3" style={{"height": "51px", "lineHeight": "51px", "marginLeft": "-1px", "marginRight": "-1px"}}>
+                                    <div style={{"textAlign": "center"}}>{`Turn: ${this.state.gameInfo.turn}`}</div>
+                                </Layout.Col>
+                                <Layout.Col span="1" style={{"height": "100%", "width": "1px"}}>
+                                    <Divider orientation="vertical" />
+                                </Layout.Col>
+                                <Layout.Col span="14">
+                                    <div>
+                                        <label className={"form-label-left"}>Game Speed</label>
+                                        <div style={{"marginLeft": "100px", "marginRight": "10px"}}>
+                                            <Slider
+                                                value={this.state.gameSpeed}
+                                                getAriaValueText={sliderValueText}
+                                                onChange={(e, newVal)=>{this.changeGameSpeed(newVal)}}
+                                                aria-labelledby="discrete-slider-custom"
+                                                step={1}
+                                                min={-3}
+                                                max={3}
+                                                track={false}
+                                                valueLabelDisplay="off"
+                                                marks={gameSpeedMarks}
+                                            />
+                                        </div>
+                                    </div>
+                                </Layout.Col>
+                            </Layout.Row>
+                        </Paper>
+                    </div>
+                    </Loading>
                 </div>
             </div>
         );

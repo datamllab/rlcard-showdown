@@ -1,12 +1,77 @@
 .progress-bar {
     margin: 5px;
 }
+
+.header-bar {
+    width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px;
+    display: flex;
+
+    .stretch {
+        flex: 1;
+    }
+
+    .github-info {
+        flex: 0 100px;
+        cursor: pointer;
+        transition: color 0.5s ease;
+
+        &:hover{
+            transition: color 0.5s ease;
+            color: #C0C4CC;
+        }
+
+        .github-icon {
+            position: absolute;
+            top: 50%;
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+            .MuiSvgIcon-root {
+                font-size: 30px;
+            }
+        }
+        .github-text {
+            left: 45px;
+            line-height: 18px;
+            position: relative;
+            top: 50%;
+            font-size: 18px;
+            -ms-transform: translateY(-50%);
+            transform: translateY(-50%);
+            span {
+                font-size: 12px;
+            }
+        }
+    }
+
+    .title {
+        margin-left: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        -ms-transform:scale(1, 1.1) translateY(-1px);
+        -webkit-transform:scale(1, 1.1) translateY(-1px);
+        -moz-transform:scale(1, 1.1) translateY(-1px);
+        -o-transform:scale(1, 1.1) translateY(-1px);
+
+        .subtitle {
+            color: #C0C4CC;
+            margin-left: 11px;
+            font-size: 16px;
+            -ms-transform: translateY(3px);
+            -webkit-transform: translateY(3px);
+            -moz-transform: translateY(3px);
+            -o-transform: translateY(3px);
+        }
+    }
+}
+
 .game-controller {
-    //width: calc(100% - 20px*2);
-    //padding: 20px;
-    //.el-row {
-    //    margin-bottom: 10px;
-    //}
     .game-controller-paper {
         margin: 5px;
         padding: 2px 10px;
@@ -31,6 +96,7 @@
 
 .doudizhu-view-container {
     width: 1000px;
+    margin-top: 5px;
     margin-left: auto;
     margin-right: auto;
 

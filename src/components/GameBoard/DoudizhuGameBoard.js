@@ -2,7 +2,12 @@ import React from 'react';
 import { translateCardData, millisecond2Second, computeHandCardsWidth } from '../../utils'
 
 import '../../assets/doudizhu.scss';
-import {fade} from "@material-ui/core";
+import Landlord_wName from '../../assets/images/Portrait/Landlord_wName.png';
+import Peasant_wName from '../../assets/images/Portrait/Peasant_wName.png';
+import PlaceHolderPlayer from '../../assets/images/Portrait/Player.png';
+
+import Chip from '@material-ui/core/Chip';
+import Avatar from '@material-ui/core/Avatar';
 
 class DoudizhuGameBoard extends React.Component {
     constructor(props) {
@@ -10,12 +15,48 @@ class DoudizhuGameBoard extends React.Component {
 
     }
 
+    computePlayerPortrait(playerId, playerIdx){
+        if(this.props.playerInfo.length > 0){
+            return this.props.playerInfo[playerIdx].role === "landlord" ?
+                <div>
+                    <img src={Landlord_wName} alt={"Landlord"} height="70%" width="70%" />
+                    <Chip
+                        avatar={<Avatar>ID</Avatar>}
+                        label={playerId}
+                        clickable
+                        color="primary"
+                    />
+                </div>
+                :
+                <div>
+                    <img src={Peasant_wName} alt={"Peasant"} height="70%" width="70%" />
+                    <Chip
+                        avatar={<Avatar>ID</Avatar>}
+                        label={playerId}
+                        clickable
+                        color="primary"
+                    />
+                </div>
+        }else
+            return (
+                <div>
+                    <img src={PlaceHolderPlayer} alt={"Player"} height="70%" width="70%" />
+                    <Chip
+                        avatar={<Avatar>ID</Avatar>}
+                        label={playerId}
+                        clickable
+                        color="primary"
+                    />
+                </div>
+            )
+    }
+
     computeSingleLineHand(cards, fadeClassName="") {
         if(cards === "P"){
-            return <div className="non-card"><span>Pass</span></div>
+            return <div className="non-card"><span>PASS</span></div>
         }else{
             return (
-                <div className={"playingCards unselectable "+fadeClassName}>
+                <div className={"playingCards unselectable loose "+fadeClassName}>
                     <ul className="hand" style={{width: computeHandCardsWidth(cards.length, 12)}}>
                         {cards.map(card=>{
                             const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
@@ -46,7 +87,7 @@ class DoudizhuGameBoard extends React.Component {
         return (
             <div>
                 <div className="player-hand-up">
-                    <div className="playingCards unselectable">
+                    <div className="playingCards unselectable loose">
                         <ul className="hand">
                             {upCards.map(card => {
                                 const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
@@ -63,7 +104,7 @@ class DoudizhuGameBoard extends React.Component {
                     </div>
                 </div>
                 <div className="player-hand-down">
-                    <div className="playingCards unselectable">
+                    <div className="playingCards unselectable loose">
                         <ul className="hand">
                             {downCards.map(card => {
                                 const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
@@ -84,15 +125,18 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     playerDecisionArea(playerIdx){
+        let fadeClassName = "";
+        if(this.props.toggleFade === "fade-out" && (playerIdx+2)%3 === this.props.currentPlayer)
+            fadeClassName = "fade-out";
+        else if(this.props.toggleFade === "fade-in" && (playerIdx+1)%3 === this.props.currentPlayer)
+            fadeClassName = "scale-fade-in";
         if(this.props.currentPlayer === playerIdx){
-            return <div className="non-card"><span>{`Consideration Time: ${millisecond2Second(this.props.considerationTime)}s`}</span></div>
+            return (
+                <div className={"timer "+fadeClassName}>
+                    <div className="timer-text">{millisecond2Second(this.props.considerationTime)}</div>
+                </div>
+            )
         }else{
-
-            let fadeClassName = "";
-            if(this.props.toggleFade === "fade-out" && (playerIdx+2)%3 === this.props.currentPlayer)
-                fadeClassName = "fade-out";
-            else if(this.props.toggleFade === "fade-in" && (playerIdx+1)%3 === this.props.currentPlayer)
-                fadeClassName = "scale-fade-in";
             return this.computeSingleLineHand(this.props.latestAction[playerIdx], fadeClassName)
         }
     }
@@ -128,11 +172,11 @@ class DoudizhuGameBoard extends React.Component {
                 leftId = found.id;
         }
         return (
-            <div className="doudizhu-wrapper" style={{width: "100%", height: "100%", backgroundColor: "#ffcc99", position: "relative"}}>
+            <div className="doudizhu-wrapper" style={{}}>
                 <div id={"left-player"}>
                     <div className="player-main-area">
                         <div className="player-info">
-                            <span>{`Player Id ${leftId}\n${this.props.playerInfo.length > 0 ? this.props.playerInfo[leftIdx].role : ""}`}</span>
+                            {this.computePlayerPortrait(leftId, leftIdx)}
                         </div>
                         {leftIdx >= 0 ? this.computeSideHand(this.props.hands[leftIdx]) : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
                     </div>
@@ -143,7 +187,7 @@ class DoudizhuGameBoard extends React.Component {
                 <div id={"right-player"}>
                     <div className="player-main-area">
                         <div className="player-info">
-                            <span>{`Player Id ${rightId}\n${this.props.playerInfo.length > 0 ? this.props.playerInfo[rightIdx].role : ""}`}</span>
+                            {this.computePlayerPortrait(rightId, rightIdx)}
                         </div>
                         {rightIdx >= 0 ? this.computeSideHand(this.props.hands[rightIdx]) : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
                     </div>
@@ -157,7 +201,7 @@ class DoudizhuGameBoard extends React.Component {
                     </div>
                     <div className="player-main-area">
                         <div className="player-info">
-                            <span>{`Player Id ${bottomId}\n${this.props.playerInfo.length > 0 ? this.props.playerInfo[bottomIdx].role : ""}`}</span>
+                            {this.computePlayerPortrait(bottomId, bottomIdx)}
                         </div>
                         {bottomIdx >= 0 ? <div className="player-hand">{this.computeSingleLineHand(this.props.hands[bottomIdx])}</div> : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
                     </div>

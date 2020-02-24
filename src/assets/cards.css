@@ -10,13 +10,6 @@
 /* card itself
 ********************************************************************/
 
-.playingCards.unselectable {
-    pointer-events: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
 .playingCards {
     visibility: visible;
     transform: translateY(0) scale(1);
@@ -184,7 +177,7 @@
     position: absolute;
 }
 .playingCards .card.joker .rank:before {
-    content: "\2605";
+    content: "";
     top: 0;
     left: 0;
 }
@@ -193,9 +186,19 @@
 }
 
 /* inner multiple suits */
-.playingCards .card .suit:after {
+.playingCards .card:not(full-content) .suit:after {
     display: block;
-    margin-top: -.8em;
+    margin-top: -.2em;
+    text-align: center;
+    white-space: pre;
+    line-height: .9;
+    font-size: 2.5em;
+    word-spacing: -.05em;
+}
+
+.playingCards .card.full-content .suit:after {
+    display: block;
+    margin-top: -.9em;
     text-align: center;
     white-space: pre;
     line-height: .9;
@@ -204,158 +207,170 @@
 }
 
 /* make the hearts and clubs symbols fit, because they are a bit bigger than the others */
-.playingCards .card.hearts .suit:after {
+.playingCards .card.full-content.hearts .suit:after {
     word-spacing: -.15em;
 }
-.playingCards .card.hearts.rank-10 .suit:after {
+.playingCards .card.full-content.hearts.rank-10 .suit:after {
     word-spacing: -.05em;
     letter-spacing: -.1em;
 }
-.playingCards .card.clubs.rank-10 .suit:after {
+.playingCards .card.full-content.clubs.rank-10 .suit:after {
     word-spacing: -.15em;
 }
 
 /* 8, 9, 10 are the most crowded */
-.playingCards .card.rank-8 .suit:after,
-.playingCards .card.rank-9 .suit:after {
+.playingCards .card.full-content.rank-8 .suit:after,
+.playingCards .card.full-content.rank-9 .suit:after {
     letter-spacing: -.075em;
 }
-.playingCards .card.rank-10 .suit:after {
+.playingCards .card.full-content.rank-10 .suit:after {
     letter-spacing: -.1em;
 }
-.playingCards .card.clubs .suit:after {
+.playingCards .card.full-content.clubs .suit:after {
     letter-spacing: -.125em;
 }
 
 /*____________ symbols in the middle (suits, full) ____________*/
 
 /* diamonds */
-.playingCards .card.rank-2.diams .suit:after {
+.playingCards .card.diams:not(full-content) .suit:after {
+    content: "\2666";
+}
+.playingCards .card.rank-2.diams.full-content .suit:after {
     content: "\2666 \A\A\2666";
 }
-.playingCards .card.rank-3.diams .suit:after {
+.playingCards .card.rank-3.diams.full-content .suit:after {
     content: "\2666 \A\2666 \A\2666";
 }
-.playingCards .card.rank-4.diams .suit:after {
+.playingCards .card.rank-4.diams.full-content .suit:after {
     content: "\2666\00A0\00A0\00A0\2666 \A\A\2666\00A0\00A0\00A0\2666";
 }
-.playingCards .card.rank-5.diams .suit:after {
+.playingCards .card.rank-5.diams.full-content .suit:after {
     content: "\2666\00A0\00A0\00A0\2666 \A\2666 \A\2666\00A0\00A0\00A0\2666";
 }
-.playingCards .card.rank-6.diams .suit:after {
+.playingCards .card.rank-6.diams.full-content .suit:after {
     content: "\2666\00A0\00A0\00A0\2666 \A\2666\00A0\00A0\00A0\2666 \A\2666\00A0\00A0\00A0\2666";
 }
-.playingCards .card.rank-7.diams .suit:after {
+.playingCards .card.rank-7.diams.full-content .suit:after {
     content: "\2666\00A0\00A0\2666 \A\2666\00A0\2666\00A0\2666 \A\2666\00A0\00A0\2666";
 }
-.playingCards .card.rank-8.diams .suit:after {
+.playingCards .card.rank-8.diams.full-content .suit:after {
     content: "\2666\00A0\2666\00A0\2666 \A\2666\00A0\00A0\2666 \A\2666\00A0\2666\00A0\2666";
 }
-.playingCards .card.rank-9.diams .suit:after {
+.playingCards .card.rank-9.diams.full-content .suit:after {
     content: "\2666\00A0\2666\00A0\2666 \A\2666\00A0\2666\00A0\2666 \A\2666\00A0\2666\00A0\2666";
 }
-.playingCards .card.rank-10.diams .suit:after {
+.playingCards .card.rank-10.diams.full-content .suit:after {
     content: "\2666\00A0\2666\00A0\2666 \A\2666\00A0\2666\00A0\2666\00A0\2666 \A\2666\00A0\2666\00A0\2666";
 }
 
 /* hearts */
-.playingCards .card.rank-2.hearts .suit:after {
+.playingCards .card.hearts:not(full-content) .suit:after {
+    content: "\2665";
+}
+.playingCards .card.rank-2.hearts.full-content .suit:after {
     content: "\2665 \A\A\2665";
 }
-.playingCards .card.rank-3.hearts .suit:after {
+.playingCards .card.rank-3.hearts.full-content .suit:after {
     content: "\2665 \A\2665 \A\2665";
 }
-.playingCards .card.rank-4.hearts .suit:after {
+.playingCards .card.rank-4.hearts.full-content .suit:after {
     content: "\2665\00A0\00A0\00A0\2665 \A\A\2665\00A0\00A0\00A0\2665";
 }
-.playingCards .card.rank-5.hearts .suit:after {
+.playingCards .card.rank-5.hearts.full-content .suit:after {
     content: "\2665\00A0\00A0\00A0\2665 \A\2665 \A\2665\00A0\00A0\00A0\2665";
 }
-.playingCards .card.rank-6.hearts .suit:after {
+.playingCards .card.rank-6.hearts.full-content .suit:after {
     content: "\2665\00A0\00A0\00A0\2665 \A\2665\00A0\00A0\00A0\2665 \A\2665\00A0\00A0\00A0\2665";
 }
-.playingCards .card.rank-7.hearts .suit:after {
+.playingCards .card.rank-7.hearts.full-content .suit:after {
     content: "\2665\00A0\00A0\2665 \A\2665\00A0\2665\00A0\2665 \A\2665\00A0\00A0\2665";
 }
-.playingCards .card.rank-8.hearts .suit:after {
+.playingCards .card.rank-8.hearts.full-content .suit:after {
     content: "\2665\00A0\2665\00A0\2665 \A\2665\00A0\00A0\2665 \A\2665\00A0\2665\00A0\2665";
 }
-.playingCards .card.rank-9.hearts .suit:after {
+.playingCards .card.rank-9.hearts.full-content .suit:after {
     content: "\2665\00A0\2665\00A0\2665 \A\2665\00A0\2665\00A0\2665 \A\2665\00A0\2665\00A0\2665";
 }
-.playingCards .card.rank-10.hearts .suit:after {
+.playingCards .card.rank-10.hearts.full-content .suit:after {
     content: "\2665\00A0\2665\00A0\2665 \A\2665\00A0\2665\00A0\2665\00A0\2665 \A\2665\00A0\2665\00A0\2665";
 }
 
 /* spades */
-.playingCards .card.rank-2.spades .suit:after {
+.playingCards .card.spades:not(full-content) .suit:after {
+    content: "\2660";
+}
+.playingCards .card.rank-2.spades.full-content .suit:after {
     content: "\2660 \A\A\2660";
 }
-.playingCards .card.rank-3.spades .suit:after {
+.playingCards .card.rank-3.spades.full-content .suit:after {
     content: "\2660 \A\2660 \A\2660";
 }
-.playingCards .card.rank-4.spades .suit:after {
+.playingCards .card.rank-4.spades.full-content .suit:after {
     content: "\2660\00A0\00A0\00A0\2660 \A\A\2660\00A0\00A0\00A0\2660";
 }
-.playingCards .card.rank-5.spades .suit:after {
+.playingCards .card.rank-5.spades.full-content .suit:after {
     content: "\2660\00A0\00A0\00A0\2660 \A\2660 \A\2660\00A0\00A0\00A0\2660";
 }
-.playingCards .card.rank-6.spades .suit:after {
+.playingCards .card.rank-6.spades.full-content .suit:after {
     content: "\2660\00A0\00A0\00A0\2660 \A\2660\00A0\00A0\00A0\2660 \A\2660\00A0\00A0\00A0\2660";
 }
-.playingCards .card.rank-7.spades .suit:after {
+.playingCards .card.rank-7.spades.full-content .suit:after {
     content: "\2660\00A0\00A0\2660 \A\2660\00A0\2660\00A0\2660 \A\2660\00A0\00A0\2660";
 }
-.playingCards .card.rank-8.spades .suit:after {
+.playingCards .card.rank-8.spades.full-content .suit:after {
     content: "\2660\00A0\2660\00A0\2660 \A\2660\00A0\00A0\2660 \A\2660\00A0\2660\00A0\2660";
 }
-.playingCards .card.rank-9.spades .suit:after {
+.playingCards .card.rank-9.spades.full-content .suit:after {
     content: "\2660\00A0\2660\00A0\2660 \A\2660\00A0\2660\00A0\2660 \A\2660\00A0\2660\00A0\2660";
 }
-.playingCards .card.rank-10.spades .suit:after {
+.playingCards .card.rank-10.spades.full-content .suit:after {
     content: "\2660\00A0\2660\00A0\2660 \A\2660\00A0\2660\00A0\2660\00A0\2660 \A\2660\00A0\2660\00A0\2660";
 }
 
 /* clubs */
-.playingCards .card.rank-2.clubs .suit:after {
+.playingCards .card.clubs:not(full-content) .suit:after {
+    content: "\2663";
+}
+.playingCards .card.rank-2.clubs.full-content .suit:after {
     content: "\2663 \A\A\2663";
 }
-.playingCards .card.rank-3.clubs .suit:after {
+.playingCards .card.rank-3.clubs.full-content .suit:after {
     content: "\2663 \A\2663 \A\2663";
 }
-.playingCards .card.rank-4.clubs .suit:after {
+.playingCards .card.rank-4.clubs.full-content .suit:after {
     content: "\2663\00A0\00A0\00A0\2663 \A\A\2663\00A0\00A0\00A0\2663";
 }
-.playingCards .card.rank-5.clubs .suit:after {
+.playingCards .card.rank-5.clubs.full-content .suit:after {
     content: "\2663\00A0\00A0\00A0\2663 \A\2663 \A\2663\00A0\00A0\00A0\2663";
 }
-.playingCards .card.rank-6.clubs .suit:after {
+.playingCards .card.rank-6.clubs.full-content .suit:after {
     content: "\2663\00A0\00A0\00A0\2663 \A\2663\00A0\00A0\00A0\2663 \A\2663\00A0\00A0\00A0\2663";
 }
-.playingCards .card.rank-7.clubs .suit:after {
+.playingCards .card.rank-7.clubs.full-content .suit:after {
     content: "\2663\00A0\00A0\2663 \A\2663\00A0\2663\00A0\2663 \A\2663\00A0\00A0\2663";
 }
-.playingCards .card.rank-8.clubs .suit:after {
+.playingCards .card.rank-8.clubs.full-content .suit:after {
     content: "\2663\00A0\2663\00A0\2663 \A\2663\00A0\00A0\2663 \A\2663\00A0\2663\00A0\2663";
 }
-.playingCards .card.rank-9.clubs .suit:after {
+.playingCards .card.rank-9.clubs.full-content .suit:after {
     content: "\2663\00A0\2663\00A0\2663 \A\2663\00A0\2663\00A0\2663 \A\2663\00A0\2663\00A0\2663";
 }
-.playingCards .card.rank-10.clubs .suit:after {
+.playingCards .card.rank-10.clubs.full-content .suit:after {
     content: "\2663\00A0\2663\00A0\2663 \A\2663\00A0\2663\00A0\2663\00A0\2663 \A\2663\00A0\2663\00A0\2663";
 }
 
 /*____________ symbols in the middle (faces as images) ____________*/
 
-.playingCards.faceImages .card.rank-j .suit:after,
-.playingCards.faceImages .card.rank-q .suit:after,
-.playingCards.faceImages .card.rank-k .suit:after {
+.playingCards.faceImages .card.rank-j.full-content .suit:after,
+.playingCards.faceImages .card.rank-q.full-content .suit:after,
+.playingCards.faceImages .card.rank-k.full-content .suit:after {
     content: '';
 }
-.playingCards.faceImages .card.rank-j,
-.playingCards.faceImages .card.rank-q,
-.playingCards.faceImages .card.rank-k,
-.playingCards.faceImages .card.joker {
+.playingCards.faceImages .card.rank-j.full-content,
+.playingCards.faceImages .card.rank-q.full-content,
+.playingCards.faceImages .card.rank-k.full-content,
+.playingCards.faceImages .card.joker.full-content {
     background-repeat: no-repeat;
     background-position: -1em 0;
     /* @change: smaller cards: more negative distance from the left
@@ -394,11 +409,11 @@
 /*____________ symbols in the middle (faces as dingbat symbols) ____________*/
 
 .playingCards.simpleCards .card .suit:after,
-.playingCards .card.rank-j .suit:after,
-.playingCards .card.rank-q .suit:after,
-.playingCards .card.rank-k .suit:after,
-.playingCards .card.rank-a .suit:after,
-.playingCards .card.joker .rank:after {
+.playingCards .card.rank-j.full-content .suit:after,
+.playingCards .card.rank-q.full-content .suit:after,
+.playingCards .card.rank-k.full-content .suit:after,
+.playingCards .card.rank-a.full-content .suit:after,
+.playingCards .card.joker.full-content .rank:after {
     font-family: Georgia, serif;
     position: absolute;
     font-size: 3em;
@@ -424,9 +439,12 @@
 }
 .playingCards .card.joker .rank:after {
     position: absolute;
-    content: "\2766";
-    top: .4em;
-    left: .1em;
+    content: "JOKER";
+    writing-mode: vertical-lr;
+    font-weight: bold;
+    font-size: 0.8em;
+    top: 0;
+    left: -0.1em;
 }
 
 /* big suits in middle */
@@ -519,6 +537,35 @@
 .playingCards ul.hand li {
     bottom: 0;
 }
+
+.playingCards.loose ul.hand li:nth-child(1)  { left: 0; }
+.playingCards.loose ul.hand li:nth-child(2)  { left: 1.4em; }
+.playingCards.loose ul.hand li:nth-child(3)  { left: 2.8em; }
+.playingCards.loose ul.hand li:nth-child(4)  { left: 4.2em; }
+.playingCards.loose ul.hand li:nth-child(5)  { left: 5.6em; }
+.playingCards.loose ul.hand li:nth-child(6)  { left: 7.0em; }
+.playingCards.loose ul.hand li:nth-child(7)  { left: 8.4em; }
+.playingCards.loose ul.hand li:nth-child(8)  { left: 9.8em; }
+.playingCards.loose ul.hand li:nth-child(9)  { left: 11.2em; }
+.playingCards.loose ul.hand li:nth-child(10) { left: 12.6em; }
+.playingCards.loose ul.hand li:nth-child(11) { left: 14.0em; }
+.playingCards.loose ul.hand li:nth-child(12) { left: 15.4em; }
+.playingCards.loose ul.hand li:nth-child(13) { left: 16.8em; }
+
+.playingCards.loose ul.hand li:nth-child(14) { left: 18.2em; }
+.playingCards.loose ul.hand li:nth-child(15) { left: 19.6em; }
+.playingCards.loose ul.hand li:nth-child(16) { left: 21em; }
+.playingCards.loose ul.hand li:nth-child(17) { left: 22.4em; }
+.playingCards.loose ul.hand li:nth-child(18) { left: 23.8em; }
+.playingCards.loose ul.hand li:nth-child(19) { left: 25.2em; }
+.playingCards.loose ul.hand li:nth-child(20) { left: 26.6em; }
+.playingCards.loose ul.hand li:nth-child(21) { left: 28em; }
+.playingCards.loose ul.hand li:nth-child(22) { left: 29.4em; }
+.playingCards.loose ul.hand li:nth-child(23) { left: 30.8em; }
+.playingCards.loose ul.hand li:nth-child(24) { left: 32.2em; }
+.playingCards.loose ul.hand li:nth-child(25) { left: 33.6em; }
+.playingCards.loose ul.hand li:nth-child(26) { left: 35em; }
+
 .playingCards ul.hand li:nth-child(1)  { left: 0; }
 .playingCards ul.hand li:nth-child(2)  { left: 1.1em; }
 .playingCards ul.hand li:nth-child(3)  { left: 2.2em; }

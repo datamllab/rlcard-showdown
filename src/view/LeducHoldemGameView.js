@@ -10,12 +10,10 @@ import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import Divider from '@material-ui/core/Divider';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseCircleOutlineRoundedIcon from '@material-ui/icons/PauseCircleOutlineRounded';
 import ReplayRoundedIcon from '@material-ui/icons/ReplayRounded';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
 import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 
@@ -106,7 +104,7 @@ class LeducHoldemGameView extends React.Component {
                         console.log("Error in player's latest action");
                 }
                 gameInfo.turn++;
-                if(gameInfo.round !== 0 && gameInfo.turn == this.moveHistory[gameInfo.round].length){
+                if(gameInfo.round !== 0 && gameInfo.turn === this.moveHistory[gameInfo.round].length){
                     gameInfo.gameStatus = "over";
                     this.setState({gameInfo: gameInfo});
                     setTimeout(()=>{
@@ -150,7 +148,7 @@ class LeducHoldemGameView extends React.Component {
                 this.gameStateTimer();
             }else{
                 let gameInfo = this.generateNewState();
-                if(gameInfo.gameStatus == "over") return;
+                if(gameInfo.gameStatus === "over") return;
                 this.gameStateTimer();
                 gameInfo.gameStatus = "playing";
                 if(this.state.gameInfo.toggleFade === "fade-out") {
@@ -244,7 +242,7 @@ class LeducHoldemGameView extends React.Component {
                 currentMove = this.moveHistory[this.state.gameInfo.round][this.state.gameInfo.turn];
             }
             let style = {};
-            style["backgroundColor"] = currentMove !== null ? `rgba(189,183,107,${currentMove.probabilities[idx].probability})` : "#bdbdbd";;
+            style["backgroundColor"] = currentMove !== null ? `rgba(189,183,107,${currentMove.probabilities[idx].probability})` : "#bdbdbd";
             return (
                 <div className={"playing"} style={style}>
                     <div className="probability-move">
@@ -262,7 +260,7 @@ class LeducHoldemGameView extends React.Component {
     }
 
     go2PrevGameState() {
-        let gameInfo = null;
+        let gameInfo;
         if(this.state.gameInfo.turn === 0 && this.state.gameInfo.round !== 0){
             let prevRound = this.gameStateHistory[this.state.gameInfo.round-1];
             gameInfo = deepCopy(prevRound[prevRound.length-1]);

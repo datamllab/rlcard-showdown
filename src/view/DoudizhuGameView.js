@@ -272,7 +272,7 @@ class DoudizhuGameView extends React.Component {
     computeProbabilityItem(idx){
         if(this.state.gameInfo.gameStatus !== "ready" && this.state.gameInfo.turn < this.moveHistory.length){
             let style = {};
-            style["backgroundColor"] = this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `rgba(245, 176, 65 , ${this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability})` : "#bdbdbd";
+            style["backgroundColor"] = this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `rgba(130, 151, 255 , ${this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability})` : "#bdbdbd";
             return (
                 <div className={"playing"} style={style}>
                     <div className="probability-move">

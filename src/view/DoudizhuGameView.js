@@ -17,6 +17,11 @@ import ReplayRoundedIcon from '@material-ui/icons/ReplayRounded';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
 import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogActions from "@material-ui/core/DialogActions";
+import Dialog from "@material-ui/core/Dialog";
 
 class DoudizhuGameView extends React.Component {
     constructor(props) {
@@ -47,6 +52,8 @@ class DoudizhuGameView extends React.Component {
             gameInfo: this.initGameState,
             gameStateLoop: null,
             gameSpeed: 0,
+            gameEndDialog: false,
+            gameEndDialogText: "",
             fullScreenLoading: false
         };
     }
@@ -89,11 +96,13 @@ class DoudizhuGameView extends React.Component {
                             this.setState({ gameInfo: gameInfo });
                             if(winner.role === "landlord")
                                 setTimeout(()=>{
-                                    alert("Landlord Wins");
+                                    const mes = "Landlord Wins";
+                                    this.setState({gameEndDialog: true, gameEndDialogText: mes});
                                 }, 200);
                             else
                                 setTimeout(()=>{
-                                    alert("Peasants Win");
+                                    const mes = "Peasants Win";
+                                    this.setState({gameEndDialog: true, gameEndDialogText: mes});
                                 }, 200);
                         }else{
                             Message({
@@ -311,6 +320,10 @@ class DoudizhuGameView extends React.Component {
         this.setState({gameInfo: gameInfo});
     }
 
+    handleCloseGameEndDialog() {
+        this.setState({gameEndDialog: false, gameEndDialogText: ""});
+    }
+
     render(){
         let sliderValueText = (value) => {
             return value;
@@ -348,6 +361,24 @@ class DoudizhuGameView extends React.Component {
 
         return (
             <div>
+                <Dialog
+                    open={this.state.gameEndDialog}
+                    onClose={()=>{this.handleCloseGameEndDialog()}}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title" style={{"width": "200px"}}>{"Game Ends!"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            {this.state.gameEndDialogText}
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={()=>{this.handleCloseGameEndDialog()}} color="primary" autoFocus>
+                            OK
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <Navbar gameName={"Doudizhu"} />
                 <div className={"doudizhu-view-container"}>
                     <Layout.Row style={{"height": "540px"}}>

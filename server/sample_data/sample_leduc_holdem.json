@@ -22,7 +22,7 @@
         "probabilities": [
           {
             "move": "Check",
-            "probability": 0.35
+            "probability": 0.7661
           },
           {
             "move": "Raise",
@@ -34,7 +34,7 @@
           },
           {
             "move": "Fold",
-            "probability": 0.01
+            "probability": 0.2339
           }
         ]
       },
@@ -44,11 +44,11 @@
         "probabilities": [
           {
             "move": "Raise",
-            "probability": 0.9
+            "probability": 0.4123
           },
           {
             "move": "Check",
-            "probability": 0.05
+            "probability": 0.4983
           },
           {
             "move": "Call",
@@ -56,7 +56,7 @@
           },
           {
             "move": "Fold",
-            "probability": 0.01
+            "probability": 0.0894
           }
         ]
       },
@@ -66,19 +66,19 @@
         "probabilities": [
           {
             "move": "Call",
-            "probability": 0.9
+            "probability": 0.5251
           },
           {
             "move": "Check",
-            "probability": 0.05
+            "probability": -1
           },
           {
             "move": "Raise",
-            "probability": 0.02
+            "probability": 0.1803
           },
           {
             "move": "Fold",
-            "probability": 0.01
+            "probability": 0.2946
           }
         ]
       },
@@ -88,19 +88,19 @@
         "probabilities": [
           {
             "move": "Check",
-            "probability": 0.9
+            "probability": 0.7435
           },
           {
             "move": "Raise",
-            "probability": 0.05
+            "probability": 0.2324
           },
           {
             "move": "Call",
-            "probability": 0.02
+            "probability": -1
           },
           {
             "move": "Fold",
-            "probability": 0.01
+            "probability": 0.0241
           }
         ]
       }
@@ -112,19 +112,19 @@
         "probabilities": [
           {
             "move": "Raise",
-            "probability": 0.9
+            "probability": 0.5031
           },
           {
             "move": "Check",
-            "probability": 0.05
+            "probability": 0.2138
           },
           {
             "move": "Call",
-            "probability": 0.02
+            "probability": -1
           },
           {
             "move": "Fold",
-            "probability": 0.01
+            "probability": 0.2931
           }
         ]
       },
@@ -134,19 +134,19 @@
         "probabilities": [
           {
             "move": "Call",
-            "probability": 0.9
+            "probability": 0.4363
           },
           {
             "move": "Check",
-            "probability": 0.05
+            "probability": -1
           },
           {
             "move": "Raise",
-            "probability": 0.02
+            "probability": 0.3512
           },
           {
             "move": "Fold",
-            "probability": 0.01
+            "probability": 0.2485
           }
         ]
       },
@@ -156,19 +156,19 @@
         "probabilities": [
           {
             "move": "Raise",
-            "probability": 0.9
+            "probability": 0.6402
           },
           {
             "move": "Check",
-            "probability": 0.05
+            "probability": 0.2563
           },
           {
             "move": "Call",
-            "probability": 0.02
+            "probability": -1
           },
           {
             "move": "Fold",
-            "probability": 0.01
+            "probability": 0.1035
           }
         ]
       },
@@ -178,19 +178,19 @@
         "probabilities": [
           {
             "move": "Call",
-            "probability": 0.9
+            "probability": 0.6042
           },
           {
             "move": "Check",
-            "probability": 0.05
+            "probability": -1
           },
           {
             "move": "Raise",
-            "probability": 0.02
+            "probability": -1
           },
           {
             "move": "Fold",
-            "probability": 0.01
+            "probability": 0.3958
           }
         ]
       }

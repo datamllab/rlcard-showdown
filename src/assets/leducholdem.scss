@@ -2,16 +2,17 @@
 .leduc-holdem-wrapper {
     width: 100%;
     height: 100%;
-    background-color: #C3CDFF;
-    // background-image: url("./images/table.png");
-    // background-repeat: no-repeat;
-    // background-size: 100% 70%;
-    // background-position: bottom;
+    //background-color: #C3CDFF;
+     background-image: url("./images/gameboard.png");
+     background-repeat: no-repeat;
+     background-size: 100% 132%;
+     background-position: bottom;
     position: relative;
 
     .played-card-area {
         font-size: 12px;
-        width: 100%;
+        width: 40%;
+        margin-left: 65%;
         position: relative;
         display: flex;
         justify-content: center;
@@ -76,18 +77,51 @@
             white-space: pre;
             text-align: center;
         }
+        .bet-value {
+            color: whitesmoke;
+            position: relative;
+            text-shadow: 0 2px 2px rgba(0, 0, 0, 0.87);
+            top: -120px;
+            left: 120px;
+            font-weight: bold;
+        }
+        .token-container{
+            position: relative;
+            top: -115px;
+            left: 120px;
+            width: 120px;
+            height: 80px;
+            display: flex;
+            flex-direction: row;
+            .pile-placeholder{
+                width: 24px;
+                margin-top: 0;
+                .token-img {
+                    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.87);
+                    -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.87);
+                    -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.87);
+                    -o-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.87);
+                    border-radius: 15px;
+                }
+            }
+            div {
+                position: relative;
+                margin-top: -15px;
+            }
+            .pile-placeholder > :first-child { margin-top: 0 !important;}
+        }
     }
 
     .player-main-area {
         background-color: initial;
-        width: 380px;
+        width: 300px;
         height: 130px;
         position: relative;
 
         .player-hand {
             position: absolute;
             top: 15px;
-            left: 56px;
+            left: 65px;
             padding-left: 20px;
             margin-left: 130px;
             width: 75px;
@@ -107,14 +141,14 @@
     #top-player {
         position: absolute;
         top: 10px;
-        left: 50%;
+        left: 40%;
         margin-left: -190px;
     }
 
     #bottom-player {
         position: absolute;
         bottom: 10px;
-        left: 50%;
+        left: 40%;
         margin-left: -190px;
     }
 
@@ -131,10 +165,12 @@
             display: table-cell;
             vertical-align: middle;
             text-align: center;
-            font-size: 20px;
-            font-weight: bold;
-            text-shadow: 0 2px 2px rgba(0, 0, 0, 0.87);
-            color: #F2F6FC;
+            span.round-number {
+                font-size: 20px;
+                font-weight: bold;
+                text-shadow: 0 2px 2px rgba(0, 0, 0, 0.87);
+                color: #F2F6FC;
+            }
         }
         .playingCards {
             transform: translate(3px, 10px);

@@ -50,9 +50,9 @@ class LeducHoldemGameBoard extends React.Component {
             )
     }
     
-    computeActionImage(action) {
+    computeActionText(action) {
         if (action.length > 0) {
-            return <img src={require('../../assets/images/Actions/' + action + '.png')} alt={action} height="80%" width="100%" />
+            return <span className={"action-text"}>{action}</span>
         }
     }
 
@@ -108,7 +108,7 @@ class LeducHoldemGameBoard extends React.Component {
                 </div>
             )
         }else{
-            return <div className="non-card">{this.computeActionImage(this.props.latestAction[playerIdx])}</div>
+            return <div className="non-card">{this.computeActionText(this.props.latestAction[playerIdx])}</div>
         }
     }
 

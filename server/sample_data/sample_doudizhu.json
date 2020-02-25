@@ -72,10 +72,10 @@
     },
     {
       "playerIdx": 1,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 1
         }
       ]
@@ -111,27 +111,27 @@
           "probability": 0.05
         },
         {
-          "move": "P",
+          "move": "pass",
           "probability": 0.02
         }
       ]
     },
     {
       "playerIdx": 1,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 1
         }
       ]
     },
     {
       "playerIdx": 2,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 1
         }
       ]
@@ -177,7 +177,7 @@
       "move": "SK CK",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 0.5
         },
         {
@@ -195,7 +195,7 @@
       "move": "S2 H2",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 0.5
         },
         {
@@ -206,20 +206,20 @@
     },
     {
       "playerIdx": 1,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 1
         }
       ]
     },
     {
       "playerIdx": 2,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 1
         }
       ]
@@ -244,10 +244,10 @@
     },
     {
       "playerIdx": 1,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 0.8
         },
         {
@@ -265,7 +265,7 @@
       "move": "CT DT",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 0.5
         },
         {
@@ -287,17 +287,17 @@
           "probability": 0.9
         },
         {
-          "move": "P",
+          "move": "pass",
           "probability": 0.1
         }
       ]
     },
     {
       "playerIdx": 1,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 0.9
         },
         {
@@ -315,27 +315,27 @@
           "probability": 0.9
         },
         {
-          "move": "P",
+          "move": "pass",
           "probability": 0.1
         }
       ]
     },
     {
       "playerIdx": 0,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 1
         }
       ]
     },
     {
       "playerIdx": 1,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 1
         }
       ]
@@ -360,10 +360,10 @@
     },
     {
       "playerIdx": 0,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 1
         }
       ]
@@ -377,7 +377,7 @@
           "probability": 0.5
         },
         {
-          "move": "P",
+          "move": "pass",
           "probability": 0.1
         },
         {
@@ -388,20 +388,20 @@
     },
     {
       "playerIdx": 2,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 1
         }
       ]
     },
     {
       "playerIdx": 0,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 1
         }
       ]
@@ -437,27 +437,27 @@
           "probability": 0.3
         },
         {
-          "move": "P",
+          "move": "pass",
           "probability": 0.2
         }
       ]
     },
     {
       "playerIdx": 0,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 1
         }
       ]
     },
     {
       "playerIdx": 1,
-      "move": "P",
+      "move": "pass",
       "probabilities": [
         {
-          "move": "P",
+          "move": "pass",
           "probability": 1
         }
       ]

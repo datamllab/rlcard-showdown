@@ -11,10 +11,10 @@ export function Navbar(props) {
             setStars(res.data.stargazers_count);
         });
     return (
-        <AppBar position="static">
+        <AppBar position="static" className={"header-bar-wrapper"}>
             <div className={"header-bar"}>
                 <img src={logo_white} alt={"Logo"} height="65px" />
-                <div className={"title unselectable"}>Showdown<span className={"subtitle"}>/ {props.gameName}</span></div>
+                <div className={"title unselectable"}><div className={"title-text"}>Showdown<span className={"subtitle"}>/ {props.gameName}</span></div></div>
                 <div className={"stretch"} />
                 <div className={"github-info"} onClick={()=>{window.location.href = 'https://github.com/datamllab/rlcard'}}>
                     <div className={"github-icon"}><GitHubIcon /></div>

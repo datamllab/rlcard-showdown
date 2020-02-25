@@ -2,10 +2,15 @@
     margin: 5px;
 }
 
+.MuiAppBar-colorPrimary.header-bar-wrapper {
+    background-color: #373538;
+}
+
 .header-bar {
     width: 1000px;
     margin-left: auto;
     margin-right: auto;
+    height: 65px;
     padding: 5px;
     display: flex;
     .stretch {
@@ -50,23 +55,28 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 26px;
-        font-weight: 600;
-        letter-spacing: 1px;
-        -ms-transform:scale(1, 1.1) translateY(-1px);
-        -webkit-transform:scale(1, 1.1) translateY(-1px);
-        -moz-transform:scale(1, 1.1) translateY(-1px);
-        -o-transform:scale(1, 1.1) translateY(-1px);
+        .title-text{
+            line-height: 65px;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transform: scale(1, 1.1) translateY(-1px);
+            -ms-transform:scale(1, 1.1) translateY(-1px);
+            -webkit-transform:scale(1, 1.1) translateY(1px);
+            -moz-transform:scale(1, 1.1) translateY(-1px);
+            -o-transform:scale(1, 1.1) translateY(-1px);
 
-        .subtitle {
-            color: #C0C4CC;
-            margin-left: 11px;
-            font-size: 16px;
-            -ms-transform: translateY(3px);
-            -webkit-transform: translateY(3px);
-            -moz-transform: translateY(3px);
-            -o-transform: translateY(3px);
+            .subtitle {
+                color: #C0C4CC;
+                margin-left: 11px;
+                font-size: 16px;
+                -ms-transform: translateY(3px);
+                -webkit-transform: translateY(3px);
+                -moz-transform: translateY(3px);
+                -o-transform: translateY(3px);
+            }
         }
+
     }
 }
 
@@ -171,6 +181,10 @@
                             text-align: center;
                             font-size: 16px;
                             font-weight: bolder;
+                            text-shadow: -1px -1px 0 #fff,
+                                1px -1px 0 #fff,
+                                -1px 1px 0 #fff,
+                                1px 1px 0 #fff;
                         }
                     }
                     .non-card.hide {
@@ -265,6 +279,10 @@
                             font-size: 16px;
                             font-weight: bolder;
                             color: #303133;
+                            text-shadow: -1px -1px 0 #fff,
+                                1px -1px 0 #fff,
+                                -1px 1px 0 #fff,
+                                1px 1px 0 #fff;
                         }
                     }
                     .non-card.hide {

@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Arvo&display=swap');
 
 body {
+  background-color: rgb(241, 241, 241);
   margin: 0;
   color: #606266;
-  font-family: 'Rockwell', 'Arvo', monospace;
+  font-family: 'Arvo', 'Rockwell', monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

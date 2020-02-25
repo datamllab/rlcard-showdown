@@ -261,18 +261,23 @@ class LeducHoldemGameView extends React.Component {
                 currentMove = this.moveHistory[this.state.gameInfo.round][this.state.gameInfo.turn];
             }
             let style = {};
-            style["backgroundColor"] = currentMove !== null ? `rgba(130, 151, 255, ${currentMove.probabilities[idx].probability})` : "#bdbdbd";
+            style["backgroundColor"] = currentMove !== null ? `rgba(63, 81, 181, ${currentMove.probabilities[idx].probability})` : "#bdbdbd";
             return (
                 <div className={"playing"} style={style}>
                     <div className="probability-move">
                     {currentMove !== null ?
-                        <img src={require('../assets/images/Actions/' + currentMove.probabilities[idx].move + '.png')} alt={currentMove.probabilities[idx].move} height="30%" width="30%" />
+                        <img src={require('../assets/images/Actions/' + currentMove.probabilities[idx].move + (currentMove.probabilities[idx].probability < 0 ? "_u" : "") + '.png')} alt={currentMove.probabilities[idx].move} height="30%" width="30%" />
                         :
                         <NotInterestedIcon fontSize="large" />}
                     </div>
                     {currentMove !== null ?
                         (<div className={"non-card"}>
-                            <span>{`Probability ${(currentMove.probabilities[idx].probability * 100).toFixed(2)}%`}</span>
+                            {
+                                currentMove.probabilities[idx].probability < 0 ?
+                                <span>Illegal</span>
+                                :
+                                <span>{`Probability ${(currentMove.probabilities[idx].probability * 100).toFixed(2)}%`}</span>
+                            }
                         </div>) : ""}
                 </div>
             )

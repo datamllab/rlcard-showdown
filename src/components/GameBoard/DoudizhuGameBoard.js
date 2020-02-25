@@ -52,7 +52,7 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     computeSingleLineHand(cards, fadeClassName="") {
-        if(cards === "P"){
+        if(cards === "pass"){
             return <div className="non-card"><span>PASS</span></div>
         }else{
             return (

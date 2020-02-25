@@ -52,7 +52,7 @@ class DoudizhuGameView extends React.Component {
     }
 
     cardStr2Arr(cardStr){
-        return cardStr === "P" ? cardStr : cardStr.split(" ");
+        return cardStr === "pass" || cardStr === "" ? "pass" : cardStr.split(" ");
     }
 
     generateNewState(){
@@ -64,7 +64,7 @@ class DoudizhuGameView extends React.Component {
         }else{
             let newMove = this.moveHistory[this.state.gameInfo.turn];
             if(newMove.playerIdx === this.state.gameInfo.currentPlayer) {
-                gameInfo.latestAction[newMove.playerIdx] = this.cardStr2Arr(newMove.move);
+                gameInfo.latestAction[newMove.playerIdx] = this.cardStr2Arr(Array.isArray(newMove.move) ? newMove.move.join(" ") : newMove.move);
                 gameInfo.turn++;
                 gameInfo.currentPlayer = (gameInfo.currentPlayer + 1) % 3;
                 // take away played cards from player's hands
@@ -246,7 +246,7 @@ class DoudizhuGameView extends React.Component {
     }
 
     computeSingleLineHand(cards) {
-        if(cards === "P"){
+        if(cards === "pass"){
             return <div className={"non-card "+this.state.gameInfo.toggleFade}><span>Pass</span></div>
         }else{
             return (

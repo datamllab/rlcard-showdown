@@ -22,15 +22,15 @@
         "probabilities": [
           {
             "move": "Check",
-            "probability": 0.9
+            "probability": 0.35
           },
           {
             "move": "Raise",
-            "probability": 0.05
+            "probability": -1
           },
           {
             "move": "Call",
-            "probability": 0.02
+            "probability": -1
           },
           {
             "move": "Fold",
@@ -52,7 +52,7 @@
           },
           {
             "move": "Call",
-            "probability": 0.02
+            "probability": -1
           },
           {
             "move": "Fold",

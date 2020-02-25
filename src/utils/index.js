@@ -11,7 +11,7 @@ const suitMapSymbol = new Map(
 export function removeCards(cards, hands){     // remove cards from hands, return the remained hands
     let remainedHands = deepCopy(hands);
     // if the player's action is pass then return the copy of original hands
-    if(cards === "P"){
+    if(cards === "pass"){
         return remainedHands;
     }
     let misMatch = false;

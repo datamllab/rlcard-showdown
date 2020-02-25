@@ -11,7 +11,8 @@
 
     .played-card-area {
         font-size: 12px;
-        width: 100%;
+        width: 40%;
+        margin-left: 90%;
         position: relative;
         display: flex;
         justify-content: center;
@@ -76,18 +77,42 @@
             white-space: pre;
             text-align: center;
         }
+        .bet-value {
+            position: relative;
+            top: -120px;
+            left: 120px;
+            font-weight: bold;
+        }
+        .token-container{
+            position: relative;
+            top: -115px;
+            left: 120px;
+            width: 120px;
+            height: 80px;
+            display: flex;
+            flex-direction: row;
+            .pile-placeholder{
+                width: 24px;
+                margin-top: 0;
+            }
+            div {
+                position: relative;
+                margin-top: -15px;
+            }
+            .pile-placeholder > :first-child { margin-top: 0 !important;}
+        }
     }
 
     .player-main-area {
         background-color: initial;
-        width: 380px;
+        width: 300px;
         height: 130px;
         position: relative;
 
         .player-hand {
             position: absolute;
             top: 15px;
-            left: 56px;
+            left: 65px;
             padding-left: 20px;
             margin-left: 130px;
             width: 75px;
@@ -107,14 +132,14 @@
     #top-player {
         position: absolute;
         top: 10px;
-        left: 50%;
+        left: 40%;
         margin-left: -190px;
     }
 
     #bottom-player {
         position: absolute;
         bottom: 10px;
-        left: 50%;
+        left: 40%;
         margin-left: -190px;
     }
 

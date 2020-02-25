@@ -272,7 +272,7 @@ class LeducHoldemGameView extends React.Component {
                     </div>
                     {currentMove !== null ?
                         (<div className={"non-card"}>
-                            <span>{`Probability: ${(currentMove.probabilities[idx].probability * 100).toFixed(2)}%`}</span>
+                            <span>{`Probability ${(currentMove.probabilities[idx].probability * 100).toFixed(2)}%`}</span>
                         </div>) : ""}
                 </div>
             )
@@ -420,7 +420,7 @@ class LeducHoldemGameView extends React.Component {
                                     <Divider orientation="vertical" />
                                 </Layout.Col>
                                 <Layout.Col span="3" style={{"height": "51px", "lineHeight": "51px", "marginLeft": "-1px", "marginRight": "-1px"}}>
-                                    <div style={{"textAlign": "center"}}>{`Turn: ${this.state.gameInfo.turn}`}</div>
+                                    <div style={{"textAlign": "center"}}>{`Turn ${this.state.gameInfo.turn}`}</div>
                                 </Layout.Col>
                                 <Layout.Col span="1" style={{"height": "100%", "width": "1px"}}>
                                     <Divider orientation="vertical" />

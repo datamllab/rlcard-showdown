@@ -79,7 +79,7 @@ class LeducHoldemGameBoard extends React.Component {
             if (value !== 0) {
                 let grandChild = [];
                 for (let j = 0; j < value; j++) {
-                    grandChild.push(<div key={key + '_' + j}><img src={require('../../assets/images/Tokens/Token_' + key + '.png')} height="100%" width="100%" /></div>);
+                    grandChild.push(<div key={key + '_' + j}><img className={"token-img"} src={require('../../assets/images/Tokens/Token_' + key + '.png')} height="100%" width="100%" alt={"taken"}/></div>);
                 }
                 let subElement = React.createElement("div", { className: "pile-placeholder", key: key+'_'+value}, grandChild);
             child.push(subElement);
@@ -160,7 +160,7 @@ class LeducHoldemGameBoard extends React.Component {
                             <span className="bet-value">{`Bet: ${this.props.pot[bottomIdx]}`}</span>
                             {this.computeTokenImage(this.props.pot[bottomIdx])}
                         </div>
-                        {bottomIdx >= 0 ? <div className="player-hand">{this.computeHand(this.props.hands[bottomIdx])}</div> : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
+                        {bottomIdx >= 0 ? <div className="player-hand">{this.computeHand(this.props.hands[bottomIdx])}</div> : <div className="player-hand-placeholder"><span style={{"color": "white"}}>Waiting...</span></div>}
                     </div>
                 </div>
                 <div id={"top-player"}>
@@ -170,7 +170,7 @@ class LeducHoldemGameBoard extends React.Component {
                             <span className="bet-value">{`Bet: ${this.props.pot[topIdx]}`}</span>
                             {this.computeTokenImage(this.props.pot[topIdx])}
                         </div>
-                        {topIdx >= 0 ? <div className="player-hand">{this.computeHand(this.props.hands[topIdx])}</div> : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
+                        {topIdx >= 0 ? <div className="player-hand">{this.computeHand(this.props.hands[topIdx])}</div> : <div className="player-hand-placeholder"><span style={{"color": "white"}}>Waiting...</span></div>}
                     </div>
                     <div className="played-card-area">
                         {topIdx >= 0 ? this.playerDecisionArea(topIdx) : ""}
@@ -178,7 +178,7 @@ class LeducHoldemGameBoard extends React.Component {
                 </div>
                 <div id={"public-card-area"}>
                     <div className={"info-area"}>
-                        <span>{`Round: ${this.props.round+1}`}</span>
+                        <span className={"round-number"}>{`Round: ${this.props.round+1}`}</span>
                         {this.displayPublicCard()}
                     </div>
                 </div>

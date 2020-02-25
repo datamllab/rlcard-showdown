@@ -272,7 +272,7 @@ class DoudizhuGameView extends React.Component {
     computeProbabilityItem(idx){
         if(this.state.gameInfo.gameStatus !== "ready" && this.state.gameInfo.turn < this.moveHistory.length){
             let style = {};
-            style["backgroundColor"] = this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `rgba(130, 151, 255 , ${this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability})` : "#bdbdbd";
+            style["backgroundColor"] = this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `rgba(63, 81, 181, ${this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability})` : "#bdbdbd";
             return (
                 <div className={"playing"} style={style}>
                     <div className="probability-move">
@@ -284,7 +284,7 @@ class DoudizhuGameView extends React.Component {
                     </div>
                     {this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ?
                         <div className={"non-card"}>
-                            <span>{this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `Probability: ${(this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability * 100).toFixed(2)}%` : ""}</span>
+                            <span>{this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `Probability ${(this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability * 100).toFixed(2)}%` : ""}</span>
                         </div>
                         :
                         ""
@@ -426,7 +426,7 @@ class DoudizhuGameView extends React.Component {
                                         <Divider orientation="vertical" />
                                     </Layout.Col>
                                     <Layout.Col span="3" style={{"height": "51px", "lineHeight": "51px", "marginLeft": "-1px", "marginRight": "-1px"}}>
-                                        <div style={{"textAlign": "center"}}>{`Turn: ${this.state.gameInfo.turn}`}</div>
+                                        <div style={{"textAlign": "center"}}>{`Turn ${this.state.gameInfo.turn}`}</div>
                                     </Layout.Col>
                                     <Layout.Col span="1" style={{"height": "100%", "width": "1px"}}>
                                         <Divider orientation="vertical" />

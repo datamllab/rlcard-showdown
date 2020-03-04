@@ -1,4 +1,5 @@
-**NOTE: This project is under final tesing. The one in the repo only supports the visualualization of some sampled data. The full version will be available soon!**
+**NOTE: This project is under final tesing. The one in the repo only supports the visualization of some sampled data. The full version will be available soon!**
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

@@ -1,0 +1,13 @@
+To run the leaderboard server:
+
+Make sure Django is installed:
+- pip install django
+
+Make sure rlcard is installed:
+- git clone https://github.com/datamllab/rlcard.git
+- cd rlcard
+- pip install -e .
+
+Run server:
+(Make sure you are in the same folder as manage.py)
+- python3 manage.py runserver

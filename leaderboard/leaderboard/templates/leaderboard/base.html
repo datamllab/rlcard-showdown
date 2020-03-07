@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+{% block title %}{% endblock %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-colors-camo.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-colors-2017.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
+</style>
+<body class="w3-light-grey w3-content" style="max-width:1400px">
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-collapse w3-camo-black" style="z-index:3;width:300px;" id="mySidebar"><br>
+  <div class="w3-container w3-camo-black">
+    <a href="{% url 'leaderboard-home' %}" onclick="w3_close()" class="w3-hide-large w3-right w3-jumbo w3-padding w3-hover-white" title="close menu">
+      <i class="fa fa-remove"></i>
+    </a>
+    <br><a href="{% url 'leaderboard-home' %}"><img src="/media/RLCard.png" style="width:95%;" class="w3-center"></a><br><br>
+  </div>
+  <div class="w3-bar-block w3-padding w3-text-white" style="font-size: medium;">
+    <!-- <br><a href="{% url 'leaderboard-about' %}" onclick="w3_close()" class="w3-bar-item w3-button"><i class="w3-margin-right"></i>About</a>
+    <a href="{% url 'leaderboard-getting_started' %}" onclick="w3_close()" class="w3-bar-item w3-button"><i class="w3-margin-right"></i>Getting Started</a><br> -->
+    <h4 class="w3-text-blue"><b>Game Leaderboards:</b></h4>
+    <a href="{% url 'leaderboard-blackjack' %}" onclick="w3_close()" class="w3-bar-item w3-button"><i class="w3-margin-right"></i>Blackjack</a> 
+    <a href="{% url 'leaderboard-leducholdem' %}" onclick="w3_close()" class="w3-bar-item w3-button"><i class="w3-margin-right"></i>Leduc Hold'em</a>
+    <a href="{% url 'leaderboard-limitholdem' %}" onclick="w3_close()" class="w3-bar-item w3-button"><i class="w3-margin-right"></i>Limit Texas Hold'em</a>
+    <a href="{% url 'leaderboard-doudizhu' %}" onclick="w3_close()" class="w3-bar-item w3-button"><i class="w3-margin-right"></i>Dou Dizhu</a>
+    <a href="{% url 'leaderboard-mahjong' %}" onclick="w3_close()" class="w3-bar-item w3-button"><i class="w3-margin-right"></i>Mahjong</a>
+    <a href="{% url 'leaderboard-nolimitholdem' %}" onclick="w3_close()" class="w3-bar-item w3-button"><i class="w3-margin-right"></i>No-Limit Texas Hold'em</a>
+    <a href="{% url 'leaderboard-uno' %}" onclick="w3_close()" class="w3-bar-item w3-button"><i class="w3-margin-right"></i>Uno</a><br>
+    <h4 class="w3-text-blue"><b>Agents:</b></h4>
+    <a href="{% url 'leaderboard-nfsp' %}" onclick="w3_close()" class="w3-bar-item w3-button"><i class="w3-margin-right"></i>NFSP</a> 
+    <a href="{% url 'leaderboard-cfr' %}" onclick="w3_close()" class="w3-bar-item w3-button"><i class="w3-margin-right"></i>CFR</a>
+    <a href="{% url 'leaderboard-dqn' %}" onclick="w3_close()" class="w3-bar-item w3-button"><i class="w3-margin-right"></i>DQN</a>
+
+  </div>
+</nav>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-container w3-camo-black">
+<span class="w3-button w3-hide-large w3-xxlarge w3-hover-text-grey w3-right" onclick="w3_open()"><i class="fa fa-bars"></i></span>
+</div>
+<div class="w3-main w3-white" style="margin-left:300px">
+  <!-- Header -->
+  <header id="home">
+    
+    <div class="w3-container w3-bottombar w3-padding-large w3-xxlarge">
+      <b>{% block header %}{% endblock %}</b>
+    </div>
+  </header>
+
+  {% block content %}{% endblock %}
+</div>
+
+<div class="w3-camo-black w3-center w3-padding-large" style="position:fixed; bottom:0; width:100%; text-align:center; max-width:1400px;">
+  &copy; Copyright DATA Lab at Texas A&amp;M University<br>
+  Powered by <a href="https://www.w3schools.com/w3css/default.asp" title="W3.CSS" target="_blank" class="w3-hover-opacity">w3.css</a>
+</div>
+
+<!-- End page content -->
+<!-- </div> -->
+
+<script>
+// Script to open and close sidebar
+function w3_open() {
+    document.getElementById("mySidebar").style.display = "block";
+    document.getElementById("myOverlay").style.display = "block";
+}
+ 
+function w3_close() {
+    document.getElementById("mySidebar").style.display = "none";
+    document.getElementById("myOverlay").style.display = "none";
+}
+</script>
+
+</body>
+</html>

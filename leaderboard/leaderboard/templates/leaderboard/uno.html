@@ -1,0 +1,36 @@
+{% extends "leaderboard/base.html" %}
+{% block title %}
+<title>RLCard Leaderboard: Uno</title>
+{% endblock title %}
+
+{% block header %}
+Uno Leaderboard
+{% endblock header %}
+  
+{% block content %}
+<div class="w3-container w3-row-padding w3-padding-large w3-margin-left w3-margin-right">
+<p class="w3-xxxlarge">Currently Unavailable</p>
+<p class="w3-xxxlarge">Try <a href="leducholdem">Ludec Hold'em</a></p>
+</div>
+
+<!-- <div class="w3-container w3-row-padding w3-padding-large w3-margin-left w3-margin-right">
+  <table class="w3-table w3-striped w3-bordered w3-border w3-card-4 w3-auto w3-centered w3-large w3-section">
+    <thead>
+      <tr class="w3-2017-lapis-blue">
+        <th scope="col">Rank</th>
+        <th scope="col">Model</th>
+        <th scope="col">Average Win Rate</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for agent in agents %}
+        <tr>
+          <th scope="row">{{ agent.rank }}</th>
+          <td><a href="{{ agent.agentName.lower }}">{{ agent.agentName }}</a></td>
+          <td>{{ agent.winRate }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div> -->
+{% endblock content %}

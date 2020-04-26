@@ -388,25 +388,84 @@
     */
 }
 
-.playingCards.faceImages .card.rank-j.diams  { background-image: url(faces/JD.gif); }
-.playingCards.faceImages .card.rank-j.hearts { background-image: url(faces/JH.gif); }
-.playingCards.faceImages .card.rank-j.spades { background-image: url(faces/JS.gif); }
-.playingCards.faceImages .card.rank-j.clubs  { background-image: url(faces/JC.gif); }
+/*.playingCards.faceImages .card.rank-j.diams  { background-image: url(faces/JD.gif); }*/
+/*.playingCards.faceImages .card.rank-j.hearts { background-image: url(faces/JH.gif); }*/
+/*.playingCards.faceImages .card.rank-j.spades { background-image: url(faces/JS.gif); }*/
+/*.playingCards.faceImages .card.rank-j.clubs  { background-image: url(faces/JC.gif); }*/
 
-.playingCards.faceImages .card.rank-q.diams  { background-image: url(faces/QD.gif); }
-.playingCards.faceImages .card.rank-q.hearts { background-image: url(faces/QH.gif); }
-.playingCards.faceImages .card.rank-q.spades { background-image: url(faces/QS.gif); }
-.playingCards.faceImages .card.rank-q.clubs  { background-image: url(faces/QC.gif); }
+/*.playingCards.faceImages .card.rank-q.diams  { background-image: url(faces/QD.gif); }*/
+/*.playingCards.faceImages .card.rank-q.hearts { background-image: url(faces/QH.gif); }*/
+/*.playingCards.faceImages .card.rank-q.spades { background-image: url(faces/QS.gif); }*/
+/*.playingCards.faceImages .card.rank-q.clubs  { background-image: url(faces/QC.gif); }*/
 
-.playingCards.faceImages .card.rank-k.diams  { background-image: url(faces/KD.gif); }
-.playingCards.faceImages .card.rank-k.hearts { background-image: url(faces/KH.gif); }
-.playingCards.faceImages .card.rank-k.spades { background-image: url(faces/KS.gif); }
-.playingCards.faceImages .card.rank-k.clubs  { background-image: url(faces/KC.gif); }
+/*.playingCards.faceImages .card.rank-k.diams  { background-image: url(faces/KD.gif); }*/
+/*.playingCards.faceImages .card.rank-k.hearts { background-image: url(faces/KH.gif); }*/
+/*.playingCards.faceImages .card.rank-k.spades { background-image: url(faces/KS.gif); }*/
+/*.playingCards.faceImages .card.rank-k.clubs  { background-image: url(faces/KC.gif); }*/
 
-.playingCards.faceImages .card.joker         { background-image: url(faces/joker.gif); }
-.playingCards.simpleCards .card.rank-j,
-.playingCards.simpleCards .card.rank-q,
-.playingCards.simpleCards .card.rank-k       { background-image: none !important; }
+/*.playingCards.faceImages .card.joker         { background-image: url(faces/joker.gif); }*/
+/*.playingCards.simpleCards .card.rank-j,*/
+/*.playingCards.simpleCards .card.rank-q,*/
+/*.playingCards.simpleCards .card.rank-k       { background-image: none !important; }*/
+
+
+.playingCards .card { background-size: 108% 100%; background-position: center }
+.playingCards .card span.rank { display: none; }
+.playingCards .card span.suit { display: none; }
+.playingCards .card.rank-a.diams   { background-image: url(faces/custom/Poker_DA.png); }
+.playingCards .card.rank-a.hearts   { background-image: url(faces/custom/Poker_HA.png); }
+.playingCards .card.rank-a.spades   { background-image: url(faces/custom/Poker_SA.png); }
+.playingCards .card.rank-a.clubs   { background-image: url(faces/custom/Poker_CA.png); }
+.playingCards .card.rank-2.diams   { background-image: url(faces/custom/Poker_D2.png); }
+.playingCards .card.rank-2.hearts   { background-image: url(faces/custom/Poker_H2.png); }
+.playingCards .card.rank-2.spades   { background-image: url(faces/custom/Poker_S2.png); }
+.playingCards .card.rank-2.clubs   { background-image: url(faces/custom/Poker_C2.png); }
+.playingCards .card.rank-3.diams   { background-image: url(faces/custom/Poker_D3.png); }
+.playingCards .card.rank-3.hearts   { background-image: url(faces/custom/Poker_H3.png); }
+.playingCards .card.rank-3.spades   { background-image: url(faces/custom/Poker_S3.png); }
+.playingCards .card.rank-3.clubs   { background-image: url(faces/custom/Poker_C3.png); }
+.playingCards .card.rank-4.diams   { background-image: url(faces/custom/Poker_D4.png); }
+.playingCards .card.rank-4.hearts   { background-image: url(faces/custom/Poker_H4.png); }
+.playingCards .card.rank-4.spades   { background-image: url(faces/custom/Poker_S4.png); }
+.playingCards .card.rank-4.clubs   { background-image: url(faces/custom/Poker_C4.png); }
+.playingCards .card.rank-5.diams   { background-image: url(faces/custom/Poker_D5.png); }
+.playingCards .card.rank-5.hearts   { background-image: url(faces/custom/Poker_H5.png); }
+.playingCards .card.rank-5.spades   { background-image: url(faces/custom/Poker_S5.png); }
+.playingCards .card.rank-5.clubs   { background-image: url(faces/custom/Poker_C5.png); }
+.playingCards .card.rank-6.diams   { background-image: url(faces/custom/Poker_D6.png); }
+.playingCards .card.rank-6.hearts   { background-image: url(faces/custom/Poker_H6.png); }
+.playingCards .card.rank-6.spades   { background-image: url(faces/custom/Poker_S6.png); }
+.playingCards .card.rank-6.clubs   { background-image: url(faces/custom/Poker_C6.png); }
+.playingCards .card.rank-7.diams   { background-image: url(faces/custom/Poker_D7.png); }
+.playingCards .card.rank-7.hearts   { background-image: url(faces/custom/Poker_H7.png); }
+.playingCards .card.rank-7.spades   { background-image: url(faces/custom/Poker_S7.png); }
+.playingCards .card.rank-7.clubs   { background-image: url(faces/custom/Poker_C7.png); }
+.playingCards .card.rank-8.diams   { background-image: url(faces/custom/Poker_D8.png); }
+.playingCards .card.rank-8.hearts   { background-image: url(faces/custom/Poker_H8.png); }
+.playingCards .card.rank-8.spades   { background-image: url(faces/custom/Poker_S8.png); }
+.playingCards .card.rank-8.clubs   { background-image: url(faces/custom/Poker_C8.png); }
+.playingCards .card.rank-9.diams   { background-image: url(faces/custom/Poker_D9.png); }
+.playingCards .card.rank-9.hearts   { background-image: url(faces/custom/Poker_H9.png); }
+.playingCards .card.rank-9.spades   { background-image: url(faces/custom/Poker_S9.png); }
+.playingCards .card.rank-9.clubs   { background-image: url(faces/custom/Poker_C9.png); }
+.playingCards .card.rank-10.diams   { background-image: url(faces/custom/Poker_D10.png); }
+.playingCards .card.rank-10.hearts   { background-image: url(faces/custom/Poker_H10.png); }
+.playingCards .card.rank-10.spades   { background-image: url(faces/custom/Poker_S10.png); }
+.playingCards .card.rank-10.clubs   { background-image: url(faces/custom/Poker_C10.png); }
+.playingCards .card.rank-j.diams   { background-image: url(faces/custom/Poker_DJ.png); }
+.playingCards .card.rank-j.hearts   { background-image: url(faces/custom/Poker_HJ.png); }
+.playingCards .card.rank-j.spades   { background-image: url(faces/custom/Poker_SJ.png); }
+.playingCards .card.rank-j.clubs   { background-image: url(faces/custom/Poker_CJ.png); }
+.playingCards .card.rank-q.diams   { background-image: url(faces/custom/Poker_DQ.png); }
+.playingCards .card.rank-q.hearts   { background-image: url(faces/custom/Poker_HQ.png); }
+.playingCards .card.rank-q.spades   { background-image: url(faces/custom/Poker_SQ.png); }
+.playingCards .card.rank-q.clubs   { background-image: url(faces/custom/Poker_CQ.png); }
+.playingCards .card.rank-k.diams   { background-image: url(faces/custom/Poker_DK.png); }
+.playingCards .card.rank-k.hearts   { background-image: url(faces/custom/Poker_HK.png); }
+.playingCards .card.rank-k.spades   { background-image: url(faces/custom/Poker_SK.png); }
+.playingCards .card.rank-k.clubs   { background-image: url(faces/custom/Poker_CK.png); }
+.playingCards .card.big.joker   { background-image: url(faces/custom/Poker_Joker_R.png); }
+.playingCards .card.little.joker   { background-image: url(faces/custom/Poker_Joker_B.png); }
 
 /*____________ symbols in the middle (faces as dingbat symbols) ____________*/
 

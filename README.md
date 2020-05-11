@@ -1,6 +1,7 @@
 **NOTE: This project is under final tesing. The one in the repo only supports the visualization of some sampled data. The full version will be available soon!**
 
-# Server Setup
+# Django Server
+## Server Setup
 Install dependencies:
 ```
 pip install -r requirements.txt
@@ -17,7 +18,7 @@ python manage.py runserver
 ```
 The default URL is [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
-# REST API
+## REST API
 The definitions of the fields are as follows:
 *   `eval_num`: Integer. The number of evaluation times.
 *   `name`: String. The name of the environment.
@@ -33,6 +34,19 @@ The definitions of the fields are as follows:
 | GET  | tournament/query\_game    | `name`, `index`, `agent0`, `agent1`, `win`, `payoff` | Query the games with the given parameters                                                                          |
 | GET  | tournament/query\_payoff  | `name`, `agent0`, `agent1`, `payoff`                 | Query the payoffs with the given parameters                                                                        |
 | GET  | tournament/replay         | `name`, `agent0`, `agent1`, `index`                  | Return the replay data (only support Leduc Holdem for now)                                                         |
+
+## Example API
+| API                                                                                                                   | Description                                                                              |
+|-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| http://127.0.0.1:8000/tournamentlaunch?eval_num=200&name=leduc-holdem                                                 | Evaluate on Leduc Holdem with 200 games for each pair of models                          |
+| http://127.0.0.1:8000/tournament/replay?name=leduc-holdem&agent0=leduc-holdem-rule-v1&agent1=leduc-holdem-cfr&index=3 | Obtain the replay data between rule model and CFR model. Obtain teh data of the 3rd game |
+| http://127.0.0.1:8000/tournament/query_game                                                                           | Get all the game data                                                                    |
+| http://127.0.0.1:8000/tournament/query_game?name=leduc-holdem                                                         | Get all the game data of Leduc Holdem                                                    |
+| http://127.0.0.1:8000/tournament/query_payoff                                                                         | Get all the payoffs                                                                      |
+| http://127.0.0.1:8000/tournament/query_payoff?agent0=leduc-holdem-cfr&agent1=leduc-holdem-rule-v1                     | Get all the payoffs between rule and CFR models                                          |
+
+
+
 
 # Others
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

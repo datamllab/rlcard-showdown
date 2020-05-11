@@ -5,10 +5,19 @@ import numpy as np
 
 from .rlcard_wrap import rlcard
 
+def cards2str(cards):
+    response = ''
+    for card in cards:
+        if card.rank == '':
+            response += card.suit[0]
+        else:
+            response += card.rank
+    return response
+
 class Tournament(object):
     
     def __init__(self, game, model_ids, evaluate_num=100):
-        """ Defalt for two player games
+        """ Default for two player games
             For Dou Dizhu, the two peasants use the same model
         """
         self.game = game
@@ -28,7 +37,13 @@ class Tournament(object):
                 if j == i:
                     continue
                 print(self.game, '-', self.model_ids[i], 'VS', self.model_ids[j])
-                data, payoffs, wins = tournament(self.game, [self.models[i].agents[0], self.models[j].agents[1]], self.evaluate_num)
+                if self.game == 'doudizhu':
+                    agents = [self.models[i].agents[0], self.models[j].agents[1], self.models[j].agents[2]]
+                    names = [self.model_ids[i], self.model_ids[j], self.model_ids[j]]
+                    data, payoffs, wins = doudizhu_tournament(self.game, agents, names, self.evaluate_num)
+                elif self.game == 'leduc-holdem':
+                    agents = [self.models[i].agents[0], self.models[j].agents[1]]
+                    data, payoffs, wins = leduc_holdem_tournament(self.game, agents, self.evaluate_num)
                 mean_payoff = np.mean(payoffs)
                 print('Average payoff:', mean_payoff)
                 print()
@@ -53,7 +68,50 @@ class Tournament(object):
                 payoffs_data.append(payoff_data)
         return games_data, payoffs_data
 
-def tournament(game, agents, num):
+def doudizhu_tournament(game, agents, names, num):
+    import rlcard
+    env = rlcard.make(game, config={'allow_raw_data': True})
+    print(env.reset())
+    print(env.step(87, False))
+    exit()
+    env.set_agents(agents)
+    payoffs = []
+    json_data = []
+    wins = []
+    for _ in tqdm(range(num)):
+        data = {}
+        roles = ['landlord', 'peasant', 'peasant']
+        data['playerInfo'] = [{'id': i, 'index': i, 'role': roles[i], 'agentInfo': {'name': names[i]}} for i in range(env.player_num)]
+        state, player_id = env.reset()
+        #perfect = env.get_perfect_information()
+        #data['initHands'] = perfect['hand_cards']
+        data['initHands'] =[cards2str(env.game.players[i].current_hand) for i in range(env.player_num)]
+        data['moveHistory'] = []
+        while not env.is_over():
+            action, probs = env.agents[player_id].eval_step(state)
+            history = {}
+            history['playerIdx'] = player_id
+            if env.agents[player_id].use_raw:
+                history['move'] = action
+            else:
+                history['move'] = env._decode_action(action)
+
+            data['moveHistory'].append(history)
+            print(action, player_id, env.agents[player_id].use_raw)
+            state, player_id = env.step(action, env.agents[player_id].use_raw)
+        data = json.dumps(data)
+        #data = json.dumps(data, indent=2, sort_keys=True)
+        print(data)
+        exit()
+        json_data.append(data)
+        if env.get_payoffs()[0] > 0:
+            wins.append(True)
+        else:
+            wins.append(False)
+        payoffs.append(env.get_payoffs()[0])
+    return json_data, payoffs, wins
+
+def leduc_holdem_tournament(game, agents, num):
     env = rlcard.make(game, config={'allow_raw_data': True})
     env.set_agents(agents)
     payoffs = []
@@ -65,7 +123,9 @@ def tournament(game, agents, num):
         state, player_id = env.reset()
         perfect = env.get_perfect_information()
         data['initHands'] = perfect['hand_cards']
-        data['moveHistory'] = [[]]
+        data['moveHistory'] = []
+        round_history = []
+        round_id = 0
         while not env.is_over():
             action, probs = env.agents[player_id].eval_step(state)
             history = {}
@@ -85,9 +145,16 @@ def tournament(game, agents, num):
                     p = -1
                 probabilities.append({'move':a, 'probability': p})
             history['probabilities'] = probabilities
-            data['moveHistory'][0].append(history)
+            round_history.append(history)
+            perfect = env.get_perfect_information()
+            if round_id < perfect['current_round']:
+                round_id = perfect['current_round']
+                data['moveHistory'].append(round_history)
+                round_history = []
             state, player_id = env.step(action, env.agents[player_id].use_raw)
         perfect = env.get_perfect_information()
+        if round_id < perfect['current_round']:
+            data['moveHistory'].append(round_history)
         data['publicCard'] = perfect['public_card']
         data = json.dumps(data)
         #data = json.dumps(data, indent=2, sort_keys=True)

@@ -25,16 +25,16 @@ The definitions of the fields are as follows:
 *   `agent1`: String. Model name.
 *   `win`: Boolean. True if model in the first seat wins.
 *   `payoff`: Float. The payoff of the agent in the first seat.
-*   `index`: Integer. The index of the game of the same environent and same agent. It is in the range \[0, eval\_num-1\]
+*   `index`: Integer. The index of the game of the same environent and same agent. It is in the range \[0, eval_num-1\]
 
 | type | Resource                  |  Parameters                                          |  Description                                                                                                       |
 |------|---------------------------|------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| GET  | tournament/launch         | `eval\_num`, `name`                                  | Launch tournment on the game. Each pair of models will play `eval\_num` times. Results will be saved in database.  |
+| GET  | tournament/launch         | `eval_num`, `name`                                  | Launch tournment on the game. Each pair of models will play `eval_num` times. Results will be saved in database.  |
 | GET  | tournament/query\_game    | `name`, `index`, `agent0`, `agent1`, `win`, `payoff` | Query the games with the given parameters                                                                          |
 | GET  | tournament/query\_payoff  | `name`, `agent0`, `agent1`, `payoff`                 | Query the payoffs with the given parameters                                                                        |
 | GET  | tournament/replay         | `name`, `agent0`, `agent1`, `index`                  | Return the replay data (only support Leduc Holdem for now)                                                         |
 
-# AAA
+# Others
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

@@ -5,15 +5,6 @@ import numpy as np
 
 from .rlcard_wrap import rlcard
 
-def cards2str(cards):
-    response = ''
-    for card in cards:
-        if card.rank == '':
-            response += card.suit[0]
-        else:
-            response += card.rank
-    return response
-
 class Tournament(object):
     
     def __init__(self, game, model_ids, evaluate_num=100):
@@ -69,11 +60,7 @@ class Tournament(object):
         return games_data, payoffs_data
 
 def doudizhu_tournament(game, agents, names, num):
-    import rlcard
     env = rlcard.make(game, config={'allow_raw_data': True})
-    print(env.reset())
-    print(env.step(87, False))
-    exit()
     env.set_agents(agents)
     payoffs = []
     json_data = []
@@ -83,9 +70,8 @@ def doudizhu_tournament(game, agents, names, num):
         roles = ['landlord', 'peasant', 'peasant']
         data['playerInfo'] = [{'id': i, 'index': i, 'role': roles[i], 'agentInfo': {'name': names[i]}} for i in range(env.player_num)]
         state, player_id = env.reset()
-        #perfect = env.get_perfect_information()
-        #data['initHands'] = perfect['hand_cards']
-        data['initHands'] =[cards2str(env.game.players[i].current_hand) for i in range(env.player_num)]
+        perfect = env.get_perfect_information()
+        data['initHands'] = perfect['hand_cards_with_suit']
         data['moveHistory'] = []
         while not env.is_over():
             action, probs = env.agents[player_id].eval_step(state)
@@ -97,12 +83,9 @@ def doudizhu_tournament(game, agents, names, num):
                 history['move'] = env._decode_action(action)
 
             data['moveHistory'].append(history)
-            print(action, player_id, env.agents[player_id].use_raw)
             state, player_id = env.step(action, env.agents[player_id].use_raw)
         data = json.dumps(data)
         #data = json.dumps(data, indent=2, sort_keys=True)
-        print(data)
-        exit()
         json_data.append(data)
         if env.get_payoffs()[0] > 0:
             wins.append(True)

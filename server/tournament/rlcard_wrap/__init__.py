@@ -19,6 +19,6 @@ MODEL_IDS['leduc-holdem'] = [
 
 MODEL_IDS['doudizhu'] = [
         'doudizhu-random',
-        'doudizhu-random',
+        'doudizhu-rule-v1',
         ]
 

@@ -45,7 +45,7 @@ The definitions of the fields are as follows:
 | http://127.0.0.1:8000/tournament/query_payoff                                                                         | Get all the payoffs                                                                      |
 | http://127.0.0.1:8000/tournament/query_payoff?agent0=leduc-holdem-cfr&agent1=leduc-holdem-rule-v1                     | Get all the payoffs between rule and CFR models                                          |
 
-## Regitered Models
+## Registered Models
 Some models have been pre-registered as baselines
 | Model                | Game         | Description                           |
 |----------------------|--------------|---------------------------------------|

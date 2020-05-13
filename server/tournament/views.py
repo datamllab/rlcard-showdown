@@ -1,12 +1,45 @@
+import json
+import os
+import importlib.util
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db import transaction
 from django.core import serializers
-
-from .models import Game, Payoff
+from django.views.decorators.csrf import csrf_exempt
+from django.dispatch import receiver
+from django.db import models
+from django.conf import settings
 
 from .rlcard_wrap import rlcard, MODEL_IDS
+from .models import Game, Payoff, UploadedAgent
+
 from .tournament import Tournament
+
+def reset_model_ids():
+    from .rlcard_wrap import rlcard, MODEL_IDS
+    agents = UploadedAgent.objects.all()
+    for agent in agents:
+        path = os.path.join(settings.MEDIA_ROOT, agent.f.name)
+        name = agent.name
+        game = agent.game
+        entry = agent.entry
+        module_name = path.split('/')[-1].split('.')[0]
+        spec = importlib.util.spec_from_file_location(module_name, path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        M = getattr(module, entry)
+
+        class ModelSpec(object):
+            def __init__(self):
+                self.model_id = name
+                self._entry_point = M
+
+            def load(self):
+                model = self._entry_point()
+                return model
+        rlcard.models.registration.model_registry.model_specs[name] = ModelSpec()
+        MODEL_IDS[game].append(name)
 
 def replay(request):
     if request.method == 'GET':
@@ -56,5 +89,41 @@ def launch(request):
                      agent1=payoff_data['agent1'],
                      payoff=payoff_data['payoff'])
             p.save()
-        return HttpResponse(1)
+        return HttpResponse(json.dumps({'value': 0, 'info': 'success'}))
 
+@csrf_exempt
+def upload_agent(request):
+    if request.method == 'POST':
+        f = request.FILES['model']
+        name = request.POST['name']
+        game = request.POST['game']
+        entry = request.POST['entry']
+        if UploadedAgent.objects.filter(name=name).exists():
+            return HttpResponse(json.dumps({'value': -1, 'info': 'name exists'}))
+
+        a = UploadedAgent(name=name, game=game, f=f, entry=entry)
+        a.save()
+        reset_model_ids()
+        return HttpResponse(json.dumps({'value': 0, 'info': 'success'}))
+
+def delete_agent(request):
+    if request.method == 'GET':
+        name = request.GET['name']
+        if not UploadedAgent.objects.filter(name=name).exists():
+            return HttpResponse(json.dumps({'value': -1, 'info': 'name not exists'}))
+
+        UploadedAgent.objects.filter(name=name).delete()
+        reset_model_ids()
+        return HttpResponse(json.dumps({'value': 0, 'info': 'success'}))
+
+def list_agents(request):
+    if request.method == 'GET':
+        agents = UploadedAgent.objects.all()
+        result = serializers.serialize('json', agents)
+        return HttpResponse(result)
+
+@receiver(models.signals.post_delete, sender=UploadedAgent)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    if instance.f:
+        if os.path.isfile(instance.f.path):
+            os.remove(instance.f.path)

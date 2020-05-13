@@ -22,3 +22,5 @@ MODEL_IDS['doudizhu'] = [
         'doudizhu-rule-v1',
         ]
 
+
+

@@ -25,3 +25,4 @@ yarn-error.log*
 db.sqlite3
 __pycache__
 *.swp
+/uploaded_agents

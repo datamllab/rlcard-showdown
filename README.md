@@ -30,16 +30,19 @@ The definitions of the fields are as follows:
 
 | type | Resource                  |  Parameters                                          |  Description                                                                                                       |
 |------|---------------------------|------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| GET  | tournament/launch         | `eval_num`, `name`                                  | Launch tournment on the game. Each pair of models will play `eval_num` times. Results will be saved in database.  |
+| GET  | tournament/launch         | `eval_num`, `name`                                   | Launch tournment on the game. Each pair of models will play `eval_num` times. Results will be saved in database.   |
 | GET  | tournament/query\_game    | `name`, `index`, `agent0`, `agent1`, `win`, `payoff` | Query the games with the given parameters                                                                          |
 | GET  | tournament/query\_payoff  | `name`, `agent0`, `agent1`, `payoff`                 | Query the payoffs with the given parameters                                                                        |
-| GET  | tournament/replay         | `name`, `agent0`, `agent1`, `index`                  | Return the replay data (only support Leduc Holdem for now)                                                         |
+| GET  | tournament/replay         | `name`, `agent0`, `agent1`, `index`                  | Return the replay data                                                                                             |
+| POST | tournament/upload\_agent  | `model`(Python file), `name`, `game`, `entry`        | Upload a model file. `name` is model ID, `entry` is the class name of the model                                    |
+| GET  | tournament/delete\_agent  | `name`                                               | Delete the agent of the given name                                                                                 |
+| GET  | tournament/list\_agents   |                                                      | list all the agents                                                                                                |
 
 ## Example API
 | API                                                                                                                   | Description                                                                              |
 |-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
-| http://127.0.0.1:8000/tournamentlaunch?eval_num=200&name=leduc-holdem                                                 | Evaluate on Leduc Holdem with 200 games for each pair of models                          |
-| http://127.0.0.1:8000/tournament/replay?name=leduc-holdem&agent0=leduc-holdem-rule-v1&agent1=leduc-holdem-cfr&index=3 | Obtain the replay data between rule model and CFR model. Obtain teh data of the 3rd game |
+| http://127.0.0.1:8000/tournament/launch?eval_num=200&name=leduc-holdem                                                | Evaluate on Leduc Holdem with 200 games for each pair of models                          |
+| http://127.0.0.1:8000/tournament/replay?name=leduc-holdem&agent0=leduc-holdem-rule-v1&agent1=leduc-holdem-cfr&index=3 | Obtain the replay data between rule model and CFR model. Obtain the data of the 3rd game |
 | http://127.0.0.1:8000/tournament/query_game                                                                           | Get all the game data                                                                    |
 | http://127.0.0.1:8000/tournament/query_game?name=leduc-holdem                                                         | Get all the game data of Leduc Holdem                                                    |
 | http://127.0.0.1:8000/tournament/query_payoff                                                                         | Get all the payoffs                                                                      |
@@ -54,6 +57,28 @@ Some models have been pre-registered as baselines
 | leduc-holdem-rule-v1 | leduc-holdem | A rule model that plays greedily      |
 | doudizhu-random      | doudizhu     | A random model                        |
 | doudizhu-rule-v1     | doudizhu     | Dou Dizhu rule model                  |
+
+## Example of uploading a new model
+A example model file is prepared:
+```
+cd server/upload_test
+```
+Upload the model with `curl`:
+```
+curl -F 'model=@example_model.py' -F "name=leduc-new" -F "entry=LeducHoldemRuleModelV2" -F "game=leduc-holdem" http://127.0.0.1:8000/tournament/upload_agent
+```
+Launch the tounament with:
+```
+curl 'http://127.0.0.1:8000/tournament/launch?eval_num=200&name=leduc-holdem'
+```
+We list the uploaded agent with
+```
+curl http://127.0.0.1:8000/tournament/list_agents
+```
+We can delete the agent with
+```
+curl 'http://127.0.0.1:8000/tournament/delete_agent?name=leduc-new'
+```
 
 
 # Others

@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 class Game(models.Model):
     # The name of the game
@@ -34,4 +35,17 @@ class Payoff(models.Model):
  
     # The average payoff of the first agent
     payoff = models.FloatField()
+
+class UploadedAgent(models.Model):
+    # The name of the agent
+    name = models.CharField(max_length=100)
+
+    # The game of the agent
+    game = models.CharField(max_length=100)
+
+    # The class name of the Model
+    entry = models.CharField(max_length=100)
+
+    # File
+    f = models.FileField(upload_to='uploaded_agents')
 

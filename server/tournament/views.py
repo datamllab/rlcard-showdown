@@ -16,7 +16,7 @@ from .models import Game, Payoff, UploadedAgent
 
 from .tournament import Tournament
 
-def reset_model_ids():
+def _reset_model_ids():
     from .rlcard_wrap import rlcard, MODEL_IDS
     agents = UploadedAgent.objects.all()
     for agent in agents:
@@ -69,8 +69,12 @@ def query_payoff(request):
 @transaction.atomic
 def launch(request):
     if request.method == 'GET':
-        eval_num = int(request.GET['eval_num'])
-        game = request.GET['name']
+        try:
+            eval_num = int(request.GET['eval_num'])
+            game = request.GET['name']
+        except:
+            return HttpResponse(json.dumps({'value': -1, 'info': 'parameters error'}))
+
         games_data, payoffs_data = Tournament(game, MODEL_IDS[game], eval_num).launch()
         Game.objects.filter(name=game).delete()
         Payoff.objects.filter(name=game).delete()
@@ -103,7 +107,7 @@ def upload_agent(request):
 
         a = UploadedAgent(name=name, game=game, f=f, entry=entry)
         a.save()
-        reset_model_ids()
+        _reset_model_ids()
         return HttpResponse(json.dumps({'value': 0, 'info': 'success'}))
 
 def delete_agent(request):
@@ -113,7 +117,7 @@ def delete_agent(request):
             return HttpResponse(json.dumps({'value': -1, 'info': 'name not exists'}))
 
         UploadedAgent.objects.filter(name=name).delete()
-        reset_model_ids()
+        _reset_model_ids()
         return HttpResponse(json.dumps({'value': 0, 'info': 'success'}))
 
 def list_agents(request):

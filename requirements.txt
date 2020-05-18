@@ -2,3 +2,4 @@ rlcard
 Django
 tqdm
 tensorflow==1.14
+django-cors-headers

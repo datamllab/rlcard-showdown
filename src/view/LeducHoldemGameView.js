@@ -97,7 +97,7 @@ class LeducHoldemGameView extends React.Component {
                                 message: "Current player choose call but has bet more or equal to the upstream player",
                                 type: "error",
                                 showClose: true
-                            });        
+                            });
                         }
                         break;
                     case "Fold":
@@ -112,13 +112,13 @@ class LeducHoldemGameView extends React.Component {
                             const mes = `Player ${foldedId} folded, player ${winnerId} wins!`;
                             this.setState({ gameEndDialog: true, gameEndDialogText: mes });
                         }, 200);
-                        return gameInfo;  
+                        return gameInfo;
                     default:
                         Message({
                             message: "Error in player's latest action",
                             type: "error",
                             showClose: true
-                        });        
+                        });
                 }
                 gameInfo.turn++;
                 if(gameInfo.round !== 0 && gameInfo.turn === this.moveHistory[gameInfo.round].length){
@@ -140,7 +140,7 @@ class LeducHoldemGameView extends React.Component {
                     message: "Mismatch in current player & move history",
                     type: "error",
                     showClose: true
-                });        
+                });
             }
         }
         // if current state is new to game state history, push it to the game state history array
@@ -151,7 +151,7 @@ class LeducHoldemGameView extends React.Component {
                 message: "Inconsistent game state history length and turn number",
                 type: "error",
                 showClose: true
-            });        
+            });
         }
         return gameInfo;
     }
@@ -195,11 +195,11 @@ class LeducHoldemGameView extends React.Component {
 
     startReplay() {
         // for test use
-        const replayId  = 0;
+        const testUrl = '/tournament/replay?name=leduc-holdem&agent0=leduc-holdem-random&agent1=leduc-holdem-cfr&index=1';
 
         // start full screen loading
         this.setState({fullScreenLoading: true});
-        axios.get(`${this.apiUrl}/replay/leduc_holdem/${replayId}`)
+        axios.get(`${this.apiUrl}${testUrl}`)
             .then(res => {
                 res = res.data;
                 // init replay info
@@ -222,8 +222,16 @@ class LeducHoldemGameView extends React.Component {
                     // loop to update game state
                     this.gameStateTimer();
                 });
+            })
+            .catch(err => {
+                console.log(err);
+                Message({
+                    message: `Error in getting replay data: ${err}`,
+                    type: "error",
+                    showClose: true
+                });
+                this.setState({fullScreenLoading: false});
             });
-
     };
 
     pauseReplay(){

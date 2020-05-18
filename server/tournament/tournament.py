@@ -129,15 +129,13 @@ def leduc_holdem_tournament(game, agents, num):
                 probabilities.append({'move':a, 'probability': p})
             history['probabilities'] = probabilities
             round_history.append(history)
+            state, player_id = env.step(action, env.agents[player_id].use_raw)
             perfect = env.get_perfect_information()
-            if round_id < perfect['current_round']:
+            if round_id < perfect['current_round'] or env.is_over():
                 round_id = perfect['current_round']
                 data['moveHistory'].append(round_history)
                 round_history = []
-            state, player_id = env.step(action, env.agents[player_id].use_raw)
         perfect = env.get_perfect_information()
-        if round_id < perfect['current_round']:
-            data['moveHistory'].append(round_history)
         data['publicCard'] = perfect['public_card']
         data = json.dumps(data)
         #data = json.dumps(data, indent=2, sort_keys=True)

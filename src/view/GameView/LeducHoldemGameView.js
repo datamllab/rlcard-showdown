@@ -1,9 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import '../assets/gameview.scss';
-import {LeducHoldemGameBoard} from '../components/GameBoard';
-import Navbar from '../components/Navbar';
-import {deepCopy} from "../utils";
+import '../../assets/gameview.scss';
+import {LeducHoldemGameBoard} from '../../components/GameBoard';
+import Navbar from '../../components/Navbar';
+import {deepCopy} from "../../utils";
+import { apiUrl } from "../../utils/config";
 
 import { Layout, Message, Loading } from 'element-react';
 import Slider from '@material-ui/core/Slider';
@@ -31,7 +32,7 @@ class LeducHoldemGameView extends React.Component {
         this.initConsiderationTime = 2000;
         this.considerationTimeDeduction = 100;
         this.gameStateTimeout = null;
-        this.apiUrl = window.g.apiUrl;
+        this.apiUrl = apiUrl;
         this.moveHistory = [];
         this.moveHistoryTotalLength = null;
         this.gameStateHistory = [[],[]];
@@ -83,12 +84,12 @@ class LeducHoldemGameView extends React.Component {
             if(gameInfo.currentPlayer === this.moveHistory[gameInfo.round][gameInfo.turn].playerIdx){
                 gameInfo.latestAction[gameInfo.currentPlayer] = this.moveHistory[gameInfo.round][gameInfo.turn].move;
                 switch (gameInfo.latestAction[gameInfo.currentPlayer]) {
-                    case "Check":
+                    case "check":
                         break;
-                    case "Raise":
+                    case "raise":
                         gameInfo.pot[gameInfo.currentPlayer] += (gameInfo.round+1) * 2;
                         break;
-                    case "Call":
+                    case "call":
                         // the upstream player must have bet more
                         if(gameInfo.pot[(gameInfo.currentPlayer+2-1)%2] > gameInfo.pot[gameInfo.currentPlayer]){
                             gameInfo.pot[gameInfo.currentPlayer] = gameInfo.pot[(gameInfo.currentPlayer+2-1)%2];
@@ -100,7 +101,7 @@ class LeducHoldemGameView extends React.Component {
                             });
                         }
                         break;
-                    case "Fold":
+                    case "fold":
                         // if one player folds, game ends
                         const foldedFound = gameInfo.playerInfo.find(element=>{return element.index === gameInfo.currentPlayer});
                         const foldedId = foldedFound ? foldedFound.id : -1;
@@ -282,7 +283,7 @@ class LeducHoldemGameView extends React.Component {
                 <div className={"playing"} style={style}>
                     <div className="probability-move">
                     {currentMove !== null ?
-                        <img src={require('../assets/images/Actions/' + currentMove.probabilities[idx].move + (currentMove.probabilities[idx].probability < 0 ? "_u" : "") + '.png')} alt={currentMove.probabilities[idx].move} height="30%" width="30%" />
+                        <img src={require('../../assets/images/Actions/' + currentMove.probabilities[idx].move + (currentMove.probabilities[idx].probability < 0 ? "_u" : "") + '.png')} alt={currentMove.probabilities[idx].move} height="30%" width="30%" />
                         :
                         <NotInterestedIcon fontSize="large" />}
                     </div>

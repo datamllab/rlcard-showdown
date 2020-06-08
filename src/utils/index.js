@@ -1,5 +1,3 @@
-import React from "react";
-
 const suitMap = new Map(
     [["H", "hearts"], ["D", "diams"], ["S", "spades"], ["C", "clubs"]]
 );

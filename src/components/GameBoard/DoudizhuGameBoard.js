@@ -10,11 +10,6 @@ import Chip from '@material-ui/core/Chip';
 import Avatar from '@material-ui/core/Avatar';
 
 class DoudizhuGameBoard extends React.Component {
-    constructor(props) {
-        super(props);
-
-    }
-
     computePlayerPortrait(playerId, playerIdx){
         if(this.props.playerInfo.length > 0){
             return this.props.playerInfo[playerIdx].role === "landlord" ?

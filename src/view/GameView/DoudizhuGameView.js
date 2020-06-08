@@ -1,9 +1,10 @@
 import React from 'react';
 import axios from 'axios';
-import '../assets/gameview.scss';
-import { DoudizhuGameBoard } from '../components/GameBoard';
-import Navbar from "../components/Navbar";
-import {removeCards, doubleRaf, deepCopy, computeHandCardsWidth, translateCardData} from "../utils";
+import '../../assets/gameview.scss';
+import { DoudizhuGameBoard } from '../../components/GameBoard';
+import Navbar from "../../components/Navbar";
+import {removeCards, doubleRaf, deepCopy, computeHandCardsWidth, translateCardData} from "../../utils";
+import { apiUrl } from "../../utils/config";
 
 import { Layout, Message, Loading } from 'element-react';
 import Slider from '@material-ui/core/Slider';
@@ -31,7 +32,7 @@ class DoudizhuGameView extends React.Component {
         this.initConsiderationTime = 2000;
         this.considerationTimeDeduction = 200;
         this.gameStateTimeout = null;
-        this.apiUrl = window.g.apiUrl;
+        this.apiUrl = apiUrl;
         this.moveHistory = [];
         this.gameStateHistory = [];
         this.initGameState = {

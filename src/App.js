@@ -1,16 +1,17 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
-import DoudizhuGameView from './view/DoudizhuGameView';
-import LeducHoldemGameView from './view/LeducHoldemGameView';
+import LeaderBoard from './view/LeaderBoard';
+import { DoudizhuGameView, LeducHoldemGameView } from './view/GameView';
 
 function App() {
     return (
         <Router>
             <Route exact path="/">
-                <Redirect to="/leduc-holdem" />
+                <Redirect to="/replay/leduc-holdem" />
             </Route>
-            <Route path="/doudizhu" component={DoudizhuGameView} />
-            <Route path="/leduc-holdem"  component={LeducHoldemGameView} />
+            <Route path="/leaderboard" component={LeaderBoard} />
+            <Route path="/replay/doudizhu" component={DoudizhuGameView} />
+            <Route path="/replay/leduc-holdem" component={LeducHoldemGameView} />
         </Router>
     );
 }

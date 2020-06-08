@@ -10,10 +10,6 @@ import Chip from '@material-ui/core/Chip';
 import Avatar from '@material-ui/core/Avatar';
 
 class LeducHoldemGameBoard extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     computePlayerPortrait(playerId, playerIdx){
         if(this.props.playerInfo.length > 0){
             return this.props.playerInfo[playerIdx].id === 0 ?
@@ -49,7 +45,7 @@ class LeducHoldemGameBoard extends React.Component {
                 </div>
             )
     }
-    
+
     computeActionText(action) {
         if (action.length > 0) {
             return <span className={"action-text"}>{action}</span>
@@ -157,7 +153,7 @@ class LeducHoldemGameBoard extends React.Component {
                     <div className="player-main-area">
                         <div className="player-info">
                             {this.computePlayerPortrait(bottomId, bottomIdx)}
-                            <span className="bet-value">{`Bet: ${this.props.pot[bottomIdx]}`}</span>
+                            <span className="bet-value">{`Bet: ${this.props.pot[bottomIdx] ? this.props.pot[bottomIdx] : '...'}`}</span>
                             {this.computeTokenImage(this.props.pot[bottomIdx])}
                         </div>
                         {bottomIdx >= 0 ? <div className="player-hand">{this.computeHand(this.props.hands[bottomIdx])}</div> : <div className="player-hand-placeholder"><span style={{"color": "white"}}>Waiting...</span></div>}
@@ -167,7 +163,7 @@ class LeducHoldemGameBoard extends React.Component {
                     <div className="player-main-area">
                         <div className="player-info">
                             {this.computePlayerPortrait(topId, topIdx)}
-                            <span className="bet-value">{`Bet: ${this.props.pot[topIdx]}`}</span>
+                            <span className="bet-value">{`Bet: ${this.props.pot[topIdx] ? this.props.pot[topIdx] : '...'}`}</span>
                             {this.computeTokenImage(this.props.pot[topIdx])}
                         </div>
                         {topIdx >= 0 ? <div className="player-hand">{this.computeHand(this.props.hands[topIdx])}</div> : <div className="player-hand-placeholder"><span style={{"color": "white"}}>Waiting...</span></div>}

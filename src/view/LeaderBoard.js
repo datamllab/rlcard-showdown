@@ -1,5 +1,4 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
 // import axios from 'axios';
 
 class LeaderBoard extends React.Component {
@@ -9,10 +8,7 @@ class LeaderBoard extends React.Component {
 
     render() {
         return (
-            <ul>
-                <li><Link to="/replay/leduc-holdem">Leduc Holdem</Link></li>
-                <li><Link to="/replay/doudizhu">Dou Dizhu</Link></li>
-            </ul>
+            <div>wdnmd</div>
         )
     }
 }

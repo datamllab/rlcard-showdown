@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -7,6 +8,7 @@ import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import {makeStyles} from "@material-ui/core/styles";
+import qs from 'query-string';
 
 const gameList = [
     {game: 'leduc-holdem', dispName: 'Leduc Hold\'em'},
@@ -47,8 +49,15 @@ const useStyles = makeStyles((theme) => ({
         '& span': {
             fontWeight: 400,
             fontSize: 14
+        },
+        '&$active': {
+            '& span': {
+                color: '#3f51b5',
+                fontWeight: 600
+            }
         }
-    }
+    },
+    active: {}
 }));
 
 function MenuBar () {
@@ -62,18 +71,27 @@ function MenuBar () {
         setOpen({game: open.game, agent: !open.agent});
     };
 
+    const history = useHistory();
+    const handleGameJump = (gameName) => {
+        history.push(`/leaderboard?type=game&name=${gameName}`);
+    }
+    const handleAgentJump = (agentName) => {
+        history.push(`/leaderboard?type=agent&name=${agentName}`);
+    }
+
+    const { type, name } = qs.parse(window.location.search);
     const gameMenu = gameList.map(game => {
         return <List component="div" disablePadding key={"game-menu-"+game.game}>
-            <ListItem button className={classes.nested}>
-                <ListItemText primary={game.dispName} className={classes.menuLayer2} />
+            <ListItem button className={classes.nested} onClick={() => {handleGameJump(game.game)}}>
+                <ListItemText primary={game.dispName} className={`${classes.menuLayer2} ${(type === 'game' && name === game.game) ? classes.active : classes.inactive}`} />
             </ListItem>
         </List>
     });
 
     const agentMenu = modelList.map(model => {
         return <List component="div" disablePadding key={"game-menu-"+model.model}>
-            <ListItem button className={classes.nested}>
-                <ListItemText primary={model.dispName} className={classes.menuLayer2} />
+            <ListItem button className={classes.nested} onClick={() => {handleAgentJump(model.model)}}>
+                <ListItemText primary={model.dispName} className={`${classes.menuLayer2} ${(type === 'agent' && name === model.model) ? classes.active : classes.inactive}`} />
             </ListItem>
         </List>
     });

@@ -32,7 +32,6 @@ class DoudizhuGameView extends React.Component {
         this.initConsiderationTime = 2000;
         this.considerationTimeDeduction = 200;
         this.gameStateTimeout = null;
-        this.apiUrl = apiUrl;
         this.moveHistory = [];
         this.gameStateHistory = [];
         this.initGameState = {
@@ -180,7 +179,7 @@ class DoudizhuGameView extends React.Component {
 
         // start full screen loading
         this.setState({fullScreenLoading: true});
-        axios.get(`${this.apiUrl}/replay/doudizhu/${replayId}`)
+        axios.get(`${apiUrl}/replay/doudizhu/${replayId}`)
             .then(res => {
                 res = res.data;
                 // init replay info

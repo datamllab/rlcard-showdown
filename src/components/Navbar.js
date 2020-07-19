@@ -21,7 +21,7 @@ class Navbar extends React.Component {
 
     render() {
         return (
-            <AppBar position="static" className={"header-bar-wrapper"}>
+            <AppBar position="fixed" className={"header-bar-wrapper"}>
                 <div className={"header-bar"}>
                     <Link to="/leaderboard"><img src={logo_white} alt={"Logo"} height="65px" /></Link>
                     <div className={"title unselectable"}><div className={"title-text"}>Showdown<span className={"subtitle"}>{this.props.gameName === '' ? '' : '/ ' + this.props.gameName}</span></div></div>

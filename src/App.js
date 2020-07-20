@@ -18,7 +18,7 @@ function App() {
             <Navbar className={classes.navBar} gameName={""}/>
             <div style={{marginTop: '75px'}}>
                 <Route exact path="/">
-                    <Redirect to="/leaderboard" />
+                    <Redirect to="/leaderboard?type=game&name=leduc-holdem" />
                 </Route>
                 <Route path="/leaderboard" component={LeaderBoard} />
                 <Route path="/replay/doudizhu" component={DoudizhuGameView} />

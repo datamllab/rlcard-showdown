@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import qs from 'query-string';
 import '../../assets/gameview.scss';
 import {LeducHoldemGameBoard} from '../../components/GameBoard';
 import Navbar from '../../components/Navbar';
@@ -32,7 +33,6 @@ class LeducHoldemGameView extends React.Component {
         this.initConsiderationTime = 2000;
         this.considerationTimeDeduction = 100;
         this.gameStateTimeout = null;
-        this.apiUrl = apiUrl;
         this.moveHistory = [];
         this.moveHistoryTotalLength = null;
         this.gameStateHistory = [[],[]];
@@ -195,12 +195,12 @@ class LeducHoldemGameView extends React.Component {
     }
 
     startReplay() {
-        // for test use
-        const testUrl = '/tournament/replay?name=leduc-holdem&agent0=leduc-holdem-random&agent1=leduc-holdem-cfr&index=1';
+        const { name, agent0, agent1, index } = qs.parse(window.location.search);
+        const requestUrl = `${apiUrl}/tournament/replay?name=${name}&agent0=${agent0}&agent1=${agent1}&index=${index}`;
 
         // start full screen loading
         this.setState({fullScreenLoading: true});
-        axios.get(`${this.apiUrl}${testUrl}`)
+        axios.get(requestUrl)
             .then(res => {
                 res = res.data;
                 // init replay info

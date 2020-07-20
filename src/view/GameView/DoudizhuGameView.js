@@ -23,6 +23,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
+import qs from "query-string";
 
 class DoudizhuGameView extends React.Component {
     constructor(props) {
@@ -174,12 +175,12 @@ class DoudizhuGameView extends React.Component {
     }
 
     startReplay() {
-        // for test use
-        const replayId  = 0;
+        const { name, agent0, agent1, index } = qs.parse(window.location.search);
+        const requestUrl = `${apiUrl}/tournament/replay?name=${name}&agent0=${agent0}&agent1=${agent1}&index=${index}`;
 
         // start full screen loading
         this.setState({fullScreenLoading: true});
-        axios.get(`${apiUrl}/replay/doudizhu/${replayId}`)
+        axios.get(requestUrl)
             .then(res => {
                 res = res.data;
                 // init replay info

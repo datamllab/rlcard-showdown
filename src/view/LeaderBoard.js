@@ -72,7 +72,8 @@ function createData(resData) {
         agent0: resData.fields.agent0,
         agent1: resData.fields.agent1,
         win: resData.fields.win ? 'Win' : 'Lose',
-        payoff: resData.fields.payoff
+        payoff: resData.fields.payoff,
+        replayUrl: `/replay/${resData.fields.name}?name=${resData.fields.name}&agent0=${resData.fields.agent0}&agent1=${resData.fields.agent1}&index=${resData.fields.index}`
     };
 }
 
@@ -82,7 +83,8 @@ const headCells = [
     { id: 'agent0', numeric: false, disablePadding: false, label: 'Agent 0' },
     { id: 'agent1', numeric: false, disablePadding: false, label: 'Agent 1' },
     { id: 'win', numeric: false, disablePadding: false, label: 'Result' },
-    { id: 'payoff', numeric: false, disablePadding: false, label: 'Payoff' }
+    { id: 'payoff', numeric: false, disablePadding: false, label: 'Payoff' },
+    { id: 'replay', numeric: false, disablePadding: false, label: 'Replay' }
 ];
 
 const StyledTableCell = withStyles((theme) => ({
@@ -261,6 +263,7 @@ const EnhancedTable = (props) => {
                                             <TableCell>{row.agent1}</TableCell>
                                             <TableCell>{row.win}</TableCell>
                                             <TableCell>{row.payoff}</TableCell>
+                                            <TableCell><a style={{display: "table-cell"}} href={row.replayUrl} target="_blank">Replay</a></TableCell>
                                         </TableRow>
                                     );
                                 })}

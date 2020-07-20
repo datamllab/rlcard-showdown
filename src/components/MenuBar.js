@@ -10,19 +10,6 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import {makeStyles} from "@material-ui/core/styles";
 import qs from 'query-string';
 
-const gameList = [
-    {game: 'leduc-holdem', dispName: 'Leduc Hold\'em'},
-    {game: 'doudizhu', dispName: 'Dou Dizhu'},
-];
-
-const modelList = [
-    {model: 'leduc-holdem-random', dispName: 'Leduc Hold\'em Random'},
-    {model: 'leduc-holdem-cfr', dispName: 'Leduc Hold\'em CFR'},
-    {model: 'leduc-holdem-rule-v1', dispName: 'Leduc Hold\'em Rule V1'},
-    {model: 'doudizhu-random', dispName: 'Dou Dizhu Random'},
-    {model: 'doudizhu-rule-v1', dispName: 'Dou Dizhu Rule V1'}
-];
-
 const drawerWidth = 250;
 
 const useStyles = makeStyles((theme) => ({
@@ -60,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     active: {}
 }));
 
-function MenuBar () {
+function MenuBar (props) {
     const classes = useStyles();
 
     const [open, setOpen] = React.useState({game: true, agent: true});
@@ -80,7 +67,7 @@ function MenuBar () {
     }
 
     const { type, name } = qs.parse(window.location.search);
-    const gameMenu = gameList.map(game => {
+    const gameMenu = props.gameList.map(game => {
         return <List component="div" disablePadding key={"game-menu-"+game.game}>
             <ListItem button className={classes.nested} onClick={() => {handleGameJump(game.game)}}>
                 <ListItemText primary={game.dispName} className={`${classes.menuLayer2} ${(type === 'game' && name === game.game) ? classes.active : classes.inactive}`} />
@@ -88,7 +75,7 @@ function MenuBar () {
         </List>
     });
 
-    const agentMenu = modelList.map(model => {
+    const agentMenu = props.modelList.map(model => {
         return <List component="div" disablePadding key={"game-menu-"+model.model}>
             <ListItem button className={classes.nested} onClick={() => {handleAgentJump(model.model)}}>
                 <ListItemText primary={model.dispName} className={`${classes.menuLayer2} ${(type === 'agent' && name === model.model) ? classes.active : classes.inactive}`} />

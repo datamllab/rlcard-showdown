@@ -280,6 +280,7 @@ class DoudizhuGameView extends React.Component {
     }
 
     computeProbabilityItem(idx){
+        return <span className={"waiting"}>Currently Unavailable...</span>
         if(this.state.gameInfo.gameStatus !== "ready" && this.state.gameInfo.turn < this.moveHistory.length){
             let style = {};
             style["backgroundColor"] = this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `rgba(63, 81, 181, ${this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability})` : "#bdbdbd";

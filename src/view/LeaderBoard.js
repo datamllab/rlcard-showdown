@@ -18,6 +18,7 @@ import axios from 'axios';
 import TablePagination from "@material-ui/core/TablePagination";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import withStyles from "@material-ui/core/styles/withStyles";
+import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 
 const gameList = [
     {game: 'leduc-holdem', dispName: 'Leduc Hold\'em'},
@@ -263,7 +264,7 @@ const EnhancedTable = (props) => {
                                             <TableCell>{row.agent1}</TableCell>
                                             <TableCell>{row.win}</TableCell>
                                             <TableCell>{row.payoff}</TableCell>
-                                            <TableCell><a style={{display: "table-cell"}} href={row.replayUrl} target="_blank">Replay</a></TableCell>
+                                            <TableCell><a style={{display: "table-cell"}} href={row.replayUrl} target="_blank"><PlayCircleOutlineIcon style={{verticalAlign: "middle"}}/></a></TableCell>
                                         </TableRow>
                                     );
                                 })}

@@ -72,15 +72,19 @@ def doudizhu_tournament(game, agents, names, num):
         state, player_id = env.reset()
         perfect = env.get_perfect_information()
         data['initHands'] = perfect['hand_cards_with_suit']
+        current_hand_cards = perfect['hand_cards_with_suit'].copy()
+        for i in range(len(current_hand_cards)):
+            current_hand_cards[i] = current_hand_cards[i].split()
         data['moveHistory'] = []
         while not env.is_over():
             action, probs = env.agents[player_id].eval_step(state)
             history = {}
             history['playerIdx'] = player_id
             if env.agents[player_id].use_raw:
-                history['move'] = action
+                _action = action
             else:
-                history['move'] = env._decode_action(action)
+                _action = env._decode_action(action)
+            history['move'] = _calculate_doudizhu_move(_action, player_id, current_hand_cards)
 
             data['moveHistory'].append(history)
             state, player_id = env.step(action, env.agents[player_id].use_raw)
@@ -93,6 +97,23 @@ def doudizhu_tournament(game, agents, names, num):
             wins.append(False)
         payoffs.append(env.get_payoffs()[0])
     return json_data, payoffs, wins
+
+def _calculate_doudizhu_move(action, player_id, current_hand_cards):
+    if action == 'pass':
+        return action
+    trans = {'B': 'BJ', 'R': 'RJ'}
+    cards_with_suit = []
+    for card in action:
+        if card in trans:
+            cards_with_suit.append(trans[card])
+            current_hand_cards[player_id].remove(trans[card])
+        else:
+            for hand_card in current_hand_cards[player_id]:
+                if hand_card[1] == card:
+                    cards_with_suit.append(hand_card)
+                    current_hand_cards[player_id].remove(hand_card)
+                    break
+    return ' '.join(cards_with_suit)
 
 def leduc_holdem_tournament(game, agents, num):
     env = rlcard.make(game, config={'allow_raw_data': True})
@@ -146,6 +167,7 @@ def leduc_holdem_tournament(game, agents, num):
             wins.append(False)
         payoffs.append(env.get_payoffs()[0])
     return json_data, payoffs, wins
+
 
 if __name__=='__main__':
     game = 'leduc-holdem'

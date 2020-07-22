@@ -49,7 +49,7 @@ def _get_page(result, elements_every_page, page_index):
     page_index = int(page_index)
     total_page = math.ceil(len(result) / float(elements_every_page))
     begin = page_index * elements_every_page
-    end = min((page_index+1) * elements_every_page, total_page)
+    end = min((page_index+1) * elements_every_page, len(result))
     result = result[begin:end]
     return result, total_page
 

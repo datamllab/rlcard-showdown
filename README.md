@@ -30,23 +30,23 @@ The definitions of the fields are as follows:
 
 | type | Resource                  |  Parameters                                          |  Description                                                                                                       |
 |------|---------------------------|------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
-| GET  | tournament/launch         | `eval_num`, `name`                                   | Launch tournment on the game. Each pair of models will play `eval_num` times. Results will be saved in database.   |
-| GET  | tournament/query\_game    | `name`, `index`, `agent0`, `agent1`, `win`, `payoff` | Query the games with the given parameters                                                                          |
-| GET  | tournament/query\_payoff  | `name`, `agent0`, `agent1`, `payoff`                 | Query the payoffs with the given parameters                                                                        |
-| GET  | tournament/replay         | `name`, `agent0`, `agent1`, `index`                  | Return the replay data                                                                                             |
-| POST | tournament/upload\_agent  | `model`(Python file), `name`, `game`, `entry`        | Upload a model file. `name` is model ID, `entry` is the class name of the model                                    |
-| GET  | tournament/delete\_agent  | `name`                                               | Delete the agent of the given name                                                                                 |
-| GET  | tournament/list\_agents   |                                                      | list all the agents                                                                                                |
+| GET  | tournament/launch         | `eval_num`, `name`                                                                        | Launch tournment on the game. Each pair of models will play `eval_num` times. Results will be saved in database.   |
+| GET  | tournament/query\_game    | `name`, `index`, `agent0`, `agent1`, `win`, `payoff`, `elements_every_page`, `page_index` | Query the games with the given parameters                                                                          |
+| GET  | tournament/query\_payoff  | `name`, `agent0`, `agent1`, `payoff`                                                      | Query the payoffs with the given parameters                                                                        |
+| GET  | tournament/replay         | `name`, `agent0`, `agent1`, `index`                                                       | Return the replay data                                                                                             |
+| POST | tournament/upload\_agent  | `model`(Python file), `name`, `game`, `entry`                                             | Upload a model file. `name` is model ID, `entry` is the class name of the model                                    |
+| GET  | tournament/delete\_agent  | `name`                                                                                    | Delete the agent of the given name                                                                                 |
+| GET  | tournament/list\_agents   |                                                                                           | list all the agents                                                                                                |
 
 ## Example API
 | API                                                                                                                   | Description                                                                              |
 |-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
-| http://127.0.0.1:8000/tournament/launch?eval_num=200&name=leduc-holdem                                                | Evaluate on Leduc Holdem with 200 games for each pair of models                          |
-| http://127.0.0.1:8000/tournament/replay?name=leduc-holdem&agent0=leduc-holdem-rule-v1&agent1=leduc-holdem-cfr&index=3 | Obtain the replay data between rule model and CFR model. Obtain the data of the 3rd game |
-| http://127.0.0.1:8000/tournament/query_game                                                                           | Get all the game data                                                                    |
-| http://127.0.0.1:8000/tournament/query_game?name=leduc-holdem                                                         | Get all the game data of Leduc Holdem                                                    |
-| http://127.0.0.1:8000/tournament/query_payoff                                                                         | Get all the payoffs                                                                      |
-| http://127.0.0.1:8000/tournament/query_payoff?agent0=leduc-holdem-cfr&agent1=leduc-holdem-rule-v1                     | Get all the payoffs between rule and CFR models                                          |
+| http://127.0.0.1:8000/tournament/launch?eval_num=200&name=leduc-holdem                                                                   | Evaluate on Leduc Holdem with 200 games for each pair of models                          |
+| http://127.0.0.1:8000/tournament/replay?name=leduc-holdem&agent0=leduc-holdem-rule-v1&agent1=leduc-holdem-cfr                   &index=3 | Obtain the replay data between rule model and CFR model. Obtain the data of the 3rd game |
+| http://127.0.0.1:8000/tournament/query_game&elements_every_page=10&page_index=0                                                          | Get all the game data                                                                    |
+| http://127.0.0.1:8000/tournament/query_game?name=leduc-holdem&elements_every_page=10&page_index=0                                        | Get all the game data of Leduc Holdem                                                    |
+| http://127.0.0.1:8000/tournament/query_payoff                                                                                            | Get all the payoffs                                                                      |
+| http://127.0.0.1:8000/tournament/query_payoff?agent0=leduc-holdem-cfr&agent1=leduc-holdem-rule-v1                                        | Get all the payoffs between rule and CFR models                                          |
 
 ## Registered Models
 Some models have been pre-registered as baselines

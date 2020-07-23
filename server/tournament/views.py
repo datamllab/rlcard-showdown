@@ -11,14 +11,15 @@ from django.views.decorators.csrf import csrf_exempt
 from django.dispatch import receiver
 from django.db import models
 from django.conf import settings
+from django.db.models import Avg
 
 from .rlcard_wrap import rlcard, MODEL_IDS
 from .models import Game, Payoff, UploadedAgent
 
 from .tournament import Tournament
+from .rlcard_wrap import rlcard, MODEL_IDS
 
 def _reset_model_ids():
-    from .rlcard_wrap import rlcard, MODEL_IDS
     agents = UploadedAgent.objects.all()
     for agent in agents:
         path = os.path.join(settings.MEDIA_ROOT, agent.f.name)
@@ -66,7 +67,7 @@ def replay(request):
 def query_game(request):
     if request.method == 'GET':
         if not PAGE_FIELDS[0] in request.GET or not PAGE_FIELDS[1] in request.GET:
-            return HttpResponse(json.dumps({'value': -1, 'info': 'elements_every_page and page index should be given'}))
+            return HttpResponse(json.dumps({'value': -1, 'info': 'elements_every_page and page_index should be given'}))
         filter_dict = {key: request.GET.get(key) for key in dict(request.GET).keys() if key not in PAGE_FIELDS}
         result = Game.objects.filter(**filter_dict).order_by('index')
         result, total_page = _get_page(result, request.GET['elements_every_page'], request.GET['page_index'])
@@ -80,6 +81,16 @@ def query_payoff(request):
         result = serializers.serialize('json', result)
         return HttpResponse(result)
 
+def query_agent_payoff(request):
+    if request.method == 'GET': 
+        if not PAGE_FIELDS[0] in request.GET or not PAGE_FIELDS[1] in request.GET:
+            return HttpResponse(json.dumps({'value': -1, 'info': 'elements_every_page and page_index should be given'}))
+        if not 'name' in request.GET:
+            return HttpResponse(json.dumps({'value': -2, 'info': 'name should be given'}))
+        result = list(Payoff.objects.filter(name=request.GET['name']).values('agent0').annotate(payoff = Avg('payoff')).order_by('-payoff'))
+        print(result)
+        result, total_page = _get_page(result, request.GET['elements_every_page'], request.GET['page_index'])
+        return HttpResponse(json.dumps({'value': 0, 'data': result, 'total_page': total_page}))
 
 @transaction.atomic
 def launch(request):
@@ -135,11 +146,19 @@ def delete_agent(request):
         _reset_model_ids()
         return HttpResponse(json.dumps({'value': 0, 'info': 'success'}))
 
-def list_agents(request):
+def list_uploaded_agents(request):
     if request.method == 'GET':
-        agents = UploadedAgent.objects.all()
-        result = serializers.serialize('json', agents)
+        filter_dict = {key: request.GET.get(key) for key in dict(request.GET).keys()}
+        result = UploadedAgent.objects.filter(**filter_dict)
+        result = serializers.serialize('json', result)
         return HttpResponse(result)
+
+def list_baseline_agents(request):
+    if request.method == 'GET':
+        if not 'game' in request.GET:
+            return HttpResponse(json.dumps({'value': -2, 'info': 'name should be given'}))
+        result = MODEL_IDS[request.GET['game']]
+        return HttpResponse(json.dumps({'value': 0, 'data': result}))
 
 @receiver(models.signals.post_delete, sender=UploadedAgent)
 def auto_delete_file_on_delete(sender, instance, **kwargs):

@@ -34,32 +34,55 @@ const modelList = [
 ];
 
 function LeaderBoard () {
+    const initRowsPerPage = 10;
+    const [rowsPerPage, setRowsPerPage] = React.useState(initRowsPerPage);
+    const [page, setPage] = React.useState(0);
+    const [rowsTotal, setRowsTotal] = React.useState(0);
     const [rows, setRows] = React.useState([]);
 
     const { type, name } = qs.parse(window.location.search);
     let requestUrl = `${apiUrl}/tournament/`;
     if (type === 'game') {
-        requestUrl += `query_game?name=${name}`
+        requestUrl += `query_agent_payoff?name=${name}&elements_every_page=${rowsPerPage}&page_index=${page}`
     } else if (type === 'agent') {
-        requestUrl += `query_game?agent0=${name}`
+        requestUrl += `query_game?agent0=${name}&elements_every_page=${rowsPerPage}&page_index=${page}`
     }
     console.log(requestUrl);
+
+    // todo: detect type change then reset page and page size
 
     useEffect(() => {
         async function fetchData() {
             const res = await axios.get(requestUrl);
-            console.log('wdnmd', res);
-            setRows(res.data.map((resRow) => {return createData(resRow);}));
+            console.log(res);
+            if (type === 'game') {
+                setRows(res.data.data.map((resRow, index) => {
+                    const rank = rowsPerPage * page + index + 1;
+                    return createLeaderBoardData(resRow, rank);
+                }));
+            } else if (type === 'agent') {
+                setRows(res.data.data.map((resRow) => {return createData(resRow);}));
+            }
+            setRowsTotal(res.data.total_row)
         }
         fetchData();
-    }, [requestUrl])
+    }, [requestUrl, page, rowsPerPage, type])
 
     return (
         <div>
             <MenuBar gameList={gameList} modelList={modelList} />
             <div style={{marginLeft: '250px'}}>
                 <div style={{padding: 20}}>
-                    <EnhancedTable tableRows={rows} routeInfo={{type, name}}/>
+                    <EnhancedTable
+                        tableRows={rows}
+                        routeInfo={{type, name}}
+                        page={page}
+                        setPage={(q) => {setPage(q)}}
+                        rowsPerPage={rowsPerPage}
+                        setRowsPerPage={(q) => {setRowsPerPage(q)}}
+                        rowsTotal={rowsTotal}
+                        type={type}
+                    />
                 </div>
             </div>
         </div>
@@ -78,7 +101,15 @@ function createData(resData) {
     };
 }
 
-const headCells = [
+function createLeaderBoardData(resData, rank) {
+    return {
+        rank: rank,
+        agent: resData.agent0,
+        payoff: resData.payoff
+    }
+}
+
+const agentHeadCells = [
     { id: 'id', numeric: false, disablePadding: false, label: 'ID' },
     { id: 'game', numeric: false, disablePadding: false, label: 'Game' },
     { id: 'agent0', numeric: false, disablePadding: false, label: 'Agent 0' },
@@ -86,6 +117,12 @@ const headCells = [
     { id: 'win', numeric: false, disablePadding: false, label: 'Result' },
     { id: 'payoff', numeric: false, disablePadding: false, label: 'Payoff' },
     { id: 'replay', numeric: false, disablePadding: false, label: 'Replay' }
+];
+
+const leaderBoardHeadCells = [
+    { id: 'rank', numeric: false, disablePadding: false, label: 'Rank' },
+    { id: 'agent', numeric: false, disablePadding: false, label: 'Agent' },
+    { id: 'payoff', numeric: false, disablePadding: false, label: 'Payoff' }
 ];
 
 const StyledTableCell = withStyles((theme) => ({
@@ -97,7 +134,8 @@ const StyledTableCell = withStyles((theme) => ({
     }
 }))(TableCell);
 
-function EnhancedTableHead() {
+function EnhancedTableHead(props) {
+    const {headCells} = props;
     return (
         <TableHead>
             <TableRow>
@@ -114,11 +152,6 @@ function EnhancedTableHead() {
         </TableHead>
     );
 }
-
-EnhancedTableHead.propTypes = {
-    classes: PropTypes.object.isRequired,
-    rowCount: PropTypes.number.isRequired,
-};
 
 const useToolbarStyles = makeStyles((theme) => ({
     root: {
@@ -206,17 +239,98 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const EnhancedTable = (props) => {
-    const initRowsPerPage = 10;
-    const { tableRows, routeInfo } = props;
+const LeaderBoardTableContent = (props) => {
+    const { tableRows, rowsPerPage, page, rowsTotal, headCells } = props;
     const classes = useStyles();
-    const [rowsPerPage, setRowsPerPage] = React.useState(initRowsPerPage);
-    const [page, setPage] = React.useState(0);
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rowsTotal - page * rowsPerPage);
+    return (
+        <TableContainer>
+            <Table
+                className={classes.table}
+                aria-labelledby="tableTitle"
+                size={'medium'}
+                aria-label="enhanced table"
+            >
+                <EnhancedTableHead headCells={headCells}/>
+                <TableBody>
+                    {tableRows.map((row, index) => {
+                        const labelId = `enhanced-table-checkbox-${index}`;
+                        return (
+                            <TableRow
+                                hover
+                                role="checkbox"
+                                tabIndex={-1}
+                                key={row.rank}
+                            >
+                                <TableCell component="th" id={labelId} scope="row">
+                                    {row.rank}
+                                </TableCell>
+                                <TableCell>{row.agent}</TableCell>
+                                <TableCell>{row.payoff}</TableCell>
+                            </TableRow>
+                        );
+                    })}
+                    {emptyRows > 0 && (
+                        <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={3} />
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    )
+}
 
-    useEffect(() => {
-        setRowsPerPage(initRowsPerPage);
-        setPage(0);
-    }, [tableRows]);
+const AgentTableContent = (props) => {
+    const { tableRows, rowsPerPage, page, rowsTotal, headCells } = props;
+    const classes = useStyles();
+    const emptyRows = rowsPerPage - Math.min(rowsPerPage, rowsTotal - page * rowsPerPage);
+    return (
+        <TableContainer>
+            <Table
+                className={classes.table}
+                aria-labelledby="tableTitle"
+                size={'medium'}
+                aria-label="enhanced table"
+            >
+                <EnhancedTableHead headCells={headCells}/>
+                <TableBody>
+                    {tableRows.map((row, index) => {
+                        const labelId = `enhanced-table-checkbox-${index}`;
+                        return (
+                            <TableRow
+                                hover
+                                role="checkbox"
+                                tabIndex={-1}
+                                key={row.id}
+                            >
+                                <TableCell component="th" id={labelId} scope="row">
+                                    {row.id}
+                                </TableCell>
+                                <TableCell>{row.game}</TableCell>
+                                <TableCell>{row.agent0}</TableCell>
+                                <TableCell>{row.agent1}</TableCell>
+                                <TableCell>{row.win}</TableCell>
+                                <TableCell>{row.payoff}</TableCell>
+                                <TableCell><a style={{display: "table-cell"}} href={row.replayUrl} rel="noopener noreferrer" target="_blank"><PlayCircleOutlineIcon style={{verticalAlign: "middle"}}/></a></TableCell>
+                            </TableRow>
+                        );
+                    })}
+                    {emptyRows > 0 && (
+                        <TableRow style={{ height: 53 * emptyRows }}>
+                            <TableCell colSpan={7} />
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    )
+}
+
+const EnhancedTable = (props) => {
+
+    const { tableRows, routeInfo, rowsPerPage, page, setPage, setRowsPerPage, rowsTotal, type } = props;
+    const classes = useStyles();
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -227,59 +341,23 @@ const EnhancedTable = (props) => {
         setPage(0);
     };
 
-    const emptyRows = rowsPerPage - Math.min(rowsPerPage, tableRows.length - page * rowsPerPage);
+    let tableContent = '';
+    if (type === 'game') {
+        tableContent = <LeaderBoardTableContent headCells={leaderBoardHeadCells} tableRows={tableRows} rowsPerPage={rowsPerPage} page={page} rowsTotal={rowsTotal}/>;
+    } else if (type === 'agent') {
+        tableContent = <AgentTableContent headCells={agentHeadCells} tableRows={tableRows} rowsPerPage={rowsPerPage} page={page} rowsTotal={rowsTotal}/>;
+    }
 
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
                 <EnhancedTableToolbar routeInfo={routeInfo}/>
-                <TableContainer>
-                    <Table
-                        className={classes.table}
-                        aria-labelledby="tableTitle"
-                        size={'medium'}
-                        aria-label="enhanced table"
-                    >
-                        <EnhancedTableHead
-                            classes={classes}
-                            rowCount={tableRows.length}
-                        />
-                        <TableBody>
-                            {tableRows
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row, index) => {
-                                    const labelId = `enhanced-table-checkbox-${index}`;
-                                    return (
-                                        <TableRow
-                                            hover
-                                            role="checkbox"
-                                            tabIndex={-1}
-                                            key={row.id}
-                                        >
-                                            <TableCell component="th" id={labelId} scope="row">
-                                                {row.id}
-                                            </TableCell>
-                                            <TableCell>{row.game}</TableCell>
-                                            <TableCell>{row.agent0}</TableCell>
-                                            <TableCell>{row.agent1}</TableCell>
-                                            <TableCell>{row.win}</TableCell>
-                                            <TableCell>{row.payoff}</TableCell>
-                                            <TableCell><a style={{display: "table-cell"}} href={row.replayUrl} target="_blank"><PlayCircleOutlineIcon style={{verticalAlign: "middle"}}/></a></TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            {emptyRows > 0 && (
-                                <TableRow style={{ height: 53 * emptyRows }}>
-                                    <TableCell colSpan={6} />
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                {tableContent}
                 <TablePagination
-                    rowsPerPageOptions={[10, 50, 100]}
+                    // todo: remove testing page size option
+                    rowsPerPageOptions={[2, 10, 50, 100]}
                     component="div"
-                    count={tableRows.length}
+                    count={rowsTotal}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}

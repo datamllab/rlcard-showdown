@@ -48,11 +48,12 @@ PAGE_FIELDS = ['elements_every_page', 'page_index']
 def _get_page(result, elements_every_page, page_index):
     elements_every_page = int(elements_every_page)
     page_index = int(page_index)
+    total_row = len(result)
     total_page = math.ceil(len(result) / float(elements_every_page))
     begin = page_index * elements_every_page
     end = min((page_index+1) * elements_every_page, len(result))
     result = result[begin:end]
-    return result, total_page
+    return result, total_page, total_row
 
 def replay(request):
     if request.method == 'GET':
@@ -70,9 +71,9 @@ def query_game(request):
             return HttpResponse(json.dumps({'value': -1, 'info': 'elements_every_page and page_index should be given'}))
         filter_dict = {key: request.GET.get(key) for key in dict(request.GET).keys() if key not in PAGE_FIELDS}
         result = Game.objects.filter(**filter_dict).order_by('index')
-        result, total_page = _get_page(result, request.GET['elements_every_page'], request.GET['page_index'])
+        result, total_page, total_row = _get_page(result, request.GET['elements_every_page'], request.GET['page_index'])
         result = serializers.serialize('json', result, fields=('name', 'index', 'agent0', 'agent1', 'win', 'payoff'))
-        return HttpResponse(json.dumps({'value': 0, 'data': json.loads(result), 'total_page': total_page}))
+        return HttpResponse(json.dumps({'value': 0, 'data': json.loads(result), 'total_page': total_page, 'total_row': total_row}))
 
 def query_payoff(request):
     if request.method == 'GET':
@@ -82,15 +83,15 @@ def query_payoff(request):
         return HttpResponse(result)
 
 def query_agent_payoff(request):
-    if request.method == 'GET': 
+    if request.method == 'GET':
         if not PAGE_FIELDS[0] in request.GET or not PAGE_FIELDS[1] in request.GET:
             return HttpResponse(json.dumps({'value': -1, 'info': 'elements_every_page and page_index should be given'}))
         if not 'name' in request.GET:
             return HttpResponse(json.dumps({'value': -2, 'info': 'name should be given'}))
         result = list(Payoff.objects.filter(name=request.GET['name']).values('agent0').annotate(payoff = Avg('payoff')).order_by('-payoff'))
         print(result)
-        result, total_page = _get_page(result, request.GET['elements_every_page'], request.GET['page_index'])
-        return HttpResponse(json.dumps({'value': 0, 'data': result, 'total_page': total_page}))
+        result, total_page, total_row = _get_page(result, request.GET['elements_every_page'], request.GET['page_index'])
+        return HttpResponse(json.dumps({'value': 0, 'data': result, 'total_page': total_page, 'total_row': total_row}))
 
 @transaction.atomic
 def launch(request):

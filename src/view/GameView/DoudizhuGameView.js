@@ -15,7 +15,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import PauseCircleOutlineRoundedIcon from '@material-ui/icons/PauseCircleOutlineRounded';
 import ReplayRoundedIcon from '@material-ui/icons/ReplayRounded';
-import NotInterestedIcon from '@material-ui/icons/NotInterested';
+// import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
 import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 import DialogTitle from "@material-ui/core/DialogTitle";
@@ -281,30 +281,30 @@ class DoudizhuGameView extends React.Component {
 
     computeProbabilityItem(idx){
         return <span className={"waiting"}>Currently Unavailable...</span>
-        if(this.state.gameInfo.gameStatus !== "ready" && this.state.gameInfo.turn < this.moveHistory.length){
-            let style = {};
-            style["backgroundColor"] = this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `rgba(63, 81, 181, ${this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability})` : "#bdbdbd";
-            return (
-                <div className={"playing"} style={style}>
-                    <div className="probability-move">
-                        {this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ?
-                            this.computeSingleLineHand(this.cardStr2Arr(this.moveHistory[this.state.gameInfo.turn].probabilities[idx].move))
-                            :
-                            <NotInterestedIcon fontSize="large" />
-                        }
-                    </div>
-                    {this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ?
-                        <div className={"non-card"}>
-                            <span>{this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `Probability ${(this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability * 100).toFixed(2)}%` : ""}</span>
-                        </div>
-                        :
-                        ""
-                    }
-                </div>
-            )
-        }else {
-            return <span className={"waiting"}>Waiting...</span>
-        }
+        // if(this.state.gameInfo.gameStatus !== "ready" && this.state.gameInfo.turn < this.moveHistory.length){
+        //     let style = {};
+        //     style["backgroundColor"] = this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `rgba(63, 81, 181, ${this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability})` : "#bdbdbd";
+        //     return (
+        //         <div className={"playing"} style={style}>
+        //             <div className="probability-move">
+        //                 {this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ?
+        //                     this.computeSingleLineHand(this.cardStr2Arr(this.moveHistory[this.state.gameInfo.turn].probabilities[idx].move))
+        //                     :
+        //                     <NotInterestedIcon fontSize="large" />
+        //                 }
+        //             </div>
+        //             {this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ?
+        //                 <div className={"non-card"}>
+        //                     <span>{this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `Probability ${(this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability * 100).toFixed(2)}%` : ""}</span>
+        //                 </div>
+        //                 :
+        //                 ""
+        //             }
+        //         </div>
+        //     )
+        // }else {
+        //     return <span className={"waiting"}>Waiting...</span>
+        // }
     }
 
     go2PrevGameState() {

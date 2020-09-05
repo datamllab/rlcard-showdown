@@ -7,7 +7,8 @@ import Navbar from '../../components/Navbar';
 import {deepCopy} from "../../utils";
 import { apiUrl } from "../../utils/config";
 
-import { Layout, Message, Loading } from 'element-react';
+import { Layout, Loading } from 'element-react';
+import { Message } from 'element-react';
 import Slider from '@material-ui/core/Slider';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
@@ -87,7 +88,7 @@ class LeducHoldemGameView extends React.Component {
                     case "check":
                         break;
                     case "raise":
-                        gameInfo.pot[gameInfo.currentPlayer] += (gameInfo.round+1) * 2;
+                        gameInfo.pot[gameInfo.currentPlayer] = (gameInfo.pot[(gameInfo.currentPlayer+2-1)%2] + (gameInfo.round+1) * 2);
                         break;
                     case "call":
                         // the upstream player must have bet more
@@ -197,12 +198,22 @@ class LeducHoldemGameView extends React.Component {
     startReplay() {
         const { name, agent0, agent1, index } = qs.parse(window.location.search);
         const requestUrl = `${apiUrl}/tournament/replay?name=${name}&agent0=${agent0}&agent1=${agent1}&index=${index}`;
-
         // start full screen loading
         this.setState({fullScreenLoading: true});
+
         axios.get(requestUrl)
             .then(res => {
                 res = res.data;
+                if (res.moveHistory.length === 0) {
+                    Message({
+                        message: "Empty move history",
+                        type: "error",
+                        showClose: true,
+                        duration: 0
+                    });
+                    this.setState({fullScreenLoading: false});
+                    return false;
+                }
                 // init replay info
                 this.moveHistory = res.moveHistory;
                 this.moveHistoryTotalLength = this.moveHistory.reduce((count, round) => count + round.length, 0) - 1;
@@ -211,6 +222,8 @@ class LeducHoldemGameView extends React.Component {
                 gameInfo.playerInfo = res.playerInfo;
                 gameInfo.hands = res.initHands;
                 gameInfo.currentPlayer = res.moveHistory[0][0].playerIdx;
+                // the other player is big blind, should have 2 unit in pot
+                gameInfo.pot[(res.moveHistory[0][0].playerIdx + 1) % 2] = 2;
                 gameInfo.publicCard = res.publicCard;
                 if(this.gameStateHistory.length !== 0 && this.gameStateHistory[0].length === 0){
                     this.gameStateHistory[gameInfo.round].push(gameInfo);
@@ -290,8 +303,11 @@ class LeducHoldemGameView extends React.Component {
                     {currentMove !== null ?
                         (<div className={"non-card"}>
                             {
-                                currentMove.probabilities[idx].probability < 0 ?
+                                currentMove.probabilities[idx].probability === -1 ?
                                 <span>Illegal</span>
+                                :
+                                currentMove.probabilities[idx].probability === -2 ?
+                                <span>Rule Based</span>
                                 :
                                 <span>{`Probability ${(currentMove.probabilities[idx].probability * 100).toFixed(2)}%`}</span>
                             }

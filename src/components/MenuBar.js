@@ -9,6 +9,7 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import {makeStyles} from "@material-ui/core/styles";
 import qs from 'query-string';
+import ListSubheader from "@material-ui/core/ListSubheader";
 
 const drawerWidth = 250;
 
@@ -75,13 +76,15 @@ function MenuBar (props) {
         </List>
     });
 
-    const agentMenu = props.modelList.map(model => {
-        return <List component="div" disablePadding key={"game-menu-"+model.model}>
-            <ListItem button className={classes.nested} onClick={() => {handleAgentJump(model.model)}}>
-                <ListItemText primary={model.dispName} className={`${classes.menuLayer2} ${(type === 'agent' && name === model.model) ? classes.active : classes.inactive}`} />
-            </ListItem>
-        </List>
-    });
+    const generateAgentMenu = (modelList) => {
+        return modelList.map((model) => {
+            return <List component="div" disablePadding key={"game-menu-"+model}>
+                <ListItem button className={classes.nested} onClick={() => {handleAgentJump(model)}}>
+                    <ListItemText primary={model} className={`${classes.menuLayer2} ${(type === 'agent' && name === model) ? classes.active : classes.inactive}`} />
+                </ListItem>
+            </List>
+        })
+    };
 
     return (
         <Drawer
@@ -108,7 +111,15 @@ function MenuBar (props) {
                     {open.game ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
                 <Collapse in={open.game} timeout="auto" unmountOnExit>
-                    {agentMenu}
+                    {Object.keys(props.modelList).map(gameName => {
+                        return (
+                            <div key={`agentMenu-sublist-${gameName}`}>
+                                <ListSubheader className={classes.nested}>{gameName}</ListSubheader>
+                                {generateAgentMenu(props.modelList[gameName])}
+                            </div>
+                        )
+                    })}
+
                 </Collapse>
             </List>
         </Drawer>

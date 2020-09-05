@@ -25,13 +25,8 @@ const gameList = [
     {game: 'doudizhu', dispName: 'Dou Dizhu'},
 ];
 
-const modelList = [
-    {model: 'leduc-holdem-random', dispName: 'Leduc Hold\'em Random'},
-    {model: 'leduc-holdem-cfr', dispName: 'Leduc Hold\'em CFR'},
-    {model: 'leduc-holdem-rule-v1', dispName: 'Leduc Hold\'em Rule V1'},
-    {model: 'doudizhu-random', dispName: 'Dou Dizhu Random'},
-    {model: 'doudizhu-rule-v1', dispName: 'Dou Dizhu Rule V1'}
-];
+// {'doudizhu': ['agent1', 'agent2', 'agent3']}
+const modelList = {};
 
 function LeaderBoard () {
     const initRowsPerPage = 10;
@@ -39,6 +34,17 @@ function LeaderBoard () {
     const [page, setPage] = React.useState(0);
     const [rowsTotal, setRowsTotal] = React.useState(0);
     const [rows, setRows] = React.useState([]);
+
+    // passing an empty array as second argument triggers the callback in useEffect
+    // only after the initial render thus replicating `componentDidMount` lifecycle behaviour
+    useEffect(() => {
+        gameList.forEach((game) => {
+            axios.get(`${apiUrl}/tournament/list_baseline_agents?game=${game.game}`)
+                .then(res => {
+                    modelList[game.game] = res.data.data;
+                });
+        });
+    }, []);
 
     const { type, name } = qs.parse(window.location.search);
     let requestUrl = `${apiUrl}/tournament/`;
@@ -112,8 +118,7 @@ function createLeaderBoardData(resData, rank) {
 const agentHeadCells = [
     { id: 'id', numeric: false, disablePadding: false, label: 'ID' },
     { id: 'game', numeric: false, disablePadding: false, label: 'Game' },
-    { id: 'agent0', numeric: false, disablePadding: false, label: 'Agent 0' },
-    { id: 'agent1', numeric: false, disablePadding: false, label: 'Agent 1' },
+    { id: 'agent1', numeric: false, disablePadding: false, label: 'Opponent Agent' },
     { id: 'win', numeric: false, disablePadding: false, label: 'Result' },
     { id: 'payoff', numeric: false, disablePadding: false, label: 'Payoff' },
     { id: 'replay', numeric: false, disablePadding: false, label: 'Replay' }
@@ -188,10 +193,7 @@ const EnhancedTableToolbar = (props) => {
         });
         name = foundItem.dispName;
     } else if (routeInfo.type === 'agent') {
-        const foundItem = modelList.find(model => {
-            return model.model === routeInfo.name;
-        });
-        name = foundItem.dispName;
+        name = routeInfo.name;
     }
 
     return (
@@ -308,7 +310,6 @@ const AgentTableContent = (props) => {
                                     {row.id}
                                 </TableCell>
                                 <TableCell>{row.game}</TableCell>
-                                <TableCell>{row.agent0}</TableCell>
                                 <TableCell>{row.agent1}</TableCell>
                                 <TableCell>{row.win}</TableCell>
                                 <TableCell>{row.payoff}</TableCell>

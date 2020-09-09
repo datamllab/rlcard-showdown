@@ -209,7 +209,6 @@ class LeducHoldemGameView extends React.Component {
                         message: "Empty move history",
                         type: "error",
                         showClose: true,
-                        duration: 0
                     });
                     this.setState({fullScreenLoading: false});
                     return false;

@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -10,6 +11,16 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import {makeStyles} from "@material-ui/core/styles";
 import qs from 'query-string';
 import ListSubheader from "@material-ui/core/ListSubheader";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import TextField from "@material-ui/core/TextField";
+import DialogActions from "@material-ui/core/DialogActions";
+
+import {Message, Upload} from 'element-react';
+import {apiUrl} from "../utils/config";
 
 const drawerWidth = 250;
 
@@ -20,12 +31,29 @@ const useStyles = makeStyles((theme) => ({
         flexShrink: 0
     },
     drawerPaper: {
+        height: 'calc(100% - 75px)',
         zIndex: 1001,
         width: drawerWidth,
         top: 75
     },
+    button: {
+        width: 200,
+        position: 'fixed',
+        left: 25,
+        bottom: 25
+    },
+    list: {
+        height: 'calc(100% - 86px - 16px)',
+        overflowY: 'auto',
+        borderBottom: '1px solid #ccc',
+        paddingTop: '0'
+    },
     nested: {
         paddingLeft: theme.spacing(4)
+    },
+    nestedSubheader: {
+        paddingLeft: theme.spacing(4),
+        background: 'white'
     },
     menuLayer1: {
         '& span': {
@@ -52,11 +80,52 @@ function MenuBar (props) {
     const classes = useStyles();
 
     const [open, setOpen] = React.useState({game: true, agent: true});
+
     const handleClickGame = () => {
         setOpen({game: !open.game, agent: open.agent});
     };
     const handleClickAgent = () => {
         setOpen({game: open.game, agent: !open.agent});
+    };
+
+    const [uploadDialogOpen, setUploadDialogOpen] = React.useState(false);
+
+    const openUploadDialog = () => {
+        setUploadDialogOpen(true);
+    };
+
+    const handleUploadDialogClose = () => {
+        setUploadDialogOpen(false);
+    };
+
+    const uploadFormInitValue = {name: '', game: 'leduc-holdem', entry: ''};
+    const [uploadForm, setUploadForm] = React.useState({...uploadFormInitValue});
+    const handleUploadFormChange = (e, property) => {
+        let tempUploadForm = {...uploadForm};
+        tempUploadForm[property] = e.target.value;
+        setUploadForm(tempUploadForm);
+    }
+
+    let uploadRef = React.createRef();
+    const handleSubmitUpload = () => {
+        console.log(uploadForm, uploadRef);
+        const bodyFormData = new FormData();
+        bodyFormData.append('name', uploadForm.name);
+        bodyFormData.append('entry', uploadForm.entry);
+        bodyFormData.append('game', uploadForm.game);
+        bodyFormData.append('model', uploadRef.current.state.fileList[0].raw);
+
+        axios.post(`${apiUrl}/tournament/upload_agent`, bodyFormData, {headers: {'Content-Type': 'multipart/form-data'}})
+            .then(res => {
+                Message({
+                    message: "Successfully uploaded model",
+                    type: "success",
+                    showClose: true,
+                });
+                props.setReloadMenu(props.reloadMenu+1);
+                setUploadDialogOpen(false);
+                setUploadForm({...uploadFormInitValue});
+            })
     };
 
     const history = useHistory();
@@ -97,7 +166,7 @@ function MenuBar (props) {
             <List
                 component="nav"
                 aria-labelledby="nested-list-subheader"
-                className={classes.root}
+                className={classes.list}
             >
                 <ListItem button onClick={handleClickAgent}>
                     <ListItemText primary="Game LeaderBoards" className={classes.menuLayer1}/>
@@ -114,7 +183,7 @@ function MenuBar (props) {
                     {Object.keys(props.modelList).map(gameName => {
                         return (
                             <div key={`agentMenu-sublist-${gameName}`}>
-                                <ListSubheader className={classes.nested}>{gameName}</ListSubheader>
+                                <ListSubheader className={classes.nestedSubheader}>{gameName}</ListSubheader>
                                 {generateAgentMenu(props.modelList[gameName])}
                             </div>
                         )
@@ -122,6 +191,61 @@ function MenuBar (props) {
 
                 </Collapse>
             </List>
+            <Button variant="contained" color="primary" onClick={openUploadDialog} className={classes.button}>
+                Upload Model
+            </Button>
+            <Dialog open={uploadDialogOpen} onClose={handleUploadDialogClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Upload Model</DialogTitle>
+                <DialogContent>
+                    <Upload
+                        className="upload-demo"
+                        drag
+                        ref={uploadRef}
+                        action="//placeholder/"
+                        multiple
+                        limit={1}
+                        autoUpload={false}
+                    >
+                        <i className="el-icon-upload"/>
+                        <div className="el-upload__text">Drag the file here, or <em>Click to upload</em></div>
+                    </Upload>
+                    <TextField
+                        required
+                        margin="dense"
+                        id="name"
+                        label="Model Name"
+                        value={uploadForm.name}
+                        onChange={(e) => handleUploadFormChange(e, 'name')}
+                        fullWidth
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        id="entry"
+                        label="Entry"
+                        value={uploadForm.entry}
+                        onChange={(e) => handleUploadFormChange(e, 'entry')}
+                        fullWidth
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        id="game"
+                        label="Game"
+                        value={uploadForm.game}
+                        onChange={(e) => handleUploadFormChange(e, 'game')}
+                        fullWidth
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleUploadDialogClose} variant="contained" disableElevation>
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSubmitUpload} color="primary" variant="contained" disableElevation>
+                        Upload
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Drawer>
     )
 }

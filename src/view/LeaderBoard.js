@@ -19,6 +19,9 @@ import TablePagination from "@material-ui/core/TablePagination";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import withStyles from "@material-ui/core/styles/withStyles";
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
+import Button from "@material-ui/core/Button";
+import {useHistory} from "react-router-dom";
+import {Message} from "element-react";
 
 const gameList = [
     {game: 'leduc-holdem', dispName: 'Leduc Hold\'em'},
@@ -26,7 +29,6 @@ const gameList = [
 ];
 
 // {'doudizhu': ['agent1', 'agent2', 'agent3']}
-const modelList = {};
 
 function LeaderBoard () {
     const initRowsPerPage = 10;
@@ -34,17 +36,31 @@ function LeaderBoard () {
     const [page, setPage] = React.useState(0);
     const [rowsTotal, setRowsTotal] = React.useState(0);
     const [rows, setRows] = React.useState([]);
+    const [modelList, setModelList] = React.useState({});
+    const [defaultModelList, setDefaultModelList] = React.useState([]);
+    const [reloadMenu, setReloadMenu] = React.useState(0);
 
     // passing an empty array as second argument triggers the callback in useEffect
     // only after the initial render thus replicating `componentDidMount` lifecycle behaviour
     useEffect(() => {
-        gameList.forEach((game) => {
-            axios.get(`${apiUrl}/tournament/list_baseline_agents?game=${game.game}`)
-                .then(res => {
-                    modelList[game.game] = res.data.data;
-                });
-        });
-    }, []);
+        async function fetchModelData() {
+            let tempModelList = {};
+            let tempDefaultModelList = [];
+            for (const game of gameList) {
+                let res = await axios.get(`${apiUrl}/tournament/list_baseline_agents?game=${game.game}`);
+                console.log('agent', res);
+                tempModelList[game.game] = res.data.data;
+                tempDefaultModelList = tempDefaultModelList.concat(res.data.data);
+                res = await axios.get(`${apiUrl}/tournament/list_uploaded_agents?game=${game.game}`);
+                res.data.forEach(agentInfo => {
+                    tempModelList[game.game].push(agentInfo.fields.name);
+                })
+            }
+            setModelList(tempModelList);
+            setDefaultModelList(tempDefaultModelList);
+        }
+        fetchModelData();
+    }, [reloadMenu]);
 
     const { type, name } = qs.parse(window.location.search);
     let requestUrl = `${apiUrl}/tournament/`;
@@ -76,10 +92,11 @@ function LeaderBoard () {
 
     return (
         <div>
-            <MenuBar gameList={gameList} modelList={modelList} />
+            <MenuBar gameList={gameList} modelList={modelList} reloadMenu={reloadMenu} setReloadMenu={setReloadMenu}/>
             <div style={{marginLeft: '250px'}}>
                 <div style={{padding: 20}}>
                     <EnhancedTable
+                        defaultModelList={defaultModelList}
                         tableRows={rows}
                         routeInfo={{type, name}}
                         page={page}
@@ -88,6 +105,8 @@ function LeaderBoard () {
                         setRowsPerPage={(q) => {setRowsPerPage(q)}}
                         rowsTotal={rowsTotal}
                         type={type}
+                        reloadMenu={reloadMenu}
+                        setReloadMenu={setReloadMenu}
                     />
                 </div>
             </div>
@@ -163,7 +182,9 @@ const useToolbarStyles = makeStyles((theme) => ({
         paddingLeft: theme.spacing(2),
         paddingRight: theme.spacing(1),
         minHeight: 52,
+        justifyContent: 'space-between'
     },
+    button: {},
     highlight:
         theme.palette.type === 'light'
             ? {
@@ -183,7 +204,8 @@ const useToolbarStyles = makeStyles((theme) => ({
 }));
 
 const EnhancedTableToolbar = (props) => {
-    const { routeInfo } = props;
+    const { routeInfo, defaultModelList, reloadMenu, setReloadMenu } = props;
+    console.log('defaultModelList', defaultModelList)
     const classes = useToolbarStyles();
 
     let name = '';
@@ -194,6 +216,54 @@ const EnhancedTableToolbar = (props) => {
         name = foundItem.dispName;
     } else if (routeInfo.type === 'agent') {
         name = routeInfo.name;
+    }
+
+    const history = useHistory();
+
+    const functionalButton = () => {
+        if (routeInfo.type === 'game'){
+                const handleLaunchTournament = (gameName) => {
+                    // todo: customize eval num
+                    // todo: add global loading when waiting for API response
+                    axios.get(`${apiUrl}/tournament/launch?eval_num=200&name=${gameName}`)
+                        .then(res => {
+                            Message({
+                                message: "Successfully launched tournament",
+                                type: "success",
+                                showClose: true
+                            });
+                        })
+                }
+            return (
+                <div className={classes.button}>
+                    <Button variant="contained" color="primary" onClick={() => handleLaunchTournament(routeInfo.name)}>
+                        Launch Tournament
+                    </Button>
+                </div>
+            )
+        }
+        else if (routeInfo.type ==='agent') {
+            const delButtonDisabled = defaultModelList.includes(routeInfo.name);
+            const handleDelModel = (agentName) => {
+                axios.get(`${apiUrl}/tournament/delete_agent?name=${agentName}`)
+                    .then(res => {
+                        Message({
+                            message: "Successfully deleted model",
+                            type: "success",
+                            showClose: true
+                        });
+                        setReloadMenu(reloadMenu+1);
+                        history.push(`/leaderboard?type=game&name=leduc-holdem`);
+                    })
+            };
+            return (
+                <div className={classes.button}>
+                    <Button variant="contained" onClick={() => handleDelModel(routeInfo.name)} color="primary" disabled={delButtonDisabled}>
+                        Delete Model
+                    </Button>
+                </div>
+            )
+        }
     }
 
     return (
@@ -209,6 +279,9 @@ const EnhancedTableToolbar = (props) => {
                 </Typography>
                 <Typography color="textPrimary">{name}</Typography>
             </Breadcrumbs>
+            <div className={classes.button}>
+                {functionalButton()}
+            </div>
         </Toolbar>
     );
 };
@@ -330,7 +403,12 @@ const AgentTableContent = (props) => {
 
 const EnhancedTable = (props) => {
 
-    const { tableRows, routeInfo, rowsPerPage, page, setPage, setRowsPerPage, rowsTotal, type } = props;
+    const { tableRows, routeInfo,
+        rowsPerPage, page, setPage,
+        setRowsPerPage, rowsTotal,
+        type, defaultModelList,
+        reloadMenu, setReloadMenu
+    } = props;
     const classes = useStyles();
 
     const handleChangePage = (event, newPage) => {
@@ -352,7 +430,7 @@ const EnhancedTable = (props) => {
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
-                <EnhancedTableToolbar routeInfo={routeInfo}/>
+                <EnhancedTableToolbar routeInfo={routeInfo} defaultModelList={defaultModelList} reloadMenu={reloadMenu} setReloadMenu={setReloadMenu}/>
                 {tableContent}
                 <TablePagination
                     // todo: remove testing page size option

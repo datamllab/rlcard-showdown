@@ -21,7 +21,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import Button from "@material-ui/core/Button";
 import {useHistory} from "react-router-dom";
-import {Message} from "element-react";
+import {Message, Loading} from "element-react";
 
 const gameList = [
     {game: 'leduc-holdem', dispName: 'Leduc Hold\'em'},
@@ -224,33 +224,48 @@ const EnhancedTableToolbar = (props) => {
 
     const history = useHistory();
 
-    const functionalButton = () => {
+    const FunctionalButton = () => {
+        const [buttonLoading, setButtonLoading] = React.useState(false);
         if (routeInfo.type === 'game'){
-                const handleLaunchTournament = (gameName) => {
-                    // todo: customize eval num
-                    // todo: add global loading when waiting for API response
-                    axios.get(`${apiUrl}/tournament/launch?eval_num=200&name=${gameName}`)
-                        .then(res => {
-                            Message({
-                                message: "Successfully launched tournament",
-                                type: "success",
-                                showClose: true
-                            });
-                        })
-                }
+            const handleLaunchTournament = (gameName) => {
+                // todo: customize eval num
+                setButtonLoading(true);
+                axios.get(`${apiUrl}/tournament/launch?eval_num=200&name=${gameName}`)
+                    .then(res => {
+                        setTimeout(() => {setButtonLoading(false)}, 250);
+                        Message({
+                            message: "Successfully launched tournament",
+                            type: "success",
+                            showClose: true
+                        });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        Message({
+                            message: "Failed to launch tournament",
+                            type: "error",
+                            showClose: true,
+                        });
+                        setTimeout(() => {setButtonLoading(false)}, 250);
+                    })
+            }
             return (
                 <div className={classes.button}>
-                    <Button variant="contained" color="primary" onClick={() => handleLaunchTournament(routeInfo.name)}>
-                        Launch Tournament
-                    </Button>
+                    <Loading loading={buttonLoading}>
+                        <Button variant="contained" color="primary" onClick={() => handleLaunchTournament(routeInfo.name)}>
+                            Launch Tournament
+                        </Button>
+                    </Loading>
                 </div>
             )
         }
         else if (routeInfo.type ==='agent') {
             const delButtonDisabled = defaultModelList.includes(routeInfo.name);
             const handleDelModel = (agentName) => {
+                setButtonLoading(true);
                 axios.get(`${apiUrl}/tournament/delete_agent?name=${agentName}`)
                     .then(res => {
+                        setTimeout(() => {setButtonLoading(false)}, 250);
                         Message({
                             message: "Successfully deleted model",
                             type: "success",
@@ -259,12 +274,22 @@ const EnhancedTableToolbar = (props) => {
                         setReloadMenu(reloadMenu+1);
                         history.push(`/leaderboard?type=game&name=leduc-holdem`);
                     })
+                    .catch(err => {
+                        Message({
+                            message: "Failed to delete model",
+                            type: "error",
+                            showClose: true,
+                        });
+                        setTimeout(() => {setButtonLoading(false)}, 250);
+                    })
             };
             return (
                 <div className={classes.button}>
-                    <Button variant="contained" onClick={() => handleDelModel(routeInfo.name)} color="primary" disabled={delButtonDisabled}>
-                        Delete Model
-                    </Button>
+                    <Loading loading={buttonLoading}>
+                        <Button variant="contained" onClick={() => handleDelModel(routeInfo.name)} color="primary" disabled={delButtonDisabled}>
+                            Delete Model
+                        </Button>
+                    </Loading>
                 </div>
             )
         }
@@ -284,7 +309,7 @@ const EnhancedTableToolbar = (props) => {
                 <Typography color="textPrimary">{name}</Typography>
             </Breadcrumbs>
             <div className={classes.button}>
-                {functionalButton()}
+                <FunctionalButton />
             </div>
         </Toolbar>
     );

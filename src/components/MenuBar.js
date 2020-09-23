@@ -15,11 +15,10 @@ import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import TextField from "@material-ui/core/TextField";
 import DialogActions from "@material-ui/core/DialogActions";
 
-import {Message, Upload} from 'element-react';
+import {Message, Upload, Loading} from 'element-react';
 import {apiUrl} from "../utils/config";
 
 const drawerWidth = 250;
@@ -78,6 +77,7 @@ const useStyles = makeStyles((theme) => ({
 
 function MenuBar (props) {
     const classes = useStyles();
+    const [uploadDialogLoading, setUploadDialogLoading] = React.useState(false);
 
     const [open, setOpen] = React.useState({game: true, agent: true});
 
@@ -114,9 +114,10 @@ function MenuBar (props) {
         bodyFormData.append('entry', uploadForm.entry);
         bodyFormData.append('game', uploadForm.game);
         bodyFormData.append('model', uploadRef.current.state.fileList[0].raw);
-
+        setUploadDialogLoading(true);
         axios.post(`${apiUrl}/tournament/upload_agent`, bodyFormData, {headers: {'Content-Type': 'multipart/form-data'}})
             .then(res => {
+                setTimeout(() => {setUploadDialogLoading(false)}, 250);
                 Message({
                     message: "Successfully uploaded model",
                     type: "success",
@@ -125,6 +126,15 @@ function MenuBar (props) {
                 props.setReloadMenu(props.reloadMenu+1);
                 setUploadDialogOpen(false);
                 setUploadForm({...uploadFormInitValue});
+            })
+            .catch(err => {
+                setTimeout(() => {setUploadDialogLoading(false)}, 250);
+                Message({
+                    message: "Failed to upload model",
+                    type: "error",
+                    showClose: true,
+                });
+                console.log(err);
             })
     };
 
@@ -196,7 +206,13 @@ function MenuBar (props) {
             <Button variant="contained" color="primary" onClick={openUploadDialog} className={classes.button}>
                 Upload Model
             </Button>
-            <Dialog open={uploadDialogOpen} onClose={handleUploadDialogClose} aria-labelledby="form-dialog-title">
+            <Dialog
+                open={uploadDialogOpen}
+                onClose={handleUploadDialogClose}
+                aria-labelledby="form-dialog-title"
+                disableBackdropClick={true}
+            >
+                <Loading loading={uploadDialogLoading}>
                 <DialogTitle id="form-dialog-title">Upload Model</DialogTitle>
                 <DialogContent>
                     <Upload
@@ -247,6 +263,7 @@ function MenuBar (props) {
                         Upload
                     </Button>
                 </DialogActions>
+                </Loading>
             </Dialog>
         </Drawer>
     )

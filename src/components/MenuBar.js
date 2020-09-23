@@ -130,9 +130,11 @@ function MenuBar (props) {
 
     const history = useHistory();
     const handleGameJump = (gameName) => {
+        props.resetPagination();
         history.push(`/leaderboard?type=game&name=${gameName}`);
     }
     const handleAgentJump = (agentName) => {
+        props.resetPagination();
         history.push(`/leaderboard?type=agent&name=${agentName}`);
     }
 

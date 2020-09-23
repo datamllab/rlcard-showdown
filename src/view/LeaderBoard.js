@@ -71,8 +71,6 @@ function LeaderBoard () {
     }
     console.log(requestUrl);
 
-    // todo: detect type change then reset page and page size
-
     useEffect(() => {
         async function fetchData() {
             const res = await axios.get(requestUrl);
@@ -92,7 +90,13 @@ function LeaderBoard () {
 
     return (
         <div>
-            <MenuBar gameList={gameList} modelList={modelList} reloadMenu={reloadMenu} setReloadMenu={setReloadMenu}/>
+            <MenuBar
+                gameList={gameList}
+                modelList={modelList}
+                reloadMenu={reloadMenu}
+                setReloadMenu={setReloadMenu}
+                resetPagination={() => {setPage(0); setRowsPerPage(initRowsPerPage);}}
+            />
             <div style={{marginLeft: '250px'}}>
                 <div style={{padding: 20}}>
                     <EnhancedTable

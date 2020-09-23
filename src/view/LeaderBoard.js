@@ -437,8 +437,7 @@ const EnhancedTable = (props) => {
                 <EnhancedTableToolbar routeInfo={routeInfo} defaultModelList={defaultModelList} reloadMenu={reloadMenu} setReloadMenu={setReloadMenu}/>
                 {tableContent}
                 <TablePagination
-                    // todo: remove testing page size option
-                    rowsPerPageOptions={[2, 10, 50, 100]}
+                    rowsPerPageOptions={[10, 50, 100]}
                     component="div"
                     count={rowsTotal}
                     rowsPerPage={rowsPerPage}

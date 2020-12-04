@@ -35,7 +35,12 @@ The frontend would be started in port 3000 in localhost by default, you can view
 You will see blank tables on the frontend if you haven't started the backend Django server, or the backend server URL is configured incorrectly.
 
 The default configuration for backend server URL is [http://127.0.0.1:8000/](http://127.0.0.1:8000/), you can also change it in `/src/utils/config.js`.
+
 ### Screenshots
+![leaderboards](https://github.com/datamllab/rlcard-showdown/blob/master/imgs/leaderboards.png?raw=true)
+![upload](https://github.com/datamllab/rlcard-showdown/blob/master/imgs/upload.png?raw=true)
+![doudizhu-replay](https://github.com/datamllab/rlcard-showdown/blob/master/imgs/doudizhu-replay.png?raw=true)
+![leduc-replay](https://github.com/datamllab/rlcard-showdown/blob/master/imgs/leduc-replay.png?raw=true)
 
 
 # Django Server

@@ -60,6 +60,7 @@ npm start
 ```
 Then launch the backend in a new terminal with
 ```
+cd server
 python manage.py runserver
 ```
 The frontend would be started in port 3000 in localhost by default. You can view it at [http://127.0.0.1:3000/](http://127.0.0.1:3000/). The backend will run by default in [http://127.0.0.1:8000/](http://127.0.0.1:8000/).

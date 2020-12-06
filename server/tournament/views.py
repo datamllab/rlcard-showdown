@@ -19,9 +19,9 @@ from .models import Game, Payoff, UploadedAgent
 
 from .tournament import Tournament
 from .rlcard_wrap import rlcard, MODEL_IDS
-MODEL_IDS_ALL = copy.deepcopy(MODEL_IDS)
 
-def _reset_model_ids():
+def _get_model_ids_all():
+    MODEL_IDS_ALL = copy.deepcopy(MODEL_IDS)
     agents = UploadedAgent.objects.all()
     for agent in agents:
         path = os.path.join(settings.MEDIA_ROOT, agent.f.name)
@@ -44,7 +44,7 @@ def _reset_model_ids():
                 return model
         rlcard.models.registration.model_registry.model_specs[name] = ModelSpec()
         MODEL_IDS_ALL[game].append(name)
-_reset_model_ids()
+    return MODEL_IDS_ALL
 
 PAGE_FIELDS = ['elements_every_page', 'page_index']
 
@@ -105,6 +105,7 @@ def launch(request):
         except:
             return HttpResponse(json.dumps({'value': -1, 'info': 'parameters error'}))
 
+        MODEL_IDS_ALL = _get_model_ids_all()
         games_data, payoffs_data = Tournament(game, MODEL_IDS_ALL[game], eval_num).launch()
         Game.objects.filter(name=game).delete()
         Payoff.objects.filter(name=game).delete()
@@ -137,7 +138,6 @@ def upload_agent(request):
 
         a = UploadedAgent(name=name, game=game, f=f, entry=entry)
         a.save()
-        _reset_model_ids()
         return HttpResponse(json.dumps({'value': 0, 'info': 'success'}))
 
 def delete_agent(request):
@@ -149,7 +149,6 @@ def delete_agent(request):
         UploadedAgent.objects.filter(name=name).delete()
         Game.objects.filter(agent0=name).delete()
         Game.objects.filter(agent1=name).delete()
-        _reset_model_ids()
         return HttpResponse(json.dumps({'value': 0, 'info': 'success'}))
 
 def list_uploaded_agents(request):

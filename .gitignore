@@ -29,3 +29,5 @@ uploaded_agents
 
 # idea
 /.idea
+
+package-lock.json

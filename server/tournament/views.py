@@ -144,6 +144,8 @@ def delete_agent(request):
             return HttpResponse(json.dumps({'value': -1, 'info': 'name not exists'}))
 
         UploadedAgent.objects.filter(name=name).delete()
+        Game.objects.filter(agent0=name).delete()
+        Game.objects.filter(agent1=name).delete()
         _reset_model_ids()
         return HttpResponse(json.dumps({'value': 0, 'info': 'success'}))
 

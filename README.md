@@ -25,7 +25,7 @@ If you find this repo useful, you may cite:
 ```
 
 ## Installation
-RLCard-Showdown has separated frontend and backend. The frontend part is built with React and the backend is with Django.
+RLCard-Showdown has separated frontend and backend. The frontend is built with React and the backend is based on Django.
 
 ### Prerequisite
 To set up the frontend, you should make sure you have [Node.js](https://nodejs.org/) and NPM installed. Normally you just need to manually install Node.js, and the NPM package would be automatically installed together with Node.js for you. Please refer to its official website for installation of Node.js.
@@ -54,14 +54,14 @@ cd ..
 ```
 
 ### Run RLCard-Showdown
-Run the following command under the project folder to start frontend in development mode.
-```
-npm start
-```
-Then launch the backend in a new terminal with
+Launch the backend in with
 ```
 cd server
 python manage.py runserver
+```
+Run the following command in a new terminal under the project folder to start frontend in development mode:
+```
+npm start
 ```
 The frontend would be started in port 3000 in localhost by default. You can view it at [http://127.0.0.1:3000/](http://127.0.0.1:3000/). The backend will run by default in [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 

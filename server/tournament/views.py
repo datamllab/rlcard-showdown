@@ -2,6 +2,7 @@ import json
 import os
 import importlib.util
 import math
+import copy
 
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -18,6 +19,7 @@ from .models import Game, Payoff, UploadedAgent
 
 from .tournament import Tournament
 from .rlcard_wrap import rlcard, MODEL_IDS
+MODEL_IDS_ALL = copy.deepcopy(MODEL_IDS)
 
 def _reset_model_ids():
     agents = UploadedAgent.objects.all()
@@ -41,7 +43,8 @@ def _reset_model_ids():
                 model = self._entry_point()
                 return model
         rlcard.models.registration.model_registry.model_specs[name] = ModelSpec()
-        MODEL_IDS[game].append(name)
+        MODEL_IDS_ALL[game].append(name)
+_reset_model_ids()
 
 PAGE_FIELDS = ['elements_every_page', 'page_index']
 
@@ -102,7 +105,7 @@ def launch(request):
         except:
             return HttpResponse(json.dumps({'value': -1, 'info': 'parameters error'}))
 
-        games_data, payoffs_data = Tournament(game, MODEL_IDS[game], eval_num).launch()
+        games_data, payoffs_data = Tournament(game, MODEL_IDS_ALL[game], eval_num).launch()
         Game.objects.filter(name=game).delete()
         Payoff.objects.filter(name=game).delete()
         for game_data in games_data:
@@ -159,7 +162,7 @@ def list_uploaded_agents(request):
 def list_baseline_agents(request):
     if request.method == 'GET':
         if not 'game' in request.GET:
-            return HttpResponse(json.dumps({'value': -2, 'info': 'name should be given'}))
+            return HttpResponse(json.dumps({'value': -2, 'info': 'game should be given'}))
         result = MODEL_IDS[request.GET['game']]
         return HttpResponse(json.dumps({'value': 0, 'data': result}))
 

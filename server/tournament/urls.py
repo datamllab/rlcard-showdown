@@ -12,4 +12,5 @@ urlpatterns = [
         path('delete_agent', views.delete_agent, name='delete_agent'),
         path('list_uploaded_agents', views.list_uploaded_agents, name='list_uploaded_agents'),
         path('list_baseline_agents', views.list_baseline_agents, name='list_baseline_agents'),
+        path('download_examples', views.download_examples, name='download_examples'),
         ]

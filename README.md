@@ -48,7 +48,6 @@ The backend can be installed with
 ```
 pip install -r requirements.txt
 cd server
-python manage.py makemigrations
 python manage.py migrate
 cd ..
 ```

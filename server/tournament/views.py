@@ -3,9 +3,11 @@ import os
 import importlib.util
 import math
 import copy
+import zipfile
+import shutil
 
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.db import transaction
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
@@ -27,9 +29,10 @@ def _get_model_ids_all():
         path = os.path.join(settings.MEDIA_ROOT, agent.f.name)
         name = agent.name
         game = agent.game
-        entry = agent.entry
-        module_name = path.split('/')[-1].split('.')[0]
-        spec = importlib.util.spec_from_file_location(module_name, path)
+        target_path = os.path.join(os.path.abspath(os.path.join(path, os.pardir)), name)
+        module_name = 'model'
+        entry = 'Model'
+        spec = importlib.util.spec_from_file_location(module_name, os.path.join(target_path, module_name+'.py'))
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         M = getattr(module, entry)
@@ -40,7 +43,7 @@ def _get_model_ids_all():
                 self._entry_point = M
 
             def load(self):
-                model = self._entry_point()
+                model = self._entry_point(target_path)
                 return model
         rlcard.models.registration.model_registry.model_specs[name] = ModelSpec()
         MODEL_IDS_ALL[game].append(name)
@@ -92,7 +95,6 @@ def query_agent_payoff(request):
         if not 'name' in request.GET:
             return HttpResponse(json.dumps({'value': -2, 'info': 'name should be given'}))
         result = list(Payoff.objects.filter(name=request.GET['name']).values('agent0').annotate(payoff = Avg('payoff')).order_by('-payoff'))
-        print(result)
         result, total_page, total_row = _get_page(result, request.GET['elements_every_page'], request.GET['page_index'])
         return HttpResponse(json.dumps({'value': 0, 'data': result, 'total_page': total_page, 'total_row': total_row}))
 
@@ -132,12 +134,15 @@ def upload_agent(request):
         f = request.FILES['model']
         name = request.POST['name']
         game = request.POST['game']
-        entry = request.POST['entry']
         if UploadedAgent.objects.filter(name=name).exists():
             return HttpResponse(json.dumps({'value': -1, 'info': 'name exists'}))
 
-        a = UploadedAgent(name=name, game=game, f=f, entry=entry)
+        a = UploadedAgent(name=name, game=game, f=f)
         a.save()
+        path = os.path.join(settings.MEDIA_ROOT, a.f.name)
+        target_path = os.path.join(os.path.abspath(os.path.join(path, os.pardir)), name)
+        with zipfile.ZipFile(path, 'r') as zip_ref:
+            zip_ref.extractall(target_path)
         return HttpResponse(json.dumps({'value': 0, 'info': 'success'}))
 
 def delete_agent(request):
@@ -146,9 +151,16 @@ def delete_agent(request):
         if not UploadedAgent.objects.filter(name=name).exists():
             return HttpResponse(json.dumps({'value': -1, 'info': 'name not exists'}))
 
-        UploadedAgent.objects.filter(name=name).delete()
+        agents = UploadedAgent.objects.filter(name=name)
+        path = os.path.join(settings.MEDIA_ROOT, agents[0].f.name)
+        target_path = os.path.join(os.path.abspath(os.path.join(path, os.pardir)), name)
+        shutil.rmtree(target_path)
+
+        agents.delete()
         Game.objects.filter(agent0=name).delete()
         Game.objects.filter(agent1=name).delete()
+        Payoff.objects.filter(agent0=name).delete()
+        Payoff.objects.filter(agent1=name).delete()
         return HttpResponse(json.dumps({'value': 0, 'info': 'success'}))
 
 def list_uploaded_agents(request):
@@ -170,3 +182,14 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     if instance.f:
         if os.path.isfile(instance.f.path):
             os.remove(instance.f.path)
+
+def download_examples(request):
+    if request.method == 'GET':
+        name = request.GET['name']
+        file_path = os.path.join(settings.MEDIA_ROOT, 'example_agents', name+'.zip')
+        if os.path.exists(file_path):
+            with open(file_path, 'rb') as fh:
+                response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+                response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+                return response
+        raise Http404

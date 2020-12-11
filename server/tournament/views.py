@@ -134,8 +134,12 @@ def upload_agent(request):
         f = request.FILES['model']
         name = request.POST['name']
         game = request.POST['game']
+        if name == '':
+            return HttpResponse(json.dumps({'value': -1, 'info': 'name can not be empty'}))
+        if game not in ['leduc-holdem', 'doudizhu']:
+            return HttpResponse(json.dumps({'value': -2, 'info': 'game can only be leduc-holdem or doudizhu'}))
         if UploadedAgent.objects.filter(name=name).exists():
-            return HttpResponse(json.dumps({'value': -1, 'info': 'name exists'}))
+            return HttpResponse(json.dumps({'value': -3, 'info': 'name exists'}))
 
         a = UploadedAgent(name=name, game=game, f=f)
         a.save()

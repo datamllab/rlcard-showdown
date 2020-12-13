@@ -34,7 +34,7 @@ const drawerWidth = 250;
 
 const useStyles = makeStyles((theme) => ({
     uploadNoteRoot: {
-        maxWidth: "400px",
+        maxWidth: "358px",
         color: "#E6A23C",
         backgroundColor: "#fdf6ec",
     },
@@ -282,7 +282,7 @@ function MenuBar (props) {
                 <Loading loading={uploadDialogLoading}>
                 <DialogTitle id="form-dialog-title">Upload Model</DialogTitle>
                 <DialogContent>
-                    <Card className={classes.uploadNoteRoot}>
+                    <Card variant="outlined" className={classes.uploadNoteRoot}>
                         <CardContent style={{paddingBottom: "16px"}}>
                             <Typography className={classes.title} color="textSecondary" gutterBottom>
                                 <HelpIcon style={{marginRight: "5px"}} />Note

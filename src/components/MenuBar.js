@@ -16,6 +16,10 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import TextField from "@material-ui/core/TextField";
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
 import DialogActions from "@material-ui/core/DialogActions";
 
 import {Message, Upload, Loading} from 'element-react';
@@ -24,6 +28,11 @@ import {apiUrl} from "../utils/config";
 const drawerWidth = 250;
 
 const useStyles = makeStyles((theme) => ({
+    formControl: {
+        marginTop: theme.spacing(1),
+        marginBottom: theme.spacing(1),
+        minWidth: 120,
+    },
     drawer: {
         zIndex: 1001,
         width: drawerWidth,
@@ -94,11 +103,7 @@ function MenuBar (props) {
         setUploadDialogOpen(true);
     };
 
-    const handleUploadDialogClose = () => {
-        setUploadDialogOpen(false);
-    };
-
-    const uploadFormInitValue = {name: '', game: 'leduc-holdem', entry: ''};
+    const uploadFormInitValue = {name: '', game: 'leduc-holdem'};
     const [uploadForm, setUploadForm] = React.useState({...uploadFormInitValue});
     const handleUploadFormChange = (e, property) => {
         let tempUploadForm = {...uploadForm};
@@ -106,12 +111,56 @@ function MenuBar (props) {
         setUploadForm(tempUploadForm);
     }
 
+    const handleUploadDialogClose = () => {
+        setUploadForm({...uploadFormInitValue});
+        setUploadDialogOpen(false);
+    };
+
     let uploadRef = React.createRef();
     const handleSubmitUpload = () => {
-        console.log(uploadForm, uploadRef);
+        // check if data to upload is legal
+        if (uploadRef.current.state.fileList.length !== 1) {
+            Message({
+                message: "Please select one zip file to upload",
+                type: "warning",
+                showClose: true,
+            });
+            return ;
+        }
+
+        if (uploadRef.current.state.fileList[0].raw.type !== "application/zip") {
+            Message({
+                message: "Only zip file can be uploaded",
+                type: "warning",
+                showClose: true,
+            });
+            return ;
+        }
+
+        if (uploadForm.name === '') {
+            Message({
+                message: "Model name cannot be blank",
+                type: "warning",
+                showClose: true,
+            });
+            return ;
+        }
+
+        let flatGameList = [];
+        Object.keys(props.modelList).forEach(game => {
+            flatGameList = flatGameList.concat([...props.modelList[game]]);
+        });
+        if (flatGameList.includes(uploadForm.name)) {
+            Message({
+                message: "Model name exists",
+                type: "warning",
+                showClose: true,
+            });
+            return ;
+        }
+
         const bodyFormData = new FormData();
         bodyFormData.append('name', uploadForm.name);
-        bodyFormData.append('entry', uploadForm.entry);
         bodyFormData.append('game', uploadForm.game);
         bodyFormData.append('model', uploadRef.current.state.fileList[0].raw);
         setUploadDialogLoading(true);
@@ -216,18 +265,20 @@ function MenuBar (props) {
                 <DialogTitle id="form-dialog-title">Upload Model</DialogTitle>
                 <DialogContent>
                     <Upload
-                        className="upload-demo"
+                        className={classes.formControl}
                         drag
                         ref={uploadRef}
                         action="//placeholder/"
                         multiple
                         limit={1}
                         autoUpload={false}
+                        tip={<div className="el-upload__tip">Only zip file can be uploaded</div>}
                     >
                         <i className="el-icon-upload"/>
                         <div className="el-upload__text">Drag the file here, or <em>Click to upload</em></div>
                     </Upload>
                     <TextField
+                        className={classes.formControl}
                         required
                         margin="dense"
                         id="name"
@@ -236,24 +287,37 @@ function MenuBar (props) {
                         onChange={(e) => handleUploadFormChange(e, 'name')}
                         fullWidth
                     />
-                    <TextField
-                        required
-                        margin="dense"
-                        id="entry"
-                        label="Entry"
-                        value={uploadForm.entry}
-                        onChange={(e) => handleUploadFormChange(e, 'entry')}
-                        fullWidth
-                    />
-                    <TextField
-                        required
-                        margin="dense"
-                        id="game"
-                        label="Game"
-                        value={uploadForm.game}
-                        onChange={(e) => handleUploadFormChange(e, 'game')}
-                        fullWidth
-                    />
+                    {/*<TextField*/}
+                    {/*    required*/}
+                    {/*    margin="dense"*/}
+                    {/*    id="entry"*/}
+                    {/*    label="Entry"*/}
+                    {/*    value={uploadForm.entry}*/}
+                    {/*    onChange={(e) => handleUploadFormChange(e, 'entry')}*/}
+                    {/*    fullWidth*/}
+                    {/*/>*/}
+                    {/*<TextField*/}
+                    {/*    required*/}
+                    {/*    margin="dense"*/}
+                    {/*    id="game"*/}
+                    {/*    label="Game"*/}
+                    {/*    value={uploadForm.game}*/}
+                    {/*    onChange={(e) => handleUploadFormChange(e, 'game')}*/}
+                    {/*    fullWidth*/}
+                    {/*/>*/}
+                    <FormControl required className={classes.formControl} fullWidth>
+                        <InputLabel id="upload-game-label">Game</InputLabel>
+                        <Select
+                            labelId="upload-game-label"
+                            id="upload-game"
+                            value={uploadForm.game}
+                            onChange={(e) => handleUploadFormChange(e, "game")}
+                        >
+                            {props.gameList.map(game => {
+                                return <MenuItem key={"upload-game-"+game.game} value={game.game}>{game.dispName}</MenuItem>
+                            })}
+                        </Select>
+                    </FormControl>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleUploadDialogClose} variant="contained" disableElevation>

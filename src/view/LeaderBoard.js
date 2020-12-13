@@ -224,6 +224,10 @@ const EnhancedTableToolbar = (props) => {
 
     const history = useHistory();
 
+    const launchTournamentSuccessMessage = () => {
+        return <span>Successfully launched tournament,<a href="javascript:window.location.reload(true)"> Click here </a>to refresh page</span>
+    }
+
     const FunctionalButton = () => {
         const [buttonLoading, setButtonLoading] = React.useState(false);
         if (routeInfo.type === 'game'){
@@ -234,10 +238,10 @@ const EnhancedTableToolbar = (props) => {
                     .then(res => {
                         setTimeout(() => {setButtonLoading(false)}, 250);
                         Message({
-                            dangerouslyUseHTMLString: true,
-                            message: 'Successfully launched tournament, <a href=\"javascript:window.location.reload(true)\">Click to reload</a>',
+                            message: launchTournamentSuccessMessage(),
                             type: "success",
-                            showClose: true
+                            showClose: true,
+                            duration: 7000
                         });
                     })
                     .catch(err => {

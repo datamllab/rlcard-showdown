@@ -21,6 +21,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import DialogActions from "@material-ui/core/DialogActions";
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import HelpIcon from '@material-ui/icons/Help';
+import Link from '@material-ui/core/Link';
 
 import {Message, Upload, Loading} from 'element-react';
 import {apiUrl} from "../utils/config";
@@ -28,6 +33,19 @@ import {apiUrl} from "../utils/config";
 const drawerWidth = 250;
 
 const useStyles = makeStyles((theme) => ({
+    uploadNoteRoot: {
+        maxWidth: "400px",
+        color: "#E6A23C",
+        backgroundColor: "#fdf6ec",
+    },
+    title: {
+        color: "#e6a23c",
+        lineHeight: "24px",
+        fontSize: 16,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "flex-start"
+    },
     formControl: {
         marginTop: theme.spacing(1),
         marginBottom: theme.spacing(1),
@@ -264,6 +282,16 @@ function MenuBar (props) {
                 <Loading loading={uploadDialogLoading}>
                 <DialogTitle id="form-dialog-title">Upload Model</DialogTitle>
                 <DialogContent>
+                    <Card className={classes.uploadNoteRoot}>
+                        <CardContent style={{paddingBottom: "16px"}}>
+                            <Typography className={classes.title} color="textSecondary" gutterBottom>
+                                <HelpIcon style={{marginRight: "5px"}} />Note
+                            </Typography>
+                            <Typography variant="body2" component="p">
+                                Download the example <Link href={apiUrl + "/tournament/download_examples?name=example_luduc_nfsp_model"} download>NFSP model</Link> and <Link href={apiUrl + "/tournament/download_examples?name=example_luduc_rule_model"} download>Rule model</Link> of Leduc Hold'em to test and learn about model upload functionality.
+                            </Typography>
+                        </CardContent>
+                    </Card>
                     <Upload
                         className={classes.formControl}
                         drag

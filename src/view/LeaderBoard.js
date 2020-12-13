@@ -234,7 +234,8 @@ const EnhancedTableToolbar = (props) => {
                     .then(res => {
                         setTimeout(() => {setButtonLoading(false)}, 250);
                         Message({
-                            message: "Successfully launched tournament",
+                            dangerouslyUseHTMLString: true,
+                            message: 'Successfully launched tournament, <a href=\"javascript:window.location.reload(true)\">Click to reload</a>',
                             type: "success",
                             showClose: true
                         });

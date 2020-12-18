@@ -1,5 +1,5 @@
 # RLCard Showdown
-This is the GUI support for the [RLCard](https://github.com/datamllab/rlcard) project. The project provides evaluation and visualization tools to help understand the performance of the agents. Currently, we only support Leduc Hold'em and Dou Dizhu. The frontend is developed using [Node.js](https://nodejs.org/). The backend is based on [Django](https://www.djangoproject.com/). Have fun!
+This is the GUI support for the [RLCard](https://github.com/datamllab/rlcard) project. The project provides evaluation and visualization tools to help understand the performance of the agents. Currently, we only support Leduc Hold'em and Dou Dizhu. The frontend is developed with [React](https://reactjs.org/). The backend is based on [Django](https://www.djangoproject.com/). Have fun!
 
 *   Official Website: [http://www.rlcard.org](http://www.rlcard.org)
 *   Tutorial in Jupyter Notebook: [https://github.com/datamllab/rlcard-tutorial](https://github.com/datamllab/rlcard-tutorial)
@@ -53,7 +53,7 @@ cd ..
 ```
 
 ### Run RLCard-Showdown
-Launch the backend in with
+Launch the backend with
 ```
 cd server
 python manage.py runserver
@@ -62,7 +62,7 @@ Run the following command in a new terminal under the project folder to start fr
 ```
 npm start
 ```
-The frontend would be started in port 3000 in localhost by default. You can view it at [http://127.0.0.1:3000/](http://127.0.0.1:3000/). The backend will run by default in [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+The frontend will be started in port 3000 in localhost by default. You can view it at [http://127.0.0.1:3000/](http://127.0.0.1:3000/). The backend will run by default in [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
 More documentation can be found [here](docs/api.md).
 

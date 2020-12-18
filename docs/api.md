@@ -23,7 +23,7 @@ The definitions of the fields are as follows:
 | GET  | tournament/query\_payoff            | `name`, `agent0`, `agent1`, `payoff`                                                      | Query the payoffs with the given parameters                                                                        |
 | GET  | tournament/query\_agent\_payoff     | `name`, `elements_every_page`, `page_index`,                                              | Query the payoffs of all the agents                                                                                |
 | GET  | tournament/replay                   | `name`, `agent0`, `agent1`, `index`                                                       | Return the replay data                                                                                             |
-| POST | tournament/upload\_agent            | `model`(Python file), `name`, `game`, `entry`                                             | Upload a model file. `name` is model ID, `entry` is the class name of the model                                    |
+| POST | tournament/upload\_agent            | `model`(Python file), `name`, `game`,                                                     | Upload a model file. `name` is model ID                                                                            |
 | GET  | tournament/delete\_agent            | `name`                                                                                    | Delete the agent of the given name                                                                                 |
 | GET  | tournament/list\_uploaded\_agents   | `game`                                                                                    | list all the uploaded agents                                                                                       |
 | GET  | tournament/list\_baseline\_agents   | `game`                                                                                    | list all the baseline agents                                                                                       |
@@ -56,11 +56,11 @@ Some models have been pre-registered as baselines
 ### Example of uploading a new model
 A example model file is prepared:
 ```
-cd server/upload_test
+cd server/media/example_agents
 ```
 Upload the model with `curl`:
 ```
-curl -F 'model=@example_model.py' -F "name=leduc-new" -F "entry=LeducHoldemRuleModelV2" -F "game=leduc-holdem" http://127.0.0.1:8000/tournament/upload_agent
+curl -F 'model=@example_luduc_nfsp_model.zip' -F "name=leduc-nfsp" -F "game=leduc-holdem" http://127.0.0.1:8000/tournament/upload_agent
 ```
 Launch the tounament with:
 ```

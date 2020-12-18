@@ -67,10 +67,10 @@ The frontend will be started in port 3000 in localhost by default. You can view 
 More documentation can be found [here](docs/api.md).
 
 ### Demos
-![leaderboards](https://github.com/datamllab/rlcard-showdown/blob/master/imgs/leaderboards.png?raw=true)
-![upload](https://github.com/datamllab/rlcard-showdown/blob/master/imgs/upload.png?raw=true)
-![doudizhu-replay](https://github.com/datamllab/rlcard-showdown/blob/master/imgs/doudizhu-replay.png?raw=true)
-![leduc-replay](https://github.com/datamllab/rlcard-showdown/blob/master/imgs/leduc-replay.png?raw=true)
+![leaderboards](https://github.com/datamllab/rlcard-showdown/blob/master/docs/imgs/leaderboards.png?raw=true)
+![upload](https://github.com/datamllab/rlcard-showdown/blob/master/docs/imgs/upload.png?raw=true)
+![doudizhu-replay](https://github.com/datamllab/rlcard-showdown/blob/master/docs/imgs/doudizhu-replay.png?raw=true)
+![leduc-replay](https://github.com/datamllab/rlcard-showdown/blob/master/docs/imgs/leduc-replay.png?raw=true)
 
 ### Contact Us
 If you have any questions or feedback, feel free to drop an email to [Songyi Huang](mailto:songyih@sfu.ca) for the frontend or [Daochen Zha](http://dczha.com/) for backend.

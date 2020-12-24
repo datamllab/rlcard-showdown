@@ -64,7 +64,7 @@ npm start
 ```
 The frontend will be started in port 3000 in localhost by default. You can view it at [http://127.0.0.1:3000/](http://127.0.0.1:3000/). The backend will run by default in [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
-More documentation can be found [here](docs/api.md).
+More documentation can be found [here](docs/api.md). User guide is [here](docs/guide.md).
 
 ### Demos
 ![leaderboards](https://github.com/datamllab/rlcard-showdown/blob/master/docs/imgs/leaderboards.png?raw=true)

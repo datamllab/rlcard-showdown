@@ -145,8 +145,8 @@ function MenuBar (props) {
             });
             return ;
         }
-
-        if (uploadRef.current.state.fileList[0].raw.type !== "application/zip") {
+        console.log('upload', uploadRef.current);
+        if (!["application/zip", "application/x-zip-compressed"].includes(uploadRef.current.state.fileList[0].raw.type)) {
             Message({
                 message: "Only zip file can be uploaded",
                 type: "warning",

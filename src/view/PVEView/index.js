@@ -1,3 +1,3 @@
-import PVEDoudizhuDemoView from './PVEDoudizhuDemoView';
+import PvEDoudizhuDemoView from './PvEDoudizhuDemoView';
 
-export {PVEDoudizhuDemoView};
+export {PvEDoudizhuDemoView};

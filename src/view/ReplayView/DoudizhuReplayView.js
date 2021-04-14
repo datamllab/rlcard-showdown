@@ -2,7 +2,6 @@ import React from 'react';
 import axios from 'axios';
 import '../../assets/gameview.scss';
 import { DoudizhuGameBoard } from '../../components/GameBoard';
-import Navbar from "../../components/Navbar";
 import {removeCards, doubleRaf, deepCopy, computeHandCardsWidth, translateCardData} from "../../utils";
 import { apiUrl } from "../../utils/config";
 
@@ -25,7 +24,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
 import qs from "query-string";
 
-class DoudizhuGameView extends React.Component {
+class DoudizhuReplayView extends React.Component {
     constructor(props) {
         super(props);
 
@@ -381,7 +380,6 @@ class DoudizhuGameView extends React.Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
-                <Navbar gameName={"Doudizhu"} />
                 <div className={"doudizhu-view-container"}>
                     <Layout.Row style={{"height": "540px"}}>
                         <Layout.Col style={{"height": "100%"}} span="17">
@@ -493,4 +491,4 @@ class DoudizhuGameView extends React.Component {
     }
 }
 
-export default DoudizhuGameView;
+export default DoudizhuReplayView;

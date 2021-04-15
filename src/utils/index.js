@@ -1,66 +1,73 @@
-const suitMap = new Map(
-    [["H", "hearts"], ["D", "diams"], ["S", "spades"], ["C", "clubs"]]
-);
+const suitMap = new Map([
+    ['H', 'hearts'],
+    ['D', 'diams'],
+    ['S', 'spades'],
+    ['C', 'clubs'],
+]);
 
-const suitMapSymbol = new Map(
-    [["H", "\u2665"], ["D", "\u2666"], ["S", "\u2660"], ["C", "\u2663"]]
-);
+const suitMapSymbol = new Map([
+    ['H', '\u2665'],
+    ['D', '\u2666'],
+    ['S', '\u2660'],
+    ['C', '\u2663'],
+]);
 
-export function removeCards(cards, hands){     // remove cards from hands, return the remained hands
+export function removeCards(cards, hands) {
+    // remove cards from hands, return the remained hands
     let remainedHands = deepCopy(hands);
     // if the player's action is pass then return the copy of original hands
-    if(cards === "pass"){
+    if (cards === 'pass') {
         return remainedHands;
     }
     let misMatch = false;
-    cards.forEach(card => {
-        let foundIdx = remainedHands.findIndex(element => {return element === card;});
-        if(foundIdx > -1){
+    cards.forEach((card) => {
+        let foundIdx = remainedHands.findIndex((element) => {
+            return element === card;
+        });
+        if (foundIdx > -1) {
             remainedHands.splice(foundIdx, 1);
-        }else {
+        } else {
             misMatch = true;
         }
     });
-    if(misMatch)
-        return false;
-    else
-        return remainedHands;
+    if (misMatch) return false;
+    else return remainedHands;
 }
 
-export function doubleRaf(callback){
+export function doubleRaf(callback) {
     // secure all the animation got rendered before callback function gets executed
     requestAnimationFrame(() => {
-        requestAnimationFrame(callback)
-    })
+        requestAnimationFrame(callback);
+    });
 }
 
-export function deepCopy(toCopy){
+export function deepCopy(toCopy) {
     return JSON.parse(JSON.stringify(toCopy));
 }
 
 export function translateCardData(card) {
     let rankClass;
-    let suitClass = "";
+    let suitClass = '';
     let rankText;
-    let suitText = "";
+    let suitText = '';
     // translate rank
-    if(card === "RJ"){
-        rankClass = "big";
-        rankText = "+";
-        suitClass = "joker";
-        suitText = "Joker";
-    }else if(card === "BJ"){
-        rankClass = "little";
-        rankText = "-";
-        suitClass = "joker";
-        suitText = "Joker";
-    }else{
-        rankClass = card.charAt(1) === "T" ? `10` : card.charAt(1).toLowerCase();
+    if (card === 'RJ') {
+        rankClass = 'big';
+        rankText = '+';
+        suitClass = 'joker';
+        suitText = 'Joker';
+    } else if (card === 'BJ') {
+        rankClass = 'little';
+        rankText = '-';
+        suitClass = 'joker';
+        suitText = 'Joker';
+    } else {
+        rankClass = card.charAt(1) === 'T' ? `10` : card.charAt(1).toLowerCase();
         rankClass = `rank-${rankClass}`;
-        rankText = card.charAt(1) === "T" ? `10` : card.charAt(1);
+        rankText = card.charAt(1) === 'T' ? `10` : card.charAt(1);
     }
     // translate suitClass
-    if(card !== "RJ" && card !== "BJ"){
+    if (card !== 'RJ' && card !== 'BJ') {
         suitClass = suitMap.get(card.charAt(0));
         suitText = suitMapSymbol.get(card.charAt(0));
     }
@@ -68,14 +75,15 @@ export function translateCardData(card) {
     return [rankClass, suitClass, rankText, suitText];
 }
 
-export function millisecond2Second(t){
-    return Math.ceil(t/1000);
+export function millisecond2Second(t) {
+    return Math.ceil(t / 1000);
 }
 
 export function debounce(func, wait, immediate) {
     let timeout;
-    return function() {
-        const context = this, args = arguments;
+    return function () {
+        const context = this,
+            args = arguments;
         const later = function () {
             timeout = null;
             if (!immediate) func.apply(context, args);
@@ -88,7 +96,6 @@ export function debounce(func, wait, immediate) {
 }
 
 export function computeHandCardsWidth(num, emWidth) {
-    if(num === 0)
-        return 0;
-    return (num-1)*1.1*emWidth + 4.3*emWidth*1.2 + 2;
+    if (num === 0) return 0;
+    return (num - 1) * 1.1 * emWidth + 4.3 * emWidth * 1.2 + 2;
 }

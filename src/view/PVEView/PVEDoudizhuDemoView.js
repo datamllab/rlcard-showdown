@@ -2,25 +2,8 @@ import Paper from '@material-ui/core/Paper';
 import { Layout } from 'element-react';
 import React, { useEffect, useState } from 'react';
 import { DoudizhuGameBoard } from '../../components/GameBoard';
+import { deepCopy } from '../../utils';
 
-// for test use
-const generatedPlayerInfo = [
-    {
-        id: 0,
-        index: 0,
-        role: 'peasant',
-    },
-    {
-        id: 1,
-        index: 1,
-        role: 'peasant',
-    },
-    {
-        id: 2,
-        index: 2,
-        role: 'landlord',
-    },
-];
 const initHands = [
     'S2 H2 HK DK HQ CQ DQ CJ S9 H9 D9 C7 S6 H6 C4 D4 S3',
     'C2 HA CA DA SQ ST HT D8 S7 H7 C6 D6 S5 H5 C5 S4 H4',
@@ -29,30 +12,105 @@ const initHands = [
 
 function PvEDoudizhuDemoView() {
     const initConsiderationTime = 2000;
-
-    const [playerInfo, setPlayerInfo] = useState([]);
-    const [hands, setHands] = useState([]);
-    const [latestAction, setLatestAction] = useState([[], [], []]);
+    const considerationTimeDeduction = 200;
     const mainPlayerId = 0;
-    const [currentPlayer, setCurrentPlayer] = useState(null);
+
+    let gameStateTimeout = null;
     const [considerationTime, setConsiderationTime] = useState(initConsiderationTime);
-    const [turn, setTurn] = useState(0);
     const [toggleFade, setToggleFade] = useState('');
     const [gameStatus, setGameStatus] = useState('ready'); // "ready", "playing", "paused", "over"
+    const [gameState, setGameState] = useState({
+        hands: [[], [], []],
+        latestAction: [[], [], []],
+        currentPlayer: null,
+        turn: 0,
+    });
 
     const cardStr2Arr = (cardStr) => {
         return cardStr === 'pass' || cardStr === '' ? 'pass' : cardStr.split(' ');
     };
 
     // todo: generate inital player / hand states
+    // for test use
+    const playerInfo = [
+        {
+            id: 0,
+            index: 0,
+            role: 'peasant',
+        },
+        {
+            id: 1,
+            index: 1,
+            role: 'peasant',
+        },
+        {
+            id: 2,
+            index: 2,
+            role: 'landlord',
+        },
+    ];
+
+    function timeout(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    const proceedNextTurn = () => {
+        // todo
+    };
+
+    const requestApiPlay = async () => {
+        // mock delayed API play
+        await timeout(250);
+        const apiRes = gameState.hands[gameState.currentPlayer][gameState.hands[gameState.currentPlayer].length - 1];
+        console.log('mock api res', apiRes);
+    };
+
+    const gameStateTimer = () => {
+        gameStateTimeout = setTimeout(() => {
+            let currentConsiderationTime = considerationTime;
+            if (currentConsiderationTime > 0) {
+                currentConsiderationTime -= considerationTimeDeduction;
+                currentConsiderationTime = Math.max(currentConsiderationTime, 0);
+                if (currentConsiderationTime === 0) {
+                    // consideration time used up for current player
+                    // if current player is controlled by user, play a random card
+                    // todo
+                }
+                setConsiderationTime(currentConsiderationTime);
+            } else {
+                // consideration time used up for current player
+                // if current player is controlled by user, play a random card
+                // todo
+            }
+        }, considerationTimeDeduction);
+    };
+
+    useEffect(() => {
+        console.log(considerationTime);
+        gameStateTimer();
+    }, [considerationTime]);
 
     // set init game state
     useEffect(() => {
-        setPlayerInfo(generatedPlayerInfo);
-        setHands(initHands.map((element) => cardStr2Arr(element)));
+        // start game
+        setGameStatus('playing');
+
+        const newGameState = deepCopy(gameState);
+        // find landord to be the first player
+        newGameState.currentPlayer = playerInfo.find((element) => element.role === 'landlord').index;
+        newGameState.hands = initHands.map((element) => cardStr2Arr(element));
+        setGameState(newGameState);
+        gameStateTimer();
     }, []);
 
-    // start game
+    useEffect(() => {
+        if (gameState.currentPlayer) {
+            // if current player is not user, request for API player
+            if (gameState.currentPlayer !== mainPlayerId) {
+                requestApiPlay();
+            }
+        }
+    }, [gameState.currentPlayer]);
 
     const runNewTurn = () => {
         // gameStateTimer();
@@ -67,12 +125,12 @@ function PvEDoudizhuDemoView() {
                             <Paper className={'doudizhu-gameboard-paper'} elevation={3}>
                                 <DoudizhuGameBoard
                                     playerInfo={playerInfo}
-                                    hands={hands}
-                                    latestAction={latestAction}
+                                    hands={gameState.hands}
+                                    latestAction={gameState.latestAction}
                                     mainPlayerId={mainPlayerId}
-                                    currentPlayer={currentPlayer}
+                                    currentPlayer={gameState.currentPlayer}
                                     considerationTime={considerationTime}
-                                    turn={turn}
+                                    turn={gameState.turn}
                                     runNewTurn={(prevTurn) => runNewTurn(prevTurn)}
                                     toggleFade={toggleFade}
                                     gameStatus={gameStatus}

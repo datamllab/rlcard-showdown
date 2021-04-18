@@ -99,3 +99,13 @@ export function computeHandCardsWidth(num, emWidth) {
     if (num === 0) return 0;
     return (num - 1) * 1.1 * emWidth + 4.3 * emWidth * 1.2 + 2;
 }
+
+export function card2SuiteAndRank(card) {
+    if (card === 'BJ') {
+        return {rank: null, suite: 'X'};
+    } else if (card === 'RJ') {
+        return {rank: null, suite: 'D'};
+    } else {
+        return {rank: card[0], suite: card[1]};
+    }
+}

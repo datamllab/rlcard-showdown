@@ -2,7 +2,7 @@ import Paper from '@material-ui/core/Paper';
 import { Layout } from 'element-react';
 import React, { useEffect, useState } from 'react';
 import { DoudizhuGameBoard } from '../../components/GameBoard';
-import { deepCopy } from '../../utils';
+import { deepCopy, card2SuiteAndRank } from '../../utils';
 
 const initHands = [
     'S2 H2 HK DK HQ CQ DQ CJ S9 H9 D9 C7 S6 H6 C4 D4 S3',
@@ -22,7 +22,7 @@ function PvEDoudizhuDemoView() {
     const [gameState, setGameState] = useState({
         hands: [[], [], []],
         latestAction: [[], [], []],
-        currentPlayer: null,
+        currentPlayer: null,    // index of current player
         turn: 0,
     });
 
@@ -54,8 +54,35 @@ function PvEDoudizhuDemoView() {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
-    const proceedNextTurn = () => {
-        // todo
+    const proceedNextTurn = (playingCard, rankOnly = true) => {
+        let newGameState = deepCopy(gameState);
+        
+        // todo: take played card out from hand, and generate playing cards with suite 
+        const currentHand = newGameState.hands[gameState.currentPlayer];
+        
+        let newHand = [];
+        let newLatestAction = []
+        if (rankOnly) {
+            newHand = currentHand.filter(card => {
+                if (playingCard.length === 0)
+                    return true;
+                
+                const [_, rank] = card2SuiteAndRank(card);
+                const idx = playingCard.indexOf(rank);
+                if (idx > 0) {
+                    playingCard.splice(idx, 1);
+                    newLatestAction.push(card);
+                    return false;
+                }
+                return true;
+            });
+        } else {
+            // todo: proceed player's action 
+        }
+        
+        newGameState.latestAction[gameState.currentPlayer] = newLatestAction;
+        newGameState.hands[gameState.currentPlayer] = newHand;
+        
     };
 
     const requestApiPlay = async () => {

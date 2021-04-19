@@ -60,8 +60,13 @@
 .playingCards a.card {
     text-decoration: none;
 }
+
+.playingCards.selectable a.card {
+    cursor: pointer;
+}
+
 /* selected and hover state */
-.playingCards a.card:hover, .playingCards a.card:active,
+.playingCards a.card:hover, .playingCards a.card:active, .playingCards a.card.selected,
 .playingCards label.card:hover,
 .playingCards strong .card {
     bottom: 1em;

@@ -51,13 +51,19 @@ class DoudizhuGameBoard extends React.Component {
             return <div className="non-card"><span>PASS</span></div>
         }else{
             return (
-                <div className={"playingCards unselectable loose "+fadeClassName}>
+                <div className={`playingCards selectable loose ${fadeClassName} ${this.props.handSelectable ? 'selectable' : 'unselectable'}`}>
                     <ul className="hand" style={{width: computeHandCardsWidth(cards.length, 12)}}>
                         {cards.map(card=>{
                             const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
+                            let selected = false;
+                            if (this.props.handSelectable) {
+                                selected = this.props.selectedCards.indexOf(card) >= 0;   
+                            }
+                            
+                            // todo: right click and move to select multiple cards
                             return (
                                 <li key={`handCard-${card}`}>
-                                    <a className={`card ${rankClass} ${suitClass}`} href="/#">
+                                    <a onClick={() => this.props.handleSelectedCards([card])} className={`card ${rankClass} ${suitClass} ${selected ? 'selected' : ''}`}>
                                         <span className="rank">{rankText}</span>
                                         <span className="suit">{suitText}</span>
                                     </a>

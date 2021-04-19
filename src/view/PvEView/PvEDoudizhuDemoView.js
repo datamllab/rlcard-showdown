@@ -10,12 +10,13 @@ const initHands = [
     'RJ BJ D2 SA SK CK SJ HJ DJ CT DT C9 S8 H8 C8 D7 D5 H3 S3 D3',
 ];
 
+let gameStateTimeout = null;
+
 function PvEDoudizhuDemoView() {
     const initConsiderationTime = 2000;
     const considerationTimeDeduction = 200;
     const mainPlayerId = 0;
 
-    let gameStateTimeout = null;
     const [considerationTime, setConsiderationTime] = useState(initConsiderationTime);
     const [toggleFade, setToggleFade] = useState('');
     const [gameStatus, setGameStatus] = useState('ready'); // "ready", "playing", "paused", "over"
@@ -25,6 +26,7 @@ function PvEDoudizhuDemoView() {
         currentPlayer: null,    // index of current player
         turn: 0,
     });
+    const [selectedCards, setSelectedCards] = useState([]);     // user selected hand card
 
     const cardStr2Arr = (cardStr) => {
         return cardStr === 'pass' || cardStr === '' ? 'pass' : cardStr.split(' ');
@@ -67,9 +69,9 @@ function PvEDoudizhuDemoView() {
                 if (playingCard.length === 0)
                     return true;
                 
-                const [_, rank] = card2SuiteAndRank(card);
+                const { rank } = card2SuiteAndRank(card);
                 const idx = playingCard.indexOf(rank);
-                if (idx > 0) {
+                if (idx >= 0) {
                     playingCard.splice(idx, 1);
                     newLatestAction.push(card);
                     return false;
@@ -82,15 +84,35 @@ function PvEDoudizhuDemoView() {
         
         newGameState.latestAction[gameState.currentPlayer] = newLatestAction;
         newGameState.hands[gameState.currentPlayer] = newHand;
+        newGameState.currentPlayer = (newGameState.currentPlayer + 1) % 3;
+        newGameState.turn++;
+        setGameState(newGameState);
         
+        if (gameStateTimeout) {
+            clearTimeout(gameStateTimeout);
+            setConsiderationTime(initConsiderationTime);
+        }
     };
 
     const requestApiPlay = async () => {
         // mock delayed API play
-        await timeout(250);
-        const apiRes = gameState.hands[gameState.currentPlayer][gameState.hands[gameState.currentPlayer].length - 1];
-        console.log('mock api res', apiRes);
+        await timeout(1200);
+        const apiRes = [card2SuiteAndRank(gameState.hands[gameState.currentPlayer][gameState.hands[gameState.currentPlayer].length - 1]).rank];
+        console.log('mock api res', apiRes, gameStateTimeout);
+        proceedNextTurn(apiRes);
     };
+    
+    const handleSelectedCards = (cards) => {
+        let newSelectedCards = selectedCards.slice();
+        cards.forEach(card => {
+            if (newSelectedCards.indexOf(card) >= 0) {
+                newSelectedCards.splice(newSelectedCards.indexOf(card), 1);
+            } else {
+                newSelectedCards.push(card);   
+            }
+        });
+        setSelectedCards(newSelectedCards);
+    }
 
     const gameStateTimer = () => {
         gameStateTimeout = setTimeout(() => {
@@ -113,7 +135,6 @@ function PvEDoudizhuDemoView() {
     };
 
     useEffect(() => {
-        console.log(considerationTime);
         gameStateTimer();
     }, [considerationTime]);
 
@@ -151,8 +172,11 @@ function PvEDoudizhuDemoView() {
                         <div style={{ height: '100%' }}>
                             <Paper className={'doudizhu-gameboard-paper'} elevation={3}>
                                 <DoudizhuGameBoard
+                                    handSelectable={true}
                                     playerInfo={playerInfo}
                                     hands={gameState.hands}
+                                    selectedCards={selectedCards}
+                                    handleSelectedCards={handleSelectedCards}
                                     latestAction={gameState.latestAction}
                                     mainPlayerId={mainPlayerId}
                                     currentPlayer={gameState.currentPlayer}

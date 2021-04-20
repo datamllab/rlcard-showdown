@@ -6,6 +6,7 @@ import Landlord_wName from '../../assets/images/Portrait/Landlord_wName.png';
 import Peasant_wName from '../../assets/images/Portrait/Peasant_wName.png';
 import PlaceHolderPlayer from '../../assets/images/Portrait/Player.png';
 
+import Button from "@material-ui/core/Button";
 import Chip from '@material-ui/core/Chip';
 import Avatar from '@material-ui/core/Avatar';
 
@@ -132,12 +133,25 @@ class DoudizhuGameBoard extends React.Component {
         else if(this.props.toggleFade === "fade-in" && (playerIdx+1)%3 === this.props.currentPlayer)
             fadeClassName = "scale-fade-in";
         if(this.props.currentPlayer === playerIdx){
-            return (
-                <div className={"timer "+fadeClassName}>
-                    <div className="timer-text">{millisecond2Second(this.props.considerationTime)}</div>
-                </div>
-            )
+            if (this.props.mainPlayerId === this.props.playerInfo[this.props.currentPlayer].id) {
+                return (
+                    <div className={"main-player-action-wrapper"}>
+                        <div style={{marginRight: '2em'}} className={"timer "+fadeClassName}>
+                          <div className="timer-text">{millisecond2Second(this.props.considerationTime)}</div>
+                        </div>
+                        <Button onClick={() => {this.props.handleMainPlayerAct('play');}} variant="contained" color="primary">play</Button>
+                    </div>
+                )
+            } else {
+                return (
+                    <div className={"timer "+fadeClassName}>
+                        <div className="timer-text">{millisecond2Second(this.props.considerationTime)}</div>
+                    </div>
+                )
+            }
         }else{
+            if (playerIdx === this.props.mainPlayerId)
+                console.log(this.props.latestAction[playerIdx]);
             return this.computeSingleLineHand(this.props.latestAction[playerIdx], fadeClassName)
         }
     }

@@ -62,7 +62,7 @@ function PvEDoudizhuDemoView() {
         // todo: take played card out from hand, and generate playing cards with suite 
         const currentHand = newGameState.hands[gameState.currentPlayer];
         
-        let newHand = [];
+        let newHand;
         let newLatestAction = []
         if (rankOnly) {
             newHand = currentHand.filter(card => {
@@ -79,7 +79,18 @@ function PvEDoudizhuDemoView() {
                 return true;
             });
         } else {
-            // todo: proceed player's action 
+            newLatestAction = playingCard.slice();
+            newHand = currentHand.filter(card => {
+                if (playingCard.length === 0)
+                    return true;
+
+                const idx = playingCard.indexOf(card);
+                if (idx >= 0) {
+                    playingCard.splice(idx, 1);
+                    return false;
+                }
+                return true;
+            });
         }
         
         newGameState.latestAction[gameState.currentPlayer] = newLatestAction;
@@ -163,6 +174,14 @@ function PvEDoudizhuDemoView() {
     const runNewTurn = () => {
         // gameStateTimer();
     };
+    
+    const handleMainPlayerAct = (type) => {
+        switch(type) {
+            case 'play': {
+                proceedNextTurn(selectedCards, false);
+            }
+        }
+    }
 
     return (
         <div>
@@ -185,6 +204,7 @@ function PvEDoudizhuDemoView() {
                                     runNewTurn={(prevTurn) => runNewTurn(prevTurn)}
                                     toggleFade={toggleFade}
                                     gameStatus={gameStatus}
+                                    handleMainPlayerAct={handleMainPlayerAct}
                                 />
                             </Paper>
                         </div>

@@ -37,8 +37,8 @@
 
 .playingCards .card {
     display: inline-block;
-    width: 3.3em;
-    height: 4.6em;
+    width: 2.5em;
+    height: 3.5em;
     border: 1px solid #666;
     border-radius: .3em;
     -moz-border-radius: .3em;
@@ -47,7 +47,7 @@
     padding: .25em;
     margin: 0 .5em .5em 0;
     text-align: center;
-    font-size: 1.2em; /* @change: adjust this value to make bigger or smaller cards */
+    font-size: 1.5em; /* @change: adjust this value to make bigger or smaller cards */
     font-weight: normal;
     font-family: Arial, sans-serif;
     position: relative;
@@ -63,6 +63,21 @@
 
 .playingCards.selectable a.card {
     cursor: pointer;
+}
+
+/* override orignal hover style */
+.playingCards.selectable a.card:hover {
+    bottom: 0;
+}
+
+.playingCards.selectable a.card:active::after {
+    background-color: rgba(23, 146, 210, 0.5);
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3em;
+    height: 4em;
 }
 
 /* selected and hover state */

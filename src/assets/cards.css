@@ -61,16 +61,16 @@
     text-decoration: none;
 }
 
-.playingCards.selectable a.card {
+.playingCards.selectable label.card {
     cursor: pointer;
 }
 
 /* override orignal hover style */
-.playingCards.selectable a.card:hover {
+.playingCards.selectable label.card:hover {
     bottom: 0;
 }
 
-.playingCards.selectable a.card:active::after {
+.playingCards.selectable label.card:active::after {
     background-color: rgba(23, 146, 210, 0.5);
     content: '';
     position: absolute;
@@ -81,7 +81,7 @@
 }
 
 /* selected and hover state */
-.playingCards a.card:hover, .playingCards a.card:active, .playingCards a.card.selected,
+.playingCards a.card:hover, .playingCards a.card:active, .playingCards.selectable label.card.selected,
 .playingCards label.card:hover,
 .playingCards strong .card {
     bottom: 1em;

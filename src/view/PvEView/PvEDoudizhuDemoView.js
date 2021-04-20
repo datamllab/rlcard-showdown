@@ -57,14 +57,19 @@ function PvEDoudizhuDemoView() {
     }
 
     const proceedNextTurn = (playingCard, rankOnly = true) => {
+        setToggleFade('fade-out');
+        
         let newGameState = deepCopy(gameState);
         
         // todo: take played card out from hand, and generate playing cards with suite 
         const currentHand = newGameState.hands[gameState.currentPlayer];
         
         let newHand;
-        let newLatestAction = []
-        if (rankOnly) {
+        let newLatestAction = [];
+        if (playingCard.length === 0) {
+            newHand = currentHand;
+            newLatestAction = 'pass';
+        } else if (rankOnly) {
             newHand = currentHand.filter(card => {
                 if (playingCard.length === 0)
                     return true;
@@ -92,13 +97,16 @@ function PvEDoudizhuDemoView() {
                 return true;
             });
         }
-        
+
         newGameState.latestAction[gameState.currentPlayer] = newLatestAction;
         newGameState.hands[gameState.currentPlayer] = newHand;
         newGameState.currentPlayer = (newGameState.currentPlayer + 1) % 3;
         newGameState.turn++;
         setGameState(newGameState);
-        
+        setToggleFade('fade-in');
+        setTimeout(()=> {
+            setToggleFade('');
+        }, 200);
         if (gameStateTimeout) {
             clearTimeout(gameStateTimeout);
             setConsiderationTime(initConsiderationTime);
@@ -131,11 +139,6 @@ function PvEDoudizhuDemoView() {
             if (currentConsiderationTime > 0) {
                 currentConsiderationTime -= considerationTimeDeduction;
                 currentConsiderationTime = Math.max(currentConsiderationTime, 0);
-                if (currentConsiderationTime === 0) {
-                    // consideration time used up for current player
-                    // if current player is controlled by user, play a random card
-                    // todo
-                }
                 setConsiderationTime(currentConsiderationTime);
             } else {
                 // consideration time used up for current player
@@ -179,6 +182,16 @@ function PvEDoudizhuDemoView() {
         switch(type) {
             case 'play': {
                 proceedNextTurn(selectedCards, false);
+                break;
+            }
+            case 'pass': {
+                proceedNextTurn([], false);
+                setSelectedCards([]);
+                break;
+            }
+            case 'deselect': {
+                setSelectedCards([]);
+                break;
             }
         }
     }
@@ -191,7 +204,7 @@ function PvEDoudizhuDemoView() {
                         <div style={{ height: '100%' }}>
                             <Paper className={'doudizhu-gameboard-paper'} elevation={3}>
                                 <DoudizhuGameBoard
-                                    handSelectable={true}
+                                    gamePlayable={true}
                                     playerInfo={playerInfo}
                                     hands={gameState.hands}
                                     selectedCards={selectedCards}

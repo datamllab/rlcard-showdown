@@ -47,27 +47,27 @@ class DoudizhuGameBoard extends React.Component {
             )
     }
 
-    computeSingleLineHand(cards, fadeClassName="") {
+    computeSingleLineHand(cards, fadeClassName="", cardSelectable = false) {
         if(cards === "pass"){
             return <div className="non-card"><span>PASS</span></div>
         }else{
             return (
-                <div className={`playingCards selectable loose ${fadeClassName} ${this.props.handSelectable ? 'selectable' : 'unselectable'}`}>
+                <div className={`playingCards loose ${fadeClassName} ${this.props.gamePlayable && cardSelectable ? 'selectable' : 'unselectable'}`}>
                     <ul className="hand" style={{width: computeHandCardsWidth(cards.length, 12)}}>
                         {cards.map(card=>{
                             const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
                             let selected = false;
-                            if (this.props.handSelectable) {
+                            if (this.props.gamePlayable && cardSelectable) {
                                 selected = this.props.selectedCards.indexOf(card) >= 0;   
                             }
                             
                             // todo: right click and move to select multiple cards
                             return (
                                 <li key={`handCard-${card}`}>
-                                    <a onClick={() => this.props.handleSelectedCards([card])} className={`card ${rankClass} ${suitClass} ${selected ? 'selected' : ''}`}>
+                                    <label onClick={() => this.props.handleSelectedCards([card])} className={`card ${rankClass} ${suitClass} ${selected ? 'selected' : ''}`}>
                                         <span className="rank">{rankText}</span>
                                         <span className="suit">{suitText}</span>
-                                    </a>
+                                    </label>
                                 </li>
                             );
                         })}
@@ -95,7 +95,7 @@ class DoudizhuGameBoard extends React.Component {
                                 const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
                                 return (
                                     <li key={`handCard-${card}`}>
-                                        <a className={`card ${rankClass} ${suitClass}`} href="/#">
+                                        <a className={`card ${rankClass} ${suitClass}`} href="javascript:void(0);">
                                             <span className="rank">{rankText}</span>
                                             <span className="suit">{suitText}</span>
                                         </a>
@@ -112,7 +112,7 @@ class DoudizhuGameBoard extends React.Component {
                                 const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
                                 return (
                                     <li key={`handCard-${card}`}>
-                                        <a className={`card ${rankClass} ${suitClass}`} href="/#">
+                                        <a className={`card ${rankClass} ${suitClass}`} href="javascript:void(0);">
                                             <span className="rank">{rankText}</span>
                                             <span className="suit">{suitText}</span>
                                         </a>
@@ -139,7 +139,9 @@ class DoudizhuGameBoard extends React.Component {
                         <div style={{marginRight: '2em'}} className={"timer "+fadeClassName}>
                           <div className="timer-text">{millisecond2Second(this.props.considerationTime)}</div>
                         </div>
-                        <Button onClick={() => {this.props.handleMainPlayerAct('play');}} variant="contained" color="primary">play</Button>
+                        <Button onClick={() => {this.props.handleMainPlayerAct('deselect')}} style={{marginRight: '2em'}} variant="contained" color="primary">Deselect</Button>
+                        <Button onClick={() => {this.props.handleMainPlayerAct('pass');}} style={{marginRight: '2em'}} variant="contained" color="primary">Pass</Button>
+                        <Button onClick={() => {this.props.handleMainPlayerAct('play');}} variant="contained" color="primary">Play</Button>
                     </div>
                 )
             } else {
@@ -150,8 +152,6 @@ class DoudizhuGameBoard extends React.Component {
                 )
             }
         }else{
-            if (playerIdx === this.props.mainPlayerId)
-                console.log(this.props.latestAction[playerIdx]);
             return this.computeSingleLineHand(this.props.latestAction[playerIdx], fadeClassName)
         }
     }
@@ -218,7 +218,7 @@ class DoudizhuGameBoard extends React.Component {
                         <div className="player-info">
                             {this.computePlayerPortrait(bottomId, bottomIdx)}
                         </div>
-                        {bottomIdx >= 0 ? <div className="player-hand">{this.computeSingleLineHand(this.props.hands[bottomIdx])}</div> : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
+                        {bottomIdx >= 0 ? <div className="player-hand">{this.computeSingleLineHand(this.props.hands[bottomIdx], '', true)}</div> : <div className="player-hand-placeholder"><span>Waiting...</span></div>}
                     </div>
                 </div>
             </div>

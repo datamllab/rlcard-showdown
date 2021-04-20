@@ -30,6 +30,11 @@
         .main-player-action-wrapper {
             display: flex;
             align-items: center;
+            
+            button {
+                font-weight: bolder;
+                border-radius: 40px;
+            }
         }
 
         .timer {

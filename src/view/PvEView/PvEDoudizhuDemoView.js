@@ -1,6 +1,6 @@
 import Paper from '@material-ui/core/Paper';
 import axios from 'axios';
-import { Layout } from 'element-react';
+import { Layout, Message } from 'element-react';
 import qs from 'query-string';
 import React, { useEffect, useState } from 'react';
 import { DoudizhuGameBoard } from '../../components/GameBoard';
@@ -13,9 +13,10 @@ const initHands = [
     'RJ BJ D2 SA SK CK SJ HJ DJ CT DT C9 S8 H8 C8 D7 D5 H3 S3 D3',
 ];
 
-const initConsiderationTime = 2000;
-const considerationTimeDeduction = 200;
-const mainPlayerId = 0;
+const initConsiderationTime = 30000;
+const considerationTimeDeduction = 1000;
+const apiPlayDelay = 3000;
+const mainPlayerId = 0; // index of main player (for the sake of simplify code logic)
 const playerInfo = [
     {
         id: 0,
@@ -48,6 +49,7 @@ let lastMoveLandlordUp = [];
 let playedCardsLandlord = [];
 let playedCardsLandlordDown = [];
 let playedCardsLandlordUp = [];
+let legalActions = { turn: -1, actions: [] };
 
 function PvEDoudizhuDemoView() {
     const [considerationTime, setConsiderationTime] = useState(initConsiderationTime);
@@ -60,6 +62,7 @@ function PvEDoudizhuDemoView() {
         turn: 0,
     });
     const [selectedCards, setSelectedCards] = useState([]); // user selected hand card
+    const [isPassDisabled, setIsPassDisabled] = useState(true);
 
     const cardStr2Arr = (cardStr) => {
         return cardStr === 'pass' || cardStr === '' ? 'pass' : cardStr.split(' ');
@@ -82,14 +85,42 @@ function PvEDoudizhuDemoView() {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
-    const proceedNextTurn = (playingCard, rankOnly = true) => {
+    const proceedNextTurn = async (playingCard, rankOnly = true) => {
+        // if next player is user, get legal actions
+        if ((gameState.currentPlayer + 1) % 3 === mainPlayerId) {
+            const player_hand_cards = cardArr2DouzeroFormat(gameState.hands[mainPlayerId].slice().reverse());
+            let rival_move = '';
+            if (playingCard.length === 0) {
+                rival_move = cardArr2DouzeroFormat(sortDoudizhuCards(gameHistory[gameHistory.length - 1], true));
+            } else {
+                rival_move = rankOnly ? playingCard.join('') : cardArr2DouzeroFormat(playingCard);
+            }
+            const requestBody = {
+                player_hand_cards,
+                rival_move,
+            };
+            const apiRes = await axios.post(`${douzeroDemoUrl}/legal`, qs.stringify(requestBody));
+            console.log('legal', apiRes);
+            const data = apiRes.data;
+            legalActions = {
+                turn: gameState.turn + 1,
+                actions: data.legal_action.split(','),
+            };
+
+            setIsPassDisabled(playingCard.length === 0 && gameHistory[gameHistory.length - 1].length === 0);
+        }
+
+        // delay play for api player
+        if (gameState.currentPlayer !== mainPlayerId && considerationTime > apiPlayDelay) {
+            await timeout(apiPlayDelay);
+        }
+
         setToggleFade('fade-out');
 
         let newGameState = deepCopy(gameState);
 
-        // todo: take played card out from hand, and generate playing cards with suite
+        // take played card out from hand, and generate playing cards with suite
         const currentHand = newGameState.hands[gameState.currentPlayer];
-
         let newHand;
         let newLatestAction = [];
         if (playingCard.length === 0) {
@@ -123,7 +154,6 @@ function PvEDoudizhuDemoView() {
         }
 
         // update value records for douzero
-        // debugger;
         const newHistoryRecord = newLatestAction === 'pass' ? [] : newLatestAction;
         switch (playerInfo[gameState.currentPlayer].douzeroPlayerPosition) {
             case 0:
@@ -153,18 +183,12 @@ function PvEDoudizhuDemoView() {
         }, 200);
         if (gameStateTimeout) {
             clearTimeout(gameStateTimeout);
-            setConsiderationTime(initConsiderationTime);
         }
+        setConsiderationTime(initConsiderationTime);
     };
 
     const requestApiPlay = async () => {
-        // mock delayed API play
-        // await timeout(1200);
-        // const apiRes = [
-        //     card2SuiteAndRank(
-        //         gameState.hands[gameState.currentPlayer][gameState.hands[gameState.currentPlayer].length - 1],
-        //     ).rank,
-        // ];
+        // gather information for api request
         const player_position = playerInfo[gameState.currentPlayer].douzeroPlayerPosition;
         const player_hand_cards = cardArr2DouzeroFormat(gameState.hands[gameState.currentPlayer].slice().reverse());
         const num_cards_left_landlord =
@@ -217,10 +241,37 @@ function PvEDoudizhuDemoView() {
             const apiRes = await axios.post(`${douzeroDemoUrl}/predict`, qs.stringify(requestBody));
             console.log(apiRes.data);
             const data = apiRes.data;
+
             if (data.status !== 0) {
                 if (data.status === -1) {
-                    // todo: check if no legal action can be made
-                    proceedNextTurn([]);
+                    // check if no legal action can be made
+                    const player_hand_cards = cardArr2DouzeroFormat(
+                        gameState.hands[gameState.currentPlayer].slice().reverse(),
+                    );
+                    let rival_move = '';
+                    if (gameHistory[gameHistory.length - 1].length > 0) {
+                        rival_move = cardArr2DouzeroFormat(
+                            sortDoudizhuCards(gameHistory[gameHistory.length - 1], true),
+                        );
+                    } else if (gameHistory.length > 2 && gameHistory[gameHistory.length - 2].length > 0) {
+                        rival_move = cardArr2DouzeroFormat(
+                            sortDoudizhuCards(gameHistory[gameHistory.length - 2], true),
+                        );
+                    }
+                    const requestBody = {
+                        player_hand_cards,
+                        rival_move,
+                    };
+                    const apiRes = await axios.post(`${douzeroDemoUrl}/legal`, qs.stringify(requestBody));
+                    console.log('api player legal', apiRes);
+                    if (apiRes.data.legal_action === '') proceedNextTurn([]);
+                    else {
+                        Message({
+                            message: 'Error receiving prediction result, please try refresh the page',
+                            type: 'error',
+                            showClose: true,
+                        });
+                    }
                 }
                 console.log(data.status, data.message);
             } else {
@@ -242,7 +293,11 @@ function PvEDoudizhuDemoView() {
                 proceedNextTurn(bestAction.split(''));
             }
         } catch (err) {
-            console.log(err);
+            Message({
+                message: 'Error receiving prediction result, please try refresh the page',
+                type: 'error',
+                showClose: true,
+            });
         }
     };
 
@@ -294,20 +349,37 @@ function PvEDoudizhuDemoView() {
         if (gameState.currentPlayer) {
             // if current player is not user, request for API player
             if (gameState.currentPlayer !== mainPlayerId) {
-                // debugger;
                 requestApiPlay();
             }
         }
     }, [gameState.currentPlayer]);
 
-    const runNewTurn = () => {
-        // gameStateTimer();
-    };
+    const runNewTurn = () => {};
 
     const handleMainPlayerAct = (type) => {
         switch (type) {
             case 'play': {
-                proceedNextTurn(selectedCards, false);
+                // check if cards to play is in legal action list
+                if (gameState.turn === legalActions.turn) {
+                    if (
+                        legalActions.actions.indexOf(cardArr2DouzeroFormat(sortDoudizhuCards(selectedCards, true))) >= 0
+                    ) {
+                        proceedNextTurn(selectedCards, false);
+                    } else {
+                        Message({
+                            message: 'Selected cards are not legal action',
+                            type: 'warning',
+                            showClose: true,
+                        });
+                        setSelectedCards([]);
+                    }
+                } else {
+                    Message({
+                        message: 'Legal Action not received or turn info inconsistant',
+                        type: 'error',
+                        showClose: true,
+                    });
+                }
                 break;
             }
             case 'pass': {
@@ -330,6 +402,7 @@ function PvEDoudizhuDemoView() {
                         <div style={{ height: '100%' }}>
                             <Paper className={'doudizhu-gameboard-paper'} elevation={3}>
                                 <DoudizhuGameBoard
+                                    isPassDisabled={isPassDisabled}
                                     gamePlayable={true}
                                     playerInfo={playerInfo}
                                     hands={gameState.hands}

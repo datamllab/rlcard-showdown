@@ -4,14 +4,19 @@ import { Layout, Message } from 'element-react';
 import qs from 'query-string';
 import React, { useEffect, useState } from 'react';
 import { DoudizhuGameBoard } from '../../components/GameBoard';
-import { card2SuiteAndRank, deepCopy, isDoudizhuBomb, sortDoudizhuCards } from '../../utils';
+import {
+    card2SuiteAndRank,
+    deepCopy,
+    fullDoudizhuDeck,
+    isDoudizhuBomb,
+    shuffleArray,
+    sortDoudizhuCards,
+} from '../../utils';
 import { douzeroDemoUrl } from '../../utils/config';
 
-const initHands = [
-    'S2 H2 HK DK HQ CQ DQ CJ S9 H9 D9 C7 S6 H6 C4 D4 S3',
-    'C2 HA CA DA SQ ST HT D8 S7 H7 C6 D6 S5 H5 C5 S4 H4',
-    'RJ BJ D2 SA SK CK SJ HJ DJ CT DT C9 S8 H8 C8 D7 D5 H3 S3 D3',
-];
+const shuffledDoudizhuDeck = shuffleArray(fullDoudizhuDeck.slice());
+
+const threeLandlordCards = shuffleArray(sortDoudizhuCards(shuffledDoudizhuDeck.slice(0, 3)));
 
 const initConsiderationTime = 30000;
 const considerationTimeDeduction = 1000;
@@ -37,7 +42,15 @@ const playerInfo = [
         douzeroPlayerPosition: 0,
     },
 ];
-const threeLandlordCards = ['RJ', 'BJ', 'D2'];
+
+let initHands = [
+    shuffledDoudizhuDeck.slice(3, 20),
+    shuffledDoudizhuDeck.slice(20, 37),
+    shuffledDoudizhuDeck.slice(37, 54),
+];
+console.log(initHands);
+const landlordIdx = playerInfo.find((player) => player.role === 'landlord').index;
+initHands[landlordIdx] = initHands[landlordIdx].concat(threeLandlordCards.slice());
 
 let gameStateTimeout = null;
 
@@ -154,7 +167,7 @@ function PvEDoudizhuDemoView() {
         }
 
         // update value records for douzero
-        const newHistoryRecord = newLatestAction === 'pass' ? [] : newLatestAction;
+        const newHistoryRecord = sortDoudizhuCards(newLatestAction === 'pass' ? [] : newLatestAction, true);
         switch (playerInfo[gameState.currentPlayer].douzeroPlayerPosition) {
             case 0:
                 lastMoveLandlord = newHistoryRecord;
@@ -253,7 +266,7 @@ function PvEDoudizhuDemoView() {
                         rival_move = cardArr2DouzeroFormat(
                             sortDoudizhuCards(gameHistory[gameHistory.length - 1], true),
                         );
-                    } else if (gameHistory.length > 2 && gameHistory[gameHistory.length - 2].length > 0) {
+                    } else if (gameHistory.length >= 2 && gameHistory[gameHistory.length - 2].length > 0) {
                         rival_move = cardArr2DouzeroFormat(
                             sortDoudizhuCards(gameHistory[gameHistory.length - 2], true),
                         );
@@ -340,7 +353,7 @@ function PvEDoudizhuDemoView() {
         const newGameState = deepCopy(gameState);
         // find landord to be the first player
         newGameState.currentPlayer = playerInfo.find((element) => element.role === 'landlord').index;
-        newGameState.hands = initHands.map((element) => sortDoudizhuCards(cardStr2Arr(element)));
+        newGameState.hands = initHands.map((element) => sortDoudizhuCards(element));
         setGameState(newGameState);
         gameStateTimer();
     }, []);

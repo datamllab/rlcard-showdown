@@ -239,3 +239,14 @@ export function isDoudizhuBomb(cards) {
         return cards[0][1] === cards[1][1] && cards[0][1] === cards[2][1] && cards[0][1] === cards[3][1];
     return false;
 }
+
+export function shuffleArray(inputArray) {
+    let array = inputArray.slice();
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+}

@@ -48,7 +48,9 @@ let initHands = [
     shuffledDoudizhuDeck.slice(20, 37),
     shuffledDoudizhuDeck.slice(37, 54),
 ];
-console.log(initHands);
+console.log('init hands', initHands);
+console.log('three landlord card', threeLandlordCards);
+console.log('player info', playerInfo);
 const landlordIdx = playerInfo.find((player) => player.role === 'landlord').index;
 initHands[landlordIdx] = initHands[landlordIdx].concat(threeLandlordCards.slice());
 
@@ -113,7 +115,6 @@ function PvEDoudizhuDemoView() {
                 rival_move,
             };
             const apiRes = await axios.post(`${douzeroDemoUrl}/legal`, qs.stringify(requestBody));
-            console.log('legal', apiRes);
             const data = apiRes.data;
             legalActions = {
                 turn: gameState.turn + 1,
@@ -252,7 +253,6 @@ function PvEDoudizhuDemoView() {
 
         try {
             const apiRes = await axios.post(`${douzeroDemoUrl}/predict`, qs.stringify(requestBody));
-            console.log(apiRes.data);
             const data = apiRes.data;
 
             if (data.status !== 0) {
@@ -276,7 +276,6 @@ function PvEDoudizhuDemoView() {
                         rival_move,
                     };
                     const apiRes = await axios.post(`${douzeroDemoUrl}/legal`, qs.stringify(requestBody));
-                    console.log('api player legal', apiRes);
                     if (apiRes.data.legal_action === '') proceedNextTurn([]);
                     else {
                         Message({
@@ -286,9 +285,7 @@ function PvEDoudizhuDemoView() {
                         });
                     }
                 }
-                console.log(data.status, data.message);
             } else {
-                console.log('api res', data, gameStateTimeout);
                 let bestAction = '';
                 if (data.result && Object.keys(data.result).length > 0) {
                     if (Object.keys(data.result).length === 1) bestAction = Object.keys(data.result)[0];

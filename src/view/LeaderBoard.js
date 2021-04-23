@@ -62,7 +62,14 @@ function LeaderBoard () {
         fetchModelData();
     }, [reloadMenu]);
 
-    const { type, name } = qs.parse(window.location.search);
+    let { type, name } = qs.parse(window.location.search);
+    // default value
+    if (!type) {
+        type = "game";
+    }
+    if (!name) {
+        name = "leduc-holdem";
+    }
     let requestUrl = `${apiUrl}/tournament/`;
     if (type === 'game') {
         requestUrl += `query_agent_payoff?name=${name}&elements_every_page=${rowsPerPage}&page_index=${page}`

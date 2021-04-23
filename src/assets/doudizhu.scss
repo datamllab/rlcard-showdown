@@ -26,6 +26,16 @@
             transition: visibility 0.1s, opacity 0.05s;
             opacity: 0;
         }
+        
+        .main-player-action-wrapper {
+            display: flex;
+            align-items: center;
+            
+            button {
+                font-weight: bolder;
+                border-radius: 40px;
+            }
+        }
 
         .timer {
             visibility: visible;
@@ -35,7 +45,7 @@
             height: 60px;
             .timer-text {
                 color: #303133;
-                margin-top: 5px;
+                transform: translateY(5px);
                 font-size: 23px;
                 font-weight: bold;
                 text-shadow: 0 2px 2px #909399;

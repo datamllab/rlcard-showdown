@@ -3,7 +3,6 @@ import axios from 'axios';
 import qs from 'query-string';
 import '../../assets/gameview.scss';
 import {LeducHoldemGameBoard} from '../../components/GameBoard';
-import Navbar from '../../components/Navbar';
 import {deepCopy} from "../../utils";
 import { apiUrl } from "../../utils/config";
 
@@ -26,7 +25,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-class LeducHoldemGameView extends React.Component {
+class LeducHoldemReplayView extends React.Component {
     constructor(props) {
         super(props);
 
@@ -398,7 +397,6 @@ class LeducHoldemGameView extends React.Component {
                         </Button>
                     </DialogActions>
                 </Dialog>
-                <Navbar gameName="Leduc Hold'em" />
                 <div className={"leduc-view-container"}>
                     <Layout.Row style={{"height": "540px"}}>
                         <Layout.Col style={{"height": "100%"}} span="17">
@@ -513,4 +511,4 @@ class LeducHoldemGameView extends React.Component {
     }
 }
 
-export default LeducHoldemGameView;
+export default LeducHoldemReplayView;

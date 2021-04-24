@@ -1,14 +1,14 @@
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Paper from '@material-ui/core/Paper';
 import axios from 'axios';
 import { Layout, Message } from 'element-react';
 import qs from 'query-string';
 import React, { useEffect, useState } from 'react';
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogActions from "@material-ui/core/DialogActions";
-import Dialog from "@material-ui/core/Dialog";
-import Button from '@material-ui/core/Button';
 import { DoudizhuGameBoard } from '../../components/GameBoard';
 import {
     card2SuiteAndRank,
@@ -204,18 +204,20 @@ function PvEDoudizhuDemoView() {
             setToggleFade('');
         }, 200);
 
+        if (gameStateTimeout) {
+            clearTimeout(gameStateTimeout);
+        }
+
         if (newHand.length === 0) {
-            const winner = playerInfo[newGameState.currentPlayer];
+            const winner = playerInfo[gameState.currentPlayer];
             setGameStatus('over');
             setTimeout(() => {
                 gameEndDialogText = winner.role + ' wins!';
                 setIsGameEndDialogOpen(true);
             }, 300);
+            return;
         }
 
-        if (gameStateTimeout) {
-            clearTimeout(gameStateTimeout);
-        }
         setConsiderationTime(initConsiderationTime);
     };
 
@@ -275,7 +277,7 @@ function PvEDoudizhuDemoView() {
 
             if (data.status !== 0) {
                 if (data.status === -1) {
-                    // check if no legal action can be made
+                    // check if no legal action or only one legal action can be made
                     const player_hand_cards = cardArr2DouzeroFormat(
                         gameState.hands[gameState.currentPlayer].slice().reverse(),
                     );
@@ -295,6 +297,8 @@ function PvEDoudizhuDemoView() {
                     };
                     const apiRes = await axios.post(`${douzeroDemoUrl}/legal`, qs.stringify(requestBody));
                     if (apiRes.data.legal_action === '') proceedNextTurn([]);
+                    else if (apiRes.data.legal_action.split(',').length === 1)
+                        proceedNextTurn(apiRes.data.legal_action.split(''));
                     else {
                         Message({
                             message: 'Error receiving prediction result, please try refresh the page',
@@ -359,7 +363,7 @@ function PvEDoudizhuDemoView() {
     const handleCloseGameEndDialog = () => {
         setIsGameEndDialogOpen(false);
         // todo: proceed next game option
-    }
+    };
 
     useEffect(() => {
         gameStateTimer();
@@ -435,11 +439,11 @@ function PvEDoudizhuDemoView() {
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title" style={{"width": "200px"}}>{"Game Ends!"}</DialogTitle>
+                <DialogTitle id="alert-dialog-title" style={{ width: '200px' }}>
+                    {'Game Ends!'}
+                </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        {gameEndDialogText}
-                    </DialogContentText>
+                    <DialogContentText id="alert-dialog-description">{gameEndDialogText}</DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseGameEndDialog} color="primary" autoFocus>

@@ -90,10 +90,10 @@ class DoudizhuGameBoard extends React.Component {
                                 const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
                                 return (
                                     <li key={`handCard-${card}`}>
-                                        <a className={`card ${rankClass} ${suitClass}`} href="javascript:void(0);">
+                                        <label className={`card ${rankClass} ${suitClass}`}>
                                             <span className="rank">{rankText}</span>
                                             <span className="suit">{suitText}</span>
-                                        </a>
+                                        </label>
                                     </li>
                                 );
                             })}
@@ -107,10 +107,10 @@ class DoudizhuGameBoard extends React.Component {
                                 const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
                                 return (
                                     <li key={`handCard-${card}`}>
-                                        <a className={`card ${rankClass} ${suitClass}`} href="javascript:void(0);">
+                                        <label className={`card ${rankClass} ${suitClass}`}>
                                             <span className="rank">{rankText}</span>
                                             <span className="suit">{suitText}</span>
-                                        </a>
+                                        </label>
                                     </li>
                                 );
                             })}

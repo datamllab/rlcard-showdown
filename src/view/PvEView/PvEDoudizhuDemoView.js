@@ -3,6 +3,12 @@ import axios from 'axios';
 import { Layout, Message } from 'element-react';
 import qs from 'query-string';
 import React, { useEffect, useState } from 'react';
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogActions from "@material-ui/core/DialogActions";
+import Dialog from "@material-ui/core/Dialog";
+import Button from '@material-ui/core/Button';
 import { DoudizhuGameBoard } from '../../components/GameBoard';
 import {
     card2SuiteAndRank,
@@ -65,8 +71,10 @@ let playedCardsLandlord = [];
 let playedCardsLandlordDown = [];
 let playedCardsLandlordUp = [];
 let legalActions = { turn: -1, actions: [] };
+let gameEndDialogText = '';
 
 function PvEDoudizhuDemoView() {
+    const [isGameEndDialogOpen, setIsGameEndDialogOpen] = useState(false);
     const [considerationTime, setConsiderationTime] = useState(initConsiderationTime);
     const [toggleFade, setToggleFade] = useState('');
     const [gameStatus, setGameStatus] = useState('ready'); // "ready", "playing", "paused", "over"
@@ -195,6 +203,16 @@ function PvEDoudizhuDemoView() {
         setTimeout(() => {
             setToggleFade('');
         }, 200);
+
+        if (newHand.length === 0) {
+            const winner = playerInfo[newGameState.currentPlayer];
+            setGameStatus('over');
+            setTimeout(() => {
+                gameEndDialogText = winner.role + ' wins!';
+                setIsGameEndDialogOpen(true);
+            }, 300);
+        }
+
         if (gameStateTimeout) {
             clearTimeout(gameStateTimeout);
         }
@@ -338,6 +356,11 @@ function PvEDoudizhuDemoView() {
         }, considerationTimeDeduction);
     };
 
+    const handleCloseGameEndDialog = () => {
+        setIsGameEndDialogOpen(false);
+        // todo: proceed next game option
+    }
+
     useEffect(() => {
         gameStateTimer();
     }, [considerationTime]);
@@ -406,6 +429,24 @@ function PvEDoudizhuDemoView() {
 
     return (
         <div>
+            <Dialog
+                open={isGameEndDialogOpen}
+                onClose={handleCloseGameEndDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title" style={{"width": "200px"}}>{"Game Ends!"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        {gameEndDialogText}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseGameEndDialog} color="primary" autoFocus>
+                        OK
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <div className={'doudizhu-view-container'}>
                 <Layout.Row style={{ height: '540px' }}>
                     <Layout.Col style={{ height: '100%' }} span="17">

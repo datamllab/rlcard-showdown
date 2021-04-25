@@ -283,18 +283,18 @@ class DoudizhuGameBoard extends React.Component {
                     >
                         <Button
                             onClick={() => this.props.handleSelectRole('landlord_up')}
-                            style={{ width: '220px' }}
+                            style={{ width: '225px' }}
                             variant="contained"
                             color="primary"
                             startIcon={<img src={Peasant_wName} alt="Peasant" width="48px" />}
                         >
                             Play as Peasant
                             <br />
-                            (Early Hand)
+                            (Landlord Up)
                         </Button>
                         <Button
                             onClick={() => this.props.handleSelectRole('landlord')}
-                            style={{ width: '220px', marginTop: '20px', marginBottom: '20px' }}
+                            style={{ width: '225px', marginTop: '20px', marginBottom: '20px' }}
                             variant="contained"
                             color="primary"
                             startIcon={<img src={Landlord_wName} alt="Peasant" width="48px" />}
@@ -303,14 +303,14 @@ class DoudizhuGameBoard extends React.Component {
                         </Button>
                         <Button
                             onClick={() => this.props.handleSelectRole('landlord_down')}
-                            style={{ width: '220px' }}
+                            style={{ width: '225px' }}
                             variant="contained"
                             color="primary"
                             startIcon={<img src={Peasant_wName} alt="Peasant" width="48px" />}
                         >
                             Play as Peasant
                             <br />
-                            (Late Hand)
+                            (Landlord Down)
                         </Button>
                     </Layout.Row>
                 ) : undefined}

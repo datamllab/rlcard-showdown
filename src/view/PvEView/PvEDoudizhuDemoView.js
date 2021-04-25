@@ -77,9 +77,6 @@ function PvEDoudizhuDemoView() {
             .join('');
     };
 
-    // todo: generate inital player / hand states
-    // for test use
-
     function timeout(ms) {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }

@@ -9,6 +9,7 @@ import axios from 'axios';
 import { Layout, Message } from 'element-react';
 import qs from 'query-string';
 import React, { useEffect, useState } from 'react';
+import '../../assets/doudizhu.scss';
 import { DoudizhuGameBoard } from '../../components/GameBoard';
 import {
     card2SuiteAndRank,
@@ -28,26 +29,7 @@ const initConsiderationTime = 30000;
 const considerationTimeDeduction = 1000;
 const apiPlayDelay = 3000;
 const mainPlayerId = 0; // index of main player (for the sake of simplify code logic)
-const playerInfo = [
-    {
-        id: 0,
-        index: 0,
-        role: 'peasant',
-        douzeroPlayerPosition: 1,
-    },
-    {
-        id: 1,
-        index: 1,
-        role: 'peasant',
-        douzeroPlayerPosition: 2,
-    },
-    {
-        id: 2,
-        index: 2,
-        role: 'landlord',
-        douzeroPlayerPosition: 0,
-    },
-];
+let playerInfo = [];
 
 let initHands = [
     shuffledDoudizhuDeck.slice(3, 20),
@@ -57,8 +39,6 @@ let initHands = [
 console.log('init hands', initHands);
 console.log('three landlord card', threeLandlordCards);
 console.log('player info', playerInfo);
-const landlordIdx = playerInfo.find((player) => player.role === 'landlord').index;
-initHands[landlordIdx] = initHands[landlordIdx].concat(threeLandlordCards.slice());
 
 let gameStateTimeout = null;
 
@@ -86,10 +66,6 @@ function PvEDoudizhuDemoView() {
     });
     const [selectedCards, setSelectedCards] = useState([]); // user selected hand card
     const [isPassDisabled, setIsPassDisabled] = useState(true);
-
-    const cardStr2Arr = (cardStr) => {
-        return cardStr === 'pass' || cardStr === '' ? 'pass' : cardStr.split(' ');
-    };
 
     const cardArr2DouzeroFormat = (cards) => {
         return cards
@@ -190,6 +166,8 @@ function PvEDoudizhuDemoView() {
                 lastMoveLandlordUp = newHistoryRecord;
                 playedCardsLandlordUp = playedCardsLandlordUp.concat(newHistoryRecord);
                 break;
+            default:
+                break;
         }
         gameHistory.push(newHistoryRecord);
         if (isDoudizhuBomb(newHistoryRecord)) bombNum++;
@@ -215,10 +193,11 @@ function PvEDoudizhuDemoView() {
                 gameEndDialogText = winner.role + ' wins!';
                 setIsGameEndDialogOpen(true);
             }, 300);
-            return;
+        } else {
+            setConsiderationTime(initConsiderationTime);
+            // manually trigger timer if consideration time equals initConsiderationTime
+            if (initConsiderationTime === considerationTime) gameStateTimer();
         }
-
-        setConsiderationTime(initConsiderationTime);
     };
 
     const requestApiPlay = async () => {
@@ -345,6 +324,51 @@ function PvEDoudizhuDemoView() {
         setSelectedCards(newSelectedCards);
     };
 
+    const handleSelectRole = (role) => {
+        const playerInfoTemplate = [
+            {
+                id: 0,
+                index: 0,
+                role: 'peasant',
+                douzeroPlayerPosition: -1,
+            },
+            {
+                id: 1,
+                index: 1,
+                role: 'peasant',
+                douzeroPlayerPosition: -1,
+            },
+            {
+                id: 2,
+                index: 2,
+                role: 'peasant',
+                douzeroPlayerPosition: -1,
+            },
+        ];
+        switch (role) {
+            case 'landlord_up':
+                playerInfo = deepCopy(playerInfoTemplate);
+                playerInfo[1].role = 'landlord';
+                break;
+            case 'landlord':
+                playerInfo = deepCopy(playerInfoTemplate);
+                playerInfo[0].role = 'landlord';
+                break;
+            case 'landlord_down':
+                playerInfo = deepCopy(playerInfoTemplate);
+                playerInfo[2].role = 'landlord';
+                break;
+            default:
+                break;
+        }
+        const landlordIdx = playerInfo.find((player) => player.role === 'landlord').index;
+        playerInfo[landlordIdx].douzeroPlayerPosition = 0;
+        playerInfo[(landlordIdx + 1) % 3].douzeroPlayerPosition = 1;
+        playerInfo[(landlordIdx + 2) % 3].douzeroPlayerPosition = 2;
+        initHands[landlordIdx] = initHands[landlordIdx].concat(threeLandlordCards.slice());
+        setGameStatus('playing');
+    };
+
     const gameStateTimer = () => {
         gameStateTimeout = setTimeout(() => {
             let currentConsiderationTime = considerationTime;
@@ -365,12 +389,7 @@ function PvEDoudizhuDemoView() {
         // todo: proceed next game option
     };
 
-    useEffect(() => {
-        gameStateTimer();
-    }, [considerationTime]);
-
-    // set init game state
-    useEffect(() => {
+    const startGame = async () => {
         // start game
         setGameStatus('playing');
 
@@ -378,18 +397,43 @@ function PvEDoudizhuDemoView() {
         // find landord to be the first player
         newGameState.currentPlayer = playerInfo.find((element) => element.role === 'landlord').index;
         newGameState.hands = initHands.map((element) => sortDoudizhuCards(element));
+
+        // if first player is user, fetch legal actions
+        if (newGameState.currentPlayer === mainPlayerId) {
+            const player_hand_cards = cardArr2DouzeroFormat(newGameState.hands[mainPlayerId].slice().reverse());
+            let rival_move = '';
+            const requestBody = {
+                player_hand_cards,
+                rival_move,
+            };
+            const apiRes = await axios.post(`${douzeroDemoUrl}/legal`, qs.stringify(requestBody));
+            const data = apiRes.data;
+            legalActions = {
+                turn: 0,
+                actions: data.legal_action.split(','),
+            };
+        }
+
         setGameState(newGameState);
         gameStateTimer();
-    }, []);
+    };
 
     useEffect(() => {
-        if (gameState.currentPlayer) {
+        gameStateTimer();
+    }, [considerationTime]);
+
+    useEffect(() => {
+        if (gameState.currentPlayer && gameStatus === 'playing') {
             // if current player is not user, request for API player
             if (gameState.currentPlayer !== mainPlayerId) {
                 requestApiPlay();
             }
         }
     }, [gameState.currentPlayer]);
+
+    useEffect(() => {
+        if (gameStatus === 'playing') startGame();
+    }, [gameStatus]);
 
     const runNewTurn = () => {};
 
@@ -446,7 +490,7 @@ function PvEDoudizhuDemoView() {
                     <DialogContentText id="alert-dialog-description">{gameEndDialogText}</DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseGameEndDialog} color="primary" autoFocus>
+                    <Button onClick={() => handleCloseGameEndDialog()} color="primary" autoFocus>
                         OK
                     </Button>
                 </DialogActions>
@@ -457,6 +501,8 @@ function PvEDoudizhuDemoView() {
                         <div style={{ height: '100%' }}>
                             <Paper className={'doudizhu-gameboard-paper'} elevation={3}>
                                 <DoudizhuGameBoard
+                                    showCardBack={true}
+                                    handleSelectRole={handleSelectRole}
                                     isPassDisabled={isPassDisabled}
                                     gamePlayable={true}
                                     playerInfo={playerInfo}
@@ -473,6 +519,7 @@ function PvEDoudizhuDemoView() {
                                     gameStatus={gameStatus}
                                     handleMainPlayerAct={handleMainPlayerAct}
                                 />
+                                {/* )} */}
                             </Paper>
                         </div>
                     </Layout.Col>

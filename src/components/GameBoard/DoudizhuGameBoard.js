@@ -1,6 +1,7 @@
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
+import { Layout } from 'element-react';
 import React from 'react';
 import '../../assets/doudizhu.scss';
 import Landlord_wName from '../../assets/images/Portrait/Landlord_wName.png';
@@ -14,19 +15,19 @@ class DoudizhuGameBoard extends React.Component {
             return this.props.playerInfo[playerIdx].role === 'landlord' ? (
                 <div>
                     <img src={Landlord_wName} alt={'Landlord'} height="70%" width="70%" />
-                    <Chip avatar={<Avatar>ID</Avatar>} label={playerId} clickable color="primary" />
+                    <Chip avatar={<Avatar>ID</Avatar>} label={playerId} color="primary" />
                 </div>
             ) : (
                 <div>
                     <img src={Peasant_wName} alt={'Peasant'} height="70%" width="70%" />
-                    <Chip avatar={<Avatar>ID</Avatar>} label={playerId} clickable color="primary" />
+                    <Chip avatar={<Avatar>ID</Avatar>} label={playerId} color="primary" />
                 </div>
             );
         } else
             return (
                 <div>
                     <img src={PlaceHolderPlayer} alt={'Player'} height="70%" width="70%" />
-                    <Chip avatar={<Avatar>ID</Avatar>} label={playerId} clickable color="primary" />
+                    <Chip avatar={<Avatar>ID</Avatar>} label={playerId} color="primary" />
                 </div>
             );
     }
@@ -90,7 +91,11 @@ class DoudizhuGameBoard extends React.Component {
                                 const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
                                 return (
                                     <li key={`handCard-${card}`}>
-                                        <label className={`card ${rankClass} ${suitClass}`}>
+                                        <label
+                                            className={`card ${
+                                                this.props.showCardBack ? 'back' : '' + rankClass + ' ' + suitClass
+                                            }`}
+                                        >
                                             <span className="rank">{rankText}</span>
                                             <span className="suit">{suitText}</span>
                                         </label>
@@ -107,7 +112,11 @@ class DoudizhuGameBoard extends React.Component {
                                 const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
                                 return (
                                     <li key={`handCard-${card}`}>
-                                        <label className={`card ${rankClass} ${suitClass}`}>
+                                        <label
+                                            className={`card ${
+                                                this.props.showCardBack ? 'back' : '' + rankClass + ' ' + suitClass
+                                            }`}
+                                        >
                                             <span className="rank">{rankText}</span>
                                             <span className="suit">{suitText}</span>
                                         </label>
@@ -209,47 +218,102 @@ class DoudizhuGameBoard extends React.Component {
         }
         return (
             <div className="doudizhu-wrapper" style={{}}>
-                <div id={'left-player'}>
-                    <div className="player-main-area">
-                        <div className="player-info">{this.computePlayerPortrait(leftId, leftIdx)}</div>
-                        {leftIdx >= 0 ? (
-                            this.computeSideHand(this.props.hands[leftIdx])
-                        ) : (
-                            <div className="player-hand-placeholder">
-                                <span>Waiting...</span>
-                            </div>
-                        )}
+                <div
+                    id={'gameboard-background'}
+                    className={
+                        this.props.gameStatus === 'ready' && this.props.gamePlayable ? 'blur-background' : undefined
+                    }
+                >
+                    <div id={'left-player'}>
+                        <div className="player-main-area">
+                            <div className="player-info">{this.computePlayerPortrait(leftId, leftIdx)}</div>
+                            {leftIdx >= 0 ? (
+                                this.computeSideHand(this.props.hands[leftIdx])
+                            ) : (
+                                <div className="player-hand-placeholder">
+                                    <span>Waiting...</span>
+                                </div>
+                            )}
+                        </div>
+                        <div className="played-card-area">{leftIdx >= 0 ? this.playerDecisionArea(leftIdx) : ''}</div>
                     </div>
-                    <div className="played-card-area">{leftIdx >= 0 ? this.playerDecisionArea(leftIdx) : ''}</div>
-                </div>
-                <div id={'right-player'}>
-                    <div className="player-main-area">
-                        <div className="player-info">{this.computePlayerPortrait(rightId, rightIdx)}</div>
-                        {rightIdx >= 0 ? (
-                            this.computeSideHand(this.props.hands[rightIdx])
-                        ) : (
-                            <div className="player-hand-placeholder">
-                                <span>Waiting...</span>
-                            </div>
-                        )}
+                    <div id={'right-player'}>
+                        <div className="player-main-area">
+                            <div className="player-info">{this.computePlayerPortrait(rightId, rightIdx)}</div>
+                            {rightIdx >= 0 ? (
+                                this.computeSideHand(this.props.hands[rightIdx])
+                            ) : (
+                                <div className="player-hand-placeholder">
+                                    <span>Waiting...</span>
+                                </div>
+                            )}
+                        </div>
+                        <div className="played-card-area">{rightIdx >= 0 ? this.playerDecisionArea(rightIdx) : ''}</div>
                     </div>
-                    <div className="played-card-area">{rightIdx >= 0 ? this.playerDecisionArea(rightIdx) : ''}</div>
-                </div>
-                <div id={'bottom-player'}>
-                    <div className="played-card-area">{bottomIdx >= 0 ? this.playerDecisionArea(bottomIdx) : ''}</div>
-                    <div className="player-main-area">
-                        <div className="player-info">{this.computePlayerPortrait(bottomId, bottomIdx)}</div>
-                        {bottomIdx >= 0 ? (
-                            <div className="player-hand">
-                                {this.computeSingleLineHand(this.props.hands[bottomIdx], '', true)}
-                            </div>
-                        ) : (
-                            <div className="player-hand-placeholder">
-                                <span>Waiting...</span>
-                            </div>
-                        )}
+                    <div id={'bottom-player'}>
+                        <div className="played-card-area">
+                            {bottomIdx >= 0 ? this.playerDecisionArea(bottomIdx) : ''}
+                        </div>
+                        <div className="player-main-area">
+                            <div className="player-info">{this.computePlayerPortrait(bottomId, bottomIdx)}</div>
+                            {bottomIdx >= 0 ? (
+                                <div className="player-hand">
+                                    {this.computeSingleLineHand(this.props.hands[bottomIdx], '', true)}
+                                </div>
+                            ) : (
+                                <div className="player-hand-placeholder">
+                                    <span>Waiting...</span>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
+                {this.props.gamePlayable && this.props.gameStatus === 'ready' ? (
+                    <Layout.Row
+                        type="flex"
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            height: '100%',
+                            width: '100%',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Button
+                            onClick={() => this.props.handleSelectRole('landlord_up')}
+                            style={{ width: '220px' }}
+                            variant="contained"
+                            color="primary"
+                            startIcon={<img src={Peasant_wName} alt="Peasant" width="48px" />}
+                        >
+                            Play as Peasant
+                            <br />
+                            (Early Hand)
+                        </Button>
+                        <Button
+                            onClick={() => this.props.handleSelectRole('landlord')}
+                            style={{ width: '220px', marginTop: '20px', marginBottom: '20px' }}
+                            variant="contained"
+                            color="primary"
+                            startIcon={<img src={Landlord_wName} alt="Peasant" width="48px" />}
+                        >
+                            Play as Landlord
+                        </Button>
+                        <Button
+                            onClick={() => this.props.handleSelectRole('landlord_down')}
+                            style={{ width: '220px' }}
+                            variant="contained"
+                            color="primary"
+                            startIcon={<img src={Peasant_wName} alt="Peasant" width="48px" />}
+                        >
+                            Play as Peasant
+                            <br />
+                            (Late Hand)
+                        </Button>
+                    </Layout.Row>
+                ) : undefined}
             </div>
         );
     }

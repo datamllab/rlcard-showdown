@@ -143,6 +143,8 @@ class DoudizhuGameBoard extends React.Component {
                         <div style={{ marginRight: '2em' }} className={'timer ' + fadeClassName}>
                             <div className="timer-text">{millisecond2Second(this.props.considerationTime)}</div>
                         </div>
+                        {this.props.gamePlayable ? 
+                        (<>
                         <Button
                             onClick={() => {
                                 this.props.handleMainPlayerAct('deselect');
@@ -165,7 +167,7 @@ class DoudizhuGameBoard extends React.Component {
                             Pass
                         </Button>
                         <Button
-                            disabled={this.props.selectedCards.length === 0}
+                            disabled={!this.props.selectedCards || this.props.selectedCards.length === 0}
                             onClick={() => {
                                 this.props.handleMainPlayerAct('play');
                             }}
@@ -174,6 +176,10 @@ class DoudizhuGameBoard extends React.Component {
                         >
                             Play
                         </Button>
+                        </>)
+                        :
+                        undefined}
+                        
                     </div>
                 );
             } else {

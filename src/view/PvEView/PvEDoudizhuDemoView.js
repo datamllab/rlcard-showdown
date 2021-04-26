@@ -4,7 +4,12 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Divider from '@material-ui/core/Divider';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormGroup from '@material-ui/core/FormGroup';
 import Paper from '@material-ui/core/Paper';
+import Switch from '@material-ui/core/Switch';
+import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import axios from 'axios';
 import { Layout, Message } from 'element-react';
 import qs from 'query-string';
@@ -13,11 +18,13 @@ import '../../assets/doudizhu.scss';
 import { DoudizhuGameBoard } from '../../components/GameBoard';
 import {
     card2SuiteAndRank,
+    computeHandCardsWidth,
     deepCopy,
     fullDoudizhuDeck,
     isDoudizhuBomb,
     shuffleArray,
     sortDoudizhuCards,
+    translateCardData,
 } from '../../utils';
 import { douzeroDemoUrl } from '../../utils/config';
 
@@ -66,6 +73,9 @@ function PvEDoudizhuDemoView() {
     });
     const [selectedCards, setSelectedCards] = useState([]); // user selected hand card
     const [isPassDisabled, setIsPassDisabled] = useState(true);
+    const [predictionRes, setPredictionRes] = useState({ prediction: [], hands: [] });
+    const [hideRivalHand, setHideRivalHand] = useState(false);
+    const [hidePredictionArea, setHidePredictionArea] = useState(false);
 
     const cardArr2DouzeroFormat = (cards) => {
         return cards
@@ -272,20 +282,41 @@ function PvEDoudizhuDemoView() {
                         rival_move,
                     };
                     const apiRes = await axios.post(`${douzeroDemoUrl}/legal`, qs.stringify(requestBody));
-                    if (apiRes.data.legal_action === '') proceedNextTurn([]);
-                    else if (apiRes.data.legal_action.split(',').length === 1)
+                    if (apiRes.data.legal_action === '') {
+                        proceedNextTurn([]);
+                        setPredictionRes({
+                            prediction: [['', 'Only Choice']],
+                            hands: gameState.hands[gameState.currentPlayer].slice(),
+                        });
+                    } else if (apiRes.data.legal_action.split(',').length === 1) {
                         proceedNextTurn(apiRes.data.legal_action.split(''));
-                    else {
+                        setPredictionRes({
+                            prediction: [[apiRes.data.legal_action, 'Only Choice']],
+                            hands: gameState.hands[gameState.currentPlayer].slice(),
+                        });
+                    } else {
                         Message({
                             message: 'Error receiving prediction result, please try refresh the page',
                             type: 'error',
                             showClose: true,
                         });
                     }
+                } else {
+                    Message({
+                        message: `Error: ${apiRes.data.message}`,
+                        type: 'error',
+                        showClose: true,
+                    });
                 }
             } else {
                 let bestAction = '';
                 if (data.result && Object.keys(data.result).length > 0) {
+                    setPredictionRes({
+                        prediction: Object.entries(data.result).sort((a, b) => {
+                            return Number(b[1]) - Number(a[1]);
+                        }),
+                        hands: gameState.hands[gameState.currentPlayer].slice(),
+                    });
                     if (Object.keys(data.result).length === 1) bestAction = Object.keys(data.result)[0];
                     else {
                         bestAction = Object.keys(data.result)[0];
@@ -307,6 +338,14 @@ function PvEDoudizhuDemoView() {
                 showClose: true,
             });
         }
+    };
+
+    const toggleHideRivalHand = () => {
+        setHideRivalHand(!hideRivalHand);
+    };
+
+    const toggleHidePredictionArea = () => {
+        setHidePredictionArea(!hidePredictionArea);
     };
 
     const handleSelectedCards = (cards) => {
@@ -416,14 +455,16 @@ function PvEDoudizhuDemoView() {
     };
 
     useEffect(() => {
-        gameStateTimer();
+        if (gameStatus === 'playing') gameStateTimer();
     }, [considerationTime]);
 
     useEffect(() => {
-        if (gameState.currentPlayer && gameStatus === 'playing') {
+        if (gameState.currentPlayer !== null && gameStatus === 'playing') {
             // if current player is not user, request for API player
             if (gameState.currentPlayer !== mainPlayerId) {
                 requestApiPlay();
+            } else {
+                setPredictionRes({ prediction: [], hands: [] });
             }
         }
     }, [gameState.currentPlayer]);
@@ -431,8 +472,6 @@ function PvEDoudizhuDemoView() {
     useEffect(() => {
         if (gameStatus === 'playing') startGame();
     }, [gameStatus]);
-
-    const runNewTurn = () => {};
 
     const handleMainPlayerAct = (type) => {
         switch (type) {
@@ -472,6 +511,82 @@ function PvEDoudizhuDemoView() {
         }
     };
 
+    const computePredictionCards = (cards, hands) => {
+        let computedCards = [];
+        if (cards.length > 0) {
+            hands.forEach((card) => {
+                const { rank } = card2SuiteAndRank(card);
+                const idx = cards.indexOf(rank);
+                if (idx >= 0) {
+                    cards.splice(idx, 1);
+                    computedCards.push(card);
+                }
+            });
+        } else {
+            computedCards = 'pass';
+        }
+
+        if (computedCards === 'pass') {
+            return (
+                <div className={'non-card ' + toggleFade}>
+                    <span>Pass</span>
+                </div>
+            );
+        } else {
+            return (
+                <div className={'unselectable playingCards loose ' + toggleFade}>
+                    <ul className="hand" style={{ width: computeHandCardsWidth(computedCards.length, 10) }}>
+                        {computedCards.map((card) => {
+                            const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
+                            return (
+                                <li key={`handCard-${card}`}>
+                                    <label className={`card ${rankClass} ${suitClass}`} href="/#">
+                                        <span className="rank">{rankText}</span>
+                                        <span className="suit">{suitText}</span>
+                                    </label>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            );
+        }
+    };
+
+    const computeProbabilityItem = (idx) => {
+        if (gameStatus !== 'ready') {
+            if (hidePredictionArea) {
+                return (
+                    <div className={'playing'}>
+                        <div className={'non-card'}>
+                            <span>{'Hidden'}</span>
+                        </div>
+                    </div>
+                );
+            }
+            return (
+                <div className={'playing'}>
+                    <div className="probability-move">
+                        {predictionRes.prediction.length > idx ? (
+                            computePredictionCards(predictionRes.prediction[idx][0].split(''), predictionRes.hands)
+                        ) : (
+                            <NotInterestedIcon fontSize="large" />
+                        )}
+                    </div>
+                    {predictionRes.prediction.length > idx ? (
+                        <div className={'non-card'}>
+                            <span>{`Expected Score: ${predictionRes.prediction[idx][1]}`}</span>
+                        </div>
+                    ) : (
+                        ''
+                    )}
+                </div>
+            );
+        } else {
+            return <span className={'waiting'}>Waiting...</span>;
+        }
+    };
+
     return (
         <div>
             <Dialog
@@ -498,7 +613,7 @@ function PvEDoudizhuDemoView() {
                         <div style={{ height: '100%' }}>
                             <Paper className={'doudizhu-gameboard-paper'} elevation={3}>
                                 <DoudizhuGameBoard
-                                    showCardBack={true}
+                                    showCardBack={hideRivalHand}
                                     handleSelectRole={handleSelectRole}
                                     isPassDisabled={isPassDisabled}
                                     gamePlayable={true}
@@ -511,7 +626,6 @@ function PvEDoudizhuDemoView() {
                                     currentPlayer={gameState.currentPlayer}
                                     considerationTime={considerationTime}
                                     turn={gameState.turn}
-                                    runNewTurn={(prevTurn) => runNewTurn(prevTurn)}
                                     toggleFade={toggleFade}
                                     gameStatus={gameStatus}
                                     handleMainPlayerAct={handleMainPlayerAct}
@@ -520,7 +634,77 @@ function PvEDoudizhuDemoView() {
                             </Paper>
                         </div>
                     </Layout.Col>
+                    <Layout.Col span="7" style={{ height: '100%' }}>
+                        <Paper className={'doudizhu-probability-paper'} elevation={3}>
+                            <div className={'probability-player'}>
+                                {playerInfo.length > 0 && gameState.currentPlayer !== null ? (
+                                    <span>
+                                        Current Player: {gameState.currentPlayer}
+                                        <br />
+                                        {playerInfo[gameState.currentPlayer].role}
+                                    </span>
+                                ) : (
+                                    <span>Waiting...</span>
+                                )}
+                            </div>
+                            <Divider />
+                            <div className={'probability-table'}>
+                                <div className={'probability-item'}>{computeProbabilityItem(0)}</div>
+                                <div className={'probability-item'}>{computeProbabilityItem(1)}</div>
+                                <div className={'probability-item'}>{computeProbabilityItem(2)}</div>
+                            </div>
+                        </Paper>
+                    </Layout.Col>
                 </Layout.Row>
+                <div className="game-controller">
+                    <Paper className={'game-controller-paper'} elevation={3}>
+                        <Layout.Row style={{ height: '51px' }}>
+                            <Layout.Col span="6" style={{ height: '51px', lineHeight: '48px' }}>
+                                <FormGroup style={{ height: '100%' }}>
+                                    <FormControlLabel
+                                        style={{ textAlign: 'center', height: '100%', display: 'table' }}
+                                        class="switch-control"
+                                        control={<Switch checked={!hideRivalHand} onChange={toggleHideRivalHand} />}
+                                        label="Show Rival Cards"
+                                    />
+                                </FormGroup>
+                            </Layout.Col>
+                            <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
+                                <Divider orientation="vertical" />
+                            </Layout.Col>
+                            <Layout.Col span="6" style={{ height: '51px', lineHeight: '48px' }}>
+                                <FormGroup sty282718 le={{ height: '100%' }}>
+                                    <FormControlLabel
+                                        style={{ textAlign: 'center', height: '100%', display: 'table' }}
+                                        class="switch-control"
+                                        control={
+                                            <Switch checked={!hidePredictionArea} onChange={toggleHidePredictionArea} />
+                                        }
+                                        label="Show Prediction Area"
+                                    />
+                                </FormGroup>
+                            </Layout.Col>
+                            <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
+                                <Divider orientation="vertical" />
+                            </Layout.Col>
+                            <Layout.Col
+                                span="6"
+                                style={{ height: '51px', lineHeight: '51px', marginLeft: '-1px', marginRight: '-1px' }}
+                            >
+                                <div style={{ textAlign: 'center' }}>{`Turn ${gameState.turn}`}</div>
+                            </Layout.Col>
+                            <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
+                                <Divider orientation="vertical" />
+                            </Layout.Col>
+                            <Layout.Col
+                                span="6"
+                                style={{ height: '51px', lineHeight: '51px', marginLeft: '-1px', marginRight: '-1px' }}
+                            >
+                                <div style={{ textAlign: 'center' }}>{`Game Status: ${gameStatus}`}</div>
+                            </Layout.Col>
+                        </Layout.Row>
+                    </Paper>
+                </div>
             </div>
         </div>
     );

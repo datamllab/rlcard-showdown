@@ -143,43 +143,41 @@ class DoudizhuGameBoard extends React.Component {
                         <div style={{ marginRight: '2em' }} className={'timer ' + fadeClassName}>
                             <div className="timer-text">{millisecond2Second(this.props.considerationTime)}</div>
                         </div>
-                        {this.props.gamePlayable ? 
-                        (<>
-                        <Button
-                            onClick={() => {
-                                this.props.handleMainPlayerAct('deselect');
-                            }}
-                            style={{ marginRight: '2em' }}
-                            variant="contained"
-                            color="primary"
-                        >
-                            Deselect
-                        </Button>
-                        <Button
-                            disabled={this.props.isPassDisabled}
-                            onClick={() => {
-                                this.props.handleMainPlayerAct('pass');
-                            }}
-                            style={{ marginRight: '2em' }}
-                            variant="contained"
-                            color="primary"
-                        >
-                            Pass
-                        </Button>
-                        <Button
-                            disabled={!this.props.selectedCards || this.props.selectedCards.length === 0}
-                            onClick={() => {
-                                this.props.handleMainPlayerAct('play');
-                            }}
-                            variant="contained"
-                            color="primary"
-                        >
-                            Play
-                        </Button>
-                        </>)
-                        :
-                        undefined}
-                        
+                        {this.props.gamePlayable ? (
+                            <>
+                                <Button
+                                    onClick={() => {
+                                        this.props.handleMainPlayerAct('deselect');
+                                    }}
+                                    style={{ marginRight: '2em' }}
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    Deselect
+                                </Button>
+                                <Button
+                                    disabled={this.props.isPassDisabled}
+                                    onClick={() => {
+                                        this.props.handleMainPlayerAct('pass');
+                                    }}
+                                    style={{ marginRight: '2em' }}
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    Pass
+                                </Button>
+                                <Button
+                                    disabled={!this.props.selectedCards || this.props.selectedCards.length === 0}
+                                    onClick={() => {
+                                        this.props.handleMainPlayerAct('play');
+                                    }}
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    Play
+                                </Button>
+                            </>
+                        ) : undefined}
                     </div>
                 );
             } else {
@@ -195,7 +193,12 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (prevProps.turn !== this.props.turn && this.props.turn !== 0 && this.props.gameStatus === 'playing') {
+        if (
+            this.props.runNewTurn &&
+            prevProps.turn !== this.props.turn &&
+            this.props.turn !== 0 &&
+            this.props.gameStatus === 'playing'
+        ) {
             // new turn starts
             this.props.runNewTurn(prevProps);
         }

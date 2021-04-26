@@ -595,7 +595,9 @@ function PvEDoudizhuDemoView() {
                     </div>
                     {predictionRes.prediction.length > idx ? (
                         <div className={'non-card'} style={{ marginTop: '0px' }}>
-                            <span>{`Expected Score: ${predictionRes.prediction[idx][1]}`}</span>
+                            <span>{`Expected Win Rate: ${(Number(predictionRes.prediction[idx][1]) * 100).toFixed(
+                                2,
+                            )}%`}</span>
                         </div>
                     ) : (
                         ''

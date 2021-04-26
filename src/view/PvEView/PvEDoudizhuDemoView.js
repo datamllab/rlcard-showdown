@@ -30,7 +30,8 @@ import { douzeroDemoUrl } from '../../utils/config';
 
 const shuffledDoudizhuDeck = shuffleArray(fullDoudizhuDeck.slice());
 
-const threeLandlordCards = shuffleArray(sortDoudizhuCards(shuffledDoudizhuDeck.slice(0, 3)));
+let threeLandlordCards = shuffleArray(sortDoudizhuCards(shuffledDoudizhuDeck.slice(0, 3)));
+const originalThreeLandlordCards = threeLandlordCards.slice();
 
 const initConsiderationTime = 30000;
 const considerationTimeDeduction = 1000;
@@ -43,9 +44,9 @@ let initHands = [
     shuffledDoudizhuDeck.slice(20, 37),
     shuffledDoudizhuDeck.slice(37, 54),
 ];
+
 console.log('init hands', initHands);
 console.log('three landlord card', threeLandlordCards);
-console.log('player info', playerInfo);
 
 let gameStateTimeout = null;
 
@@ -92,6 +93,25 @@ function PvEDoudizhuDemoView() {
     }
 
     const proceedNextTurn = async (playingCard, rankOnly = true) => {
+        // take played three landlord card out
+        if (playerInfo[gameState.currentPlayer].role === 'landlord' && threeLandlordCards.length > 0) {
+            let playingCardCopy;
+            if (rankOnly) playingCardCopy = playingCard.slice();
+            else
+                playingCardCopy = playingCard.map((card) => {
+                    const { rank } = card2SuiteAndRank(card);
+                    return rank;
+                });
+            threeLandlordCards = threeLandlordCards.filter((card) => {
+                const { rank } = card2SuiteAndRank(card);
+                const idx = playingCardCopy.indexOf(rank);
+                if (idx >= 0) {
+                    playingCardCopy.splice(idx, 1);
+                    return false;
+                } else return true;
+            });
+        }
+
         // if next player is user, get legal actions
         if ((gameState.currentPlayer + 1) % 3 === mainPlayerId) {
             const player_hand_cards = cardArr2DouzeroFormat(gameState.hands[mainPlayerId].slice().reverse());
@@ -574,7 +594,7 @@ function PvEDoudizhuDemoView() {
                         )}
                     </div>
                     {predictionRes.prediction.length > idx ? (
-                        <div className={'non-card'}>
+                        <div className={'non-card'} style={{ marginTop: '0px' }}>
                             <span>{`Expected Score: ${predictionRes.prediction[idx][1]}`}</span>
                         </div>
                     ) : (
@@ -636,11 +656,44 @@ function PvEDoudizhuDemoView() {
                     </Layout.Col>
                     <Layout.Col span="7" style={{ height: '100%' }}>
                         <Paper className={'doudizhu-probability-paper'} elevation={3}>
-                            <div className={'probability-player'}>
+                            {playerInfo.length > 0 && gameState.currentPlayer !== null ? (
+                                <div style={{ padding: '16px' }}>
+                                    <span style={{ textAlign: 'center', marginBottom: '8px', display: 'block' }}>
+                                        Three Landlord Cards
+                                    </span>
+                                    <div className="playingCards" style={{ display: 'flex', justifyContent: 'center' }}>
+                                        {sortDoudizhuCards(originalThreeLandlordCards, true).map((card) => {
+                                            const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
+                                            return (
+                                                <div
+                                                    style={{ fontSize: '1.2em' }}
+                                                    className={`card ${rankClass} full-content ${suitClass}`}
+                                                >
+                                                    <span className="rank">{rankText}</span>
+                                                    <span className="suit">{suitText}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div
+                                    style={{
+                                        height: '112px',
+                                        padding: '16px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <span>Waiting...</span>
+                                </div>
+                            )}
+                            <Divider />
+                            <div className={'probability-player'} style={{ height: '19px' }}>
                                 {playerInfo.length > 0 && gameState.currentPlayer !== null ? (
                                     <span>
-                                        Current Player: {gameState.currentPlayer}
-                                        <br />
+                                        Current Player: {gameState.currentPlayer} |{' '}
                                         {playerInfo[gameState.currentPlayer].role}
                                     </span>
                                 ) : (
@@ -648,7 +701,7 @@ function PvEDoudizhuDemoView() {
                                 )}
                             </div>
                             <Divider />
-                            <div className={'probability-table'}>
+                            <div className={'probability-table with-three-landlord-cards'}>
                                 <div className={'probability-item'}>{computeProbabilityItem(0)}</div>
                                 <div className={'probability-item'}>{computeProbabilityItem(1)}</div>
                                 <div className={'probability-item'}>{computeProbabilityItem(2)}</div>
@@ -662,8 +715,8 @@ function PvEDoudizhuDemoView() {
                             <Layout.Col span="6" style={{ height: '51px', lineHeight: '48px' }}>
                                 <FormGroup style={{ height: '100%' }}>
                                     <FormControlLabel
-                                        style={{ textAlign: 'center', height: '100%', display: 'table' }}
-                                        class="switch-control"
+                                        style={{ textAlign: 'center', height: '100%', display: 'inline-block' }}
+                                        className="switch-control"
                                         control={<Switch checked={!hideRivalHand} onChange={toggleHideRivalHand} />}
                                         label="Show Rival Cards"
                                     />
@@ -675,8 +728,8 @@ function PvEDoudizhuDemoView() {
                             <Layout.Col span="6" style={{ height: '51px', lineHeight: '48px' }}>
                                 <FormGroup sty282718 le={{ height: '100%' }}>
                                     <FormControlLabel
-                                        style={{ textAlign: 'center', height: '100%', display: 'table' }}
-                                        class="switch-control"
+                                        style={{ textAlign: 'center', height: '100%', display: 'inline-block' }}
+                                        className="switch-control"
                                         control={
                                             <Switch checked={!hidePredictionArea} onChange={toggleHidePredictionArea} />
                                         }

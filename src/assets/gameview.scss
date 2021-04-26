@@ -103,7 +103,8 @@
     }
 
     .MuiFormControlLabel-label {
-        display: table-cell;
+        text-align: center;
+        height: 51px;
         line-height: 51px;
         vertical-align: middle;
     }
@@ -142,6 +143,15 @@
 
             width: 100%;
             height: calc(100% - 72px);
+
+            &.with-three-landlord-cards {
+                height: calc(100% - 200px);
+                .probability-item {
+                    .playing {
+                        height: 109px;
+                    }
+                }
+            }
 
             .probability-item {
                 display: table-row;

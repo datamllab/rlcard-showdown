@@ -1,5 +1,6 @@
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
+import Slider from '@material-ui/core/Slider';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -28,14 +29,13 @@ import {
 } from '../../utils';
 import { douzeroDemoUrl } from '../../utils/config';
 
-const shuffledDoudizhuDeck = shuffleArray(fullDoudizhuDeck.slice());
+let shuffledDoudizhuDeck = shuffleArray(fullDoudizhuDeck.slice());
 
 let threeLandlordCards = shuffleArray(sortDoudizhuCards(shuffledDoudizhuDeck.slice(0, 3)));
-const originalThreeLandlordCards = threeLandlordCards.slice();
+let originalThreeLandlordCards = threeLandlordCards.slice();
 
 const initConsiderationTime = 30000;
 const considerationTimeDeduction = 1000;
-const apiPlayDelay = 3000;
 const mainPlayerId = 0; // index of main player (for the sake of simplify code logic)
 let playerInfo = [];
 
@@ -60,8 +60,10 @@ let playedCardsLandlordDown = [];
 let playedCardsLandlordUp = [];
 let legalActions = { turn: -1, actions: [] };
 let gameEndDialogText = '';
+let syncGameStatus = 'ready';
 
 function PvEDoudizhuDemoView() {
+    const [apiPlayDelay, setApiPlayDelay] = useState(3000);
     const [isGameEndDialogOpen, setIsGameEndDialogOpen] = useState(false);
     const [considerationTime, setConsiderationTime] = useState(initConsiderationTime);
     const [toggleFade, setToggleFade] = useState('');
@@ -203,6 +205,10 @@ function PvEDoudizhuDemoView() {
         newGameState.hands[gameState.currentPlayer] = newHand;
         newGameState.currentPlayer = (newGameState.currentPlayer + 1) % 3;
         newGameState.turn++;
+        if (newHand.length === 0) {
+            setGameStatus('over');
+            syncGameStatus = 'over';
+        }
         setGameState(newGameState);
         setToggleFade('fade-in');
         setTimeout(() => {
@@ -215,7 +221,6 @@ function PvEDoudizhuDemoView() {
 
         if (newHand.length === 0) {
             const winner = playerInfo[gameState.currentPlayer];
-            setGameStatus('over');
             setTimeout(() => {
                 gameEndDialogText = winner.role + ' wins!';
                 setIsGameEndDialogOpen(true);
@@ -331,9 +336,12 @@ function PvEDoudizhuDemoView() {
             } else {
                 let bestAction = '';
                 if (data.result && Object.keys(data.result).length > 0) {
+                    const sortedResult = Object.entries(data.result).sort((a, b) => {
+                        return Number(b[1]) - Number(a[1]);
+                    });
                     setPredictionRes({
-                        prediction: Object.entries(data.result).sort((a, b) => {
-                            return Number(b[1]) - Number(a[1]);
+                        prediction: sortedResult.map((result) => {
+                            return [result[0], data.win_rates[result[0]]];
                         }),
                         hands: gameState.hands[gameState.currentPlayer].slice(),
                     });
@@ -360,11 +368,8 @@ function PvEDoudizhuDemoView() {
         }
     };
 
-    const toggleHideRivalHand = () => {
-        setHideRivalHand(!hideRivalHand);
-    };
-
     const toggleHidePredictionArea = () => {
+        setHideRivalHand(!hideRivalHand);
         setHidePredictionArea(!hidePredictionArea);
     };
 
@@ -423,6 +428,7 @@ function PvEDoudizhuDemoView() {
         playerInfo[(landlordIdx + 2) % 3].douzeroPlayerPosition = 2;
         initHands[landlordIdx] = initHands[landlordIdx].concat(threeLandlordCards.slice());
         setGameStatus('playing');
+        syncGameStatus = 'playing';
     };
 
     const gameStateTimer = () => {
@@ -441,14 +447,53 @@ function PvEDoudizhuDemoView() {
     };
 
     const handleCloseGameEndDialog = () => {
+        // reset all game state for new game
+        shuffledDoudizhuDeck = shuffleArray(fullDoudizhuDeck.slice());
+
+        threeLandlordCards = shuffleArray(sortDoudizhuCards(shuffledDoudizhuDeck.slice(0, 3)));
+        originalThreeLandlordCards = threeLandlordCards.slice();
+
+        initHands = [
+            shuffledDoudizhuDeck.slice(3, 20),
+            shuffledDoudizhuDeck.slice(20, 37),
+            shuffledDoudizhuDeck.slice(37, 54),
+        ];
+
+        playerInfo = [];
+
+        gameStateTimeout = null;
+        gameHistory = [];
+        bombNum = 0;
+        lastMoveLandlord = [];
+        lastMoveLandlordDown = [];
+        lastMoveLandlordUp = [];
+        playedCardsLandlord = [];
+        playedCardsLandlordDown = [];
+        playedCardsLandlordUp = [];
+        legalActions = { turn: -1, actions: [] };
+        gameEndDialogText = '';
+
+        setConsiderationTime(initConsiderationTime);
+        setToggleFade('');
+        setGameState({
+            hands: [[], [], []],
+            latestAction: [[], [], []],
+            currentPlayer: null, // index of current player
+            turn: 0,
+        });
+        setSelectedCards([]); // user selected hand card
+        setPredictionRes({ prediction: [], hands: [] });
+
+        setGameStatus('ready');
+        syncGameStatus = 'ready';
         setIsGameEndDialogOpen(false);
-        // todo: proceed next game option
+        
     };
 
     const startGame = async () => {
         // start game
         setGameStatus('playing');
-
+        syncGameStatus = 'playing';
         const newGameState = deepCopy(gameState);
         // find landord to be the first player
         newGameState.currentPlayer = playerInfo.find((element) => element.role === 'landlord').index;
@@ -475,11 +520,11 @@ function PvEDoudizhuDemoView() {
     };
 
     useEffect(() => {
-        if (gameStatus === 'playing') gameStateTimer();
+        if (syncGameStatus === 'playing') gameStateTimer();
     }, [considerationTime]);
 
     useEffect(() => {
-        if (gameState.currentPlayer !== null && gameStatus === 'playing') {
+        if (gameState.currentPlayer !== null && syncGameStatus === 'playing') {
             // if current player is not user, request for API player
             if (gameState.currentPlayer !== mainPlayerId) {
                 requestApiPlay();
@@ -609,6 +654,70 @@ function PvEDoudizhuDemoView() {
         }
     };
 
+    const gameSpeedMarks = [
+        {
+            value: 0,
+            label: '0s',
+        },
+        {
+            value: 1,
+            label: '1s',
+        },
+        {
+            value: 2,
+            label: '3s',
+        },
+        {
+            value: 3,
+            label: '5s',
+        },
+        {
+            value: 4,
+            label: '10s',
+        },
+        {
+            value: 5,
+            label: '30s',
+        }
+    ];
+
+    const gameSpeedMap = [
+        {
+            value: 0,
+            delay: 0,
+        },
+        {
+            value: 1,
+            delay: 1000,
+        },
+        {
+            value: 2,
+            delay: 3000,
+        },
+        {
+            value: 3,
+            delay: 5000,
+        },
+        {
+            value: 4,
+            delay: 10000,
+        },
+        {
+            value: 5,
+            delay: 30000,
+        }
+    ];
+
+    const changeApiPlayerDelay = (newVal) => {
+        const found = gameSpeedMap.find(element => element.value === newVal);
+        if (found)
+            setApiPlayDelay(found.delay);
+    }
+
+    const sliderValueText = (value) => {
+        return value;
+    };
+
     return (
         <div>
             <Dialog
@@ -625,7 +734,7 @@ function PvEDoudizhuDemoView() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => handleCloseGameEndDialog()} color="primary" autoFocus>
-                        OK
+                        Play Again
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -668,6 +777,7 @@ function PvEDoudizhuDemoView() {
                                             const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
                                             return (
                                                 <div
+                                                    key={'probability-cards-' + rankText + '-' + suitText}
                                                     style={{ fontSize: '1.2em' }}
                                                     className={`card ${rankClass} full-content ${suitClass}`}
                                                 >
@@ -692,11 +802,10 @@ function PvEDoudizhuDemoView() {
                                 </div>
                             )}
                             <Divider />
-                            <div className={'probability-player'} style={{ height: '19px' }}>
+                            <div className={'probability-player'} style={{ height: '19px', textAlign: 'center' }}>
                                 {playerInfo.length > 0 && gameState.currentPlayer !== null ? (
                                     <span>
-                                        Current Player: {gameState.currentPlayer} |{' '}
-                                        {playerInfo[gameState.currentPlayer].role}
+                                        {['Landlord', 'Landlord Down', 'Landlord Up'][playerInfo[gameState.currentPlayer].douzeroPlayerPosition]}
                                     </span>
                                 ) : (
                                     <span>Waiting...</span>
@@ -719,19 +828,6 @@ function PvEDoudizhuDemoView() {
                                     <FormControlLabel
                                         style={{ textAlign: 'center', height: '100%', display: 'inline-block' }}
                                         className="switch-control"
-                                        control={<Switch checked={!hideRivalHand} onChange={toggleHideRivalHand} />}
-                                        label="Show Rival Cards"
-                                    />
-                                </FormGroup>
-                            </Layout.Col>
-                            <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
-                                <Divider orientation="vertical" />
-                            </Layout.Col>
-                            <Layout.Col span="6" style={{ height: '51px', lineHeight: '48px' }}>
-                                <FormGroup sty282718 le={{ height: '100%' }}>
-                                    <FormControlLabel
-                                        style={{ textAlign: 'center', height: '100%', display: 'inline-block' }}
-                                        className="switch-control"
                                         control={
                                             <Switch checked={!hidePredictionArea} onChange={toggleHidePredictionArea} />
                                         }
@@ -743,7 +839,7 @@ function PvEDoudizhuDemoView() {
                                 <Divider orientation="vertical" />
                             </Layout.Col>
                             <Layout.Col
-                                span="6"
+                                span="3"
                                 style={{ height: '51px', lineHeight: '51px', marginLeft: '-1px', marginRight: '-1px' }}
                             >
                                 <div style={{ textAlign: 'center' }}>{`Turn ${gameState.turn}`}</div>
@@ -751,11 +847,24 @@ function PvEDoudizhuDemoView() {
                             <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
                                 <Divider orientation="vertical" />
                             </Layout.Col>
-                            <Layout.Col
-                                span="6"
-                                style={{ height: '51px', lineHeight: '51px', marginLeft: '-1px', marginRight: '-1px' }}
-                            >
-                                <div style={{ textAlign: 'center' }}>{`Game Status: ${gameStatus}`}</div>
+                            <Layout.Col span="15">
+                                <div>
+                                    <label className={"form-label-left"} style={{width: '140px', lineHeight: '28px', fontSize: '15px'}}>AI Player Delay</label>
+                                    <div style={{"marginLeft": "160px", "marginRight": "10px"}}>
+                                        <Slider
+                                            value={gameSpeedMap.find(element => element.delay === apiPlayDelay).value}
+                                            getAriaValueText={sliderValueText}
+                                            onChange={(e, newVal)=>{changeApiPlayerDelay(newVal)}}
+                                            aria-labelledby="discrete-slider-custom"
+                                            step={1}
+                                            min={0}
+                                            max={5}
+                                            track={false}
+                                            valueLabelDisplay="off"
+                                            marks={gameSpeedMarks}
+                                        />
+                                    </div>
+                                </div>
                             </Layout.Col>
                         </Layout.Row>
                     </Paper>

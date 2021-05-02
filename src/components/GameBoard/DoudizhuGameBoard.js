@@ -7,7 +7,7 @@ import '../../assets/doudizhu.scss';
 import Landlord_wName from '../../assets/images/Portrait/Landlord_wName.png';
 import Peasant_wName from '../../assets/images/Portrait/Peasant_wName.png';
 import PlaceHolderPlayer from '../../assets/images/Portrait/Player.png';
-import { computeHandCardsWidth, millisecond2Second, translateCardData } from '../../utils';
+import { computeHandCardsWidth, millisecond2Second, translateCardData, sortDoudizhuCards } from '../../utils';
 
 class DoudizhuGameBoard extends React.Component {
     computePlayerPortrait(playerId, playerIdx) {
@@ -32,7 +32,8 @@ class DoudizhuGameBoard extends React.Component {
             );
     }
 
-    computeSingleLineHand(cards, fadeClassName = '', cardSelectable = false) {
+    computeSingleLineHand(inputCards, fadeClassName = '', cardSelectable = false) {
+        const cards = inputCards === 'pass' ? inputCards : sortDoudizhuCards(inputCards);
         if (cards === 'pass') {
             return (
                 <div className="non-card">

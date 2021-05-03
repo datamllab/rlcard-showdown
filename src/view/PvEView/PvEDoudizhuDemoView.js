@@ -77,8 +77,8 @@ function PvEDoudizhuDemoView() {
     const [selectedCards, setSelectedCards] = useState([]); // user selected hand card
     const [isPassDisabled, setIsPassDisabled] = useState(true);
     const [predictionRes, setPredictionRes] = useState({ prediction: [], hands: [] });
-    const [hideRivalHand, setHideRivalHand] = useState(false);
-    const [hidePredictionArea, setHidePredictionArea] = useState(false);
+    const [hideRivalHand, setHideRivalHand] = useState(true);
+    const [hidePredictionArea, setHidePredictionArea] = useState(true);
 
     const cardArr2DouzeroFormat = (cards) => {
         return cards
@@ -138,7 +138,7 @@ function PvEDoudizhuDemoView() {
         }
 
         // delay play for api player
-        if (gameState.currentPlayer !== mainPlayerId && considerationTime > apiPlayDelay) {
+        if (gameState.currentPlayer !== mainPlayerId) {
             await timeout(apiPlayDelay);
         }
 
@@ -710,6 +710,7 @@ function PvEDoudizhuDemoView() {
 
     const changeApiPlayerDelay = (newVal) => {
         const found = gameSpeedMap.find(element => element.value === newVal);
+        console.log(newVal, found.delay);
         if (found)
             setApiPlayDelay(found.delay);
     }
@@ -831,7 +832,7 @@ function PvEDoudizhuDemoView() {
                                         control={
                                             <Switch checked={!hidePredictionArea} onChange={toggleHidePredictionArea} />
                                         }
-                                        label="Show Prediction Area"
+                                        label="AI Hand Face-Up"
                                     />
                                 </FormGroup>
                             </Layout.Col>
@@ -849,8 +850,8 @@ function PvEDoudizhuDemoView() {
                             </Layout.Col>
                             <Layout.Col span="15">
                                 <div>
-                                    <label className={"form-label-left"} style={{width: '140px', lineHeight: '28px', fontSize: '15px'}}>AI Player Delay</label>
-                                    <div style={{"marginLeft": "160px", "marginRight": "10px"}}>
+                                    <label className={"form-label-left"} style={{width: '155px', lineHeight: '28px', fontSize: '15px'}}>AI Thinking Time</label>
+                                    <div style={{"marginLeft": "170px", "marginRight": "10px"}}>
                                         <Slider
                                             value={gameSpeedMap.find(element => element.delay === apiPlayDelay).value}
                                             getAriaValueText={sliderValueText}

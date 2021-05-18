@@ -49,7 +49,7 @@
     text-align: center;
     font-size: 1.5em; /* @change: adjust this value to make bigger or smaller cards */
     font-weight: normal;
-    font-family: Arial, sans-serif;
+    font-family: Arial, sans-serif, PingFangSC-Regular, sans-serif;
     position: relative;
     background-color: #fff;
     -moz-box-shadow: .2em .2em .5em #333;
@@ -95,7 +95,7 @@
     background-color: #ccc;
     background-repeat: no-repeat;
     background-image: url("./faces/pokerback.png"); /* image is "Pattern 069" from http://www.squidfingers.com/patterns/ */
-    background-size: 100% 100%;
+    /* background-size: 100% 100%; */
     background-position: bottom;
     /*background-image: -moz-repeating-linear-gradient(34% 6% 135deg,#0F1E59, #75A1BF, #3E3E63 50%);*/
     /*background-image: -webkit-gradient(radial, center center, 20, center center, 80, from(#3c3), color-stop(0.4, #363), to(#030));*/
@@ -531,7 +531,7 @@
 /* big suits in middle */
 .playingCards.simpleCards .card .suit:after,
 .playingCards .card.rank-a .suit:after {
-    font-family: Arial, sans-serif;
+    font-family: Arial, sans-serif, PingFangSC-Regular, sans-serif;;
     line-height: .9;
     bottom: .35em;
 }

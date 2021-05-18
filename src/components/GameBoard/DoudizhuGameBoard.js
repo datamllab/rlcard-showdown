@@ -7,7 +7,7 @@ import '../../assets/doudizhu.scss';
 import Landlord_wName from '../../assets/images/Portrait/Landlord_wName.png';
 import Peasant_wName from '../../assets/images/Portrait/Peasant_wName.png';
 import PlaceHolderPlayer from '../../assets/images/Portrait/Player.png';
-import { computeHandCardsWidth, millisecond2Second, translateCardData, sortDoudizhuCards } from '../../utils';
+import { computeHandCardsWidth, millisecond2Second, sortDoudizhuCards, translateCardData } from '../../utils';
 
 class DoudizhuGameBoard extends React.Component {
     computePlayerPortrait(playerId, playerIdx) {
@@ -296,7 +296,7 @@ class DoudizhuGameBoard extends React.Component {
                             style={{ width: '225px' }}
                             variant="contained"
                             color="primary"
-                            startIcon={<img src={Peasant_wName} alt="Peasant" width="48px" />}
+                            startIcon={<img src={Peasant_wName} alt="Peasant" width="48px" height="48px" />}
                         >
                             Play as Peasant
                             <br />
@@ -307,7 +307,7 @@ class DoudizhuGameBoard extends React.Component {
                             style={{ width: '225px', marginTop: '20px', marginBottom: '20px' }}
                             variant="contained"
                             color="primary"
-                            startIcon={<img src={Landlord_wName} alt="Peasant" width="48px" />}
+                            startIcon={<img src={Landlord_wName} alt="Peasant" width="48px" height="48px" />}
                         >
                             Play as Landlord
                         </Button>
@@ -316,7 +316,7 @@ class DoudizhuGameBoard extends React.Component {
                             style={{ width: '225px' }}
                             variant="contained"
                             color="primary"
-                            startIcon={<img src={Peasant_wName} alt="Peasant" width="48px" />}
+                            startIcon={<img src={Peasant_wName} alt="Peasant" width="48px" height="48px" />}
                         >
                             Play as Peasant
                             <br />

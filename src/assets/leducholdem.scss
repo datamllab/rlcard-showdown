@@ -3,11 +3,14 @@
     width: 100%;
     height: 100%;
     //background-color: #C3CDFF;
-     background-image: url("./images/gameboard.png");
-     background-repeat: no-repeat;
-     background-size: 100% 132%;
-     background-position: bottom;
+    background-image: url("./images/gameboard.png");
+    background-repeat: no-repeat;
+    background-size: 100% 132%;
+    background-position: bottom;
     position: relative;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 
     .played-card-area {
         font-size: 12px;

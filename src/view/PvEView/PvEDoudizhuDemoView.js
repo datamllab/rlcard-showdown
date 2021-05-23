@@ -1,14 +1,14 @@
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import Slider from '@material-ui/core/Slider';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import Paper from '@material-ui/core/Paper';
+import Slider from '@material-ui/core/Slider';
 import Switch from '@material-ui/core/Switch';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import axios from 'axios';
@@ -59,7 +59,8 @@ let playedCardsLandlord = [];
 let playedCardsLandlordDown = [];
 let playedCardsLandlordUp = [];
 let legalActions = { turn: -1, actions: [] };
-let gameEndDialogText = '';
+let gameEndDialogTitle = '';
+let statisticRows = [];
 let syncGameStatus = 'ready';
 
 function PvEDoudizhuDemoView() {
@@ -221,8 +222,93 @@ function PvEDoudizhuDemoView() {
 
         if (newHand.length === 0) {
             const winner = playerInfo[gameState.currentPlayer];
+
+            // update game overall history
+            const gameStatistics = localStorage.getItem('GAME_STATISTICS')
+                ? JSON.parse(localStorage.getItem('GAME_STATISTICS'))
+                : {
+                      totalGameNum: 0,
+                      totalWinNum: 0,
+                      landlordGameNum: 0,
+                      landlordWinNum: 0,
+                      landlordUpGameNum: 0,
+                      landlordUpWinNum: 0,
+                      landlordDownGameNum: 0,
+                      landlordDownWinNum: 0,
+                  };
+
+            gameStatistics.totalGameNum += 1;
+            switch (playerInfo[mainPlayerId].douzeroPlayerPosition) {
+                case 0:
+                    gameStatistics.landlordGameNum += 1;
+                    if (winner.role === playerInfo[mainPlayerId].role) {
+                        gameStatistics.totalWinNum += 1;
+                        gameStatistics.landlordWinNum += 1;
+                    }
+                    break;
+                case 1:
+                    gameStatistics.landlordDownGameNum += 1;
+                    if (winner.role === playerInfo[mainPlayerId].role) {
+                        gameStatistics.totalWinNum += 1;
+                        gameStatistics.landlordDownWinNum += 1;
+                    }
+                    break;
+                case 2:
+                    gameStatistics.landlordUpGameNum += 1;
+                    if (winner.role === playerInfo[mainPlayerId].role) {
+                        gameStatistics.totalWinNum += 1;
+                        gameStatistics.landlordUpWinNum += 1;
+                    }
+                    break;
+                default:
+                    Message({
+                        message: 'Wrong douzero player position',
+                        type: 'error',
+                        showClose: true,
+                    });
+            }
+            localStorage.setItem('GAME_STATISTICS', JSON.stringify(gameStatistics));
+
             setTimeout(() => {
-                gameEndDialogText = winner.role + ' wins!';
+                gameEndDialogTitle = winner.role === 'peasant' ? 'Peasants win!' : 'Landlord wins!';
+                statisticRows = [
+                    {
+                        role: 'Landlord',
+                        win: gameStatistics.landlordWinNum,
+                        total: gameStatistics.landlordGameNum,
+                        winRate: gameStatistics.landlordGameNum
+                            ? ((gameStatistics.landlordWinNum / gameStatistics.landlordGameNum) * 100).toFixed(2) + '%'
+                            : '-',
+                    },
+                    {
+                        role: 'Landlord Up',
+                        win: gameStatistics.landlordUpWinNum,
+                        total: gameStatistics.landlordUpGameNum,
+                        winRate: gameStatistics.landlordUpGameNum
+                            ? ((gameStatistics.landlordUpWinNum / gameStatistics.landlordUpGameNum) * 100).toFixed(2) +
+                              '%'
+                            : '-',
+                    },
+                    {
+                        role: 'Landlord Down',
+                        win: gameStatistics.landlordDownWinNum,
+                        total: gameStatistics.landlordDownGameNum,
+                        winRate: gameStatistics.landlordDownGameNum
+                            ? ((gameStatistics.landlordDownWinNum / gameStatistics.landlordDownGameNum) * 100).toFixed(
+                                  2,
+                              ) + '%'
+                            : '-',
+                    },
+                    {
+                        role: 'All',
+                        win: gameStatistics.totalWinNum,
+                        total: gameStatistics.totalGameNum,
+                        winRate: gameStatistics.totalGameNum
+                            ? ((gameStatistics.totalWinNum / gameStatistics.totalGameNum) * 100).toFixed(2) + '%'
+                            : '-',
+                    },
+                ];
+
                 setIsGameEndDialogOpen(true);
             }, 300);
         } else {
@@ -471,10 +557,10 @@ function PvEDoudizhuDemoView() {
         playedCardsLandlordDown = [];
         playedCardsLandlordUp = [];
         legalActions = { turn: -1, actions: [] };
-        gameEndDialogText = '';
 
         setConsiderationTime(initConsiderationTime);
         setToggleFade('');
+        setIsPassDisabled(true);
         setGameState({
             hands: [[], [], []],
             latestAction: [[], [], []],
@@ -487,7 +573,6 @@ function PvEDoudizhuDemoView() {
         setGameStatus('ready');
         syncGameStatus = 'ready';
         setIsGameEndDialogOpen(false);
-        
     };
 
     const startGame = async () => {
@@ -678,7 +763,7 @@ function PvEDoudizhuDemoView() {
         {
             value: 5,
             label: '30s',
-        }
+        },
     ];
 
     const gameSpeedMap = [
@@ -705,15 +790,13 @@ function PvEDoudizhuDemoView() {
         {
             value: 5,
             delay: 30000,
-        }
+        },
     ];
 
     const changeApiPlayerDelay = (newVal) => {
-        const found = gameSpeedMap.find(element => element.value === newVal);
-        console.log(newVal, found.delay);
-        if (found)
-            setApiPlayDelay(found.delay);
-    }
+        const found = gameSpeedMap.find((element) => element.value === newVal);
+        if (found) setApiPlayDelay(found.delay);
+    };
 
     const sliderValueText = (value) => {
         return value;
@@ -722,19 +805,43 @@ function PvEDoudizhuDemoView() {
     return (
         <div>
             <Dialog
+                disableBackdropClick
                 open={isGameEndDialogOpen}
                 onClose={handleCloseGameEndDialog}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title" style={{ width: '200px' }}>
-                    {'Game Ends!'}
+                    {gameEndDialogTitle}
                 </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-description">{gameEndDialogText}</DialogContentText>
+                    <TableContainer component={Paper} className="doudizhu-statistic-table">
+                        <Table aria-label="statistic table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Role</TableCell>
+                                    <TableCell>Win</TableCell>
+                                    <TableCell>Total</TableCell>
+                                    <TableCell>Win Rate</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {statisticRows.map((row) => (
+                                    <TableRow key={row.name}>
+                                        <TableCell component="th" scope="row">
+                                            {row.role}
+                                        </TableCell>
+                                        <TableCell>{row.win}</TableCell>
+                                        <TableCell>{row.total}</TableCell>
+                                        <TableCell>{row.winRate}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => handleCloseGameEndDialog()} color="primary" autoFocus>
+                    <Button onClick={() => handleCloseGameEndDialog()} color="primary" variant="contained" autoFocus>
                         Play Again
                     </Button>
                 </DialogActions>
@@ -762,7 +869,6 @@ function PvEDoudizhuDemoView() {
                                     gameStatus={gameStatus}
                                     handleMainPlayerAct={handleMainPlayerAct}
                                 />
-                                {/* )} */}
                             </Paper>
                         </div>
                     </Layout.Col>
@@ -806,7 +912,11 @@ function PvEDoudizhuDemoView() {
                             <div className={'probability-player'} style={{ height: '19px', textAlign: 'center' }}>
                                 {playerInfo.length > 0 && gameState.currentPlayer !== null ? (
                                     <span>
-                                        {['Landlord', 'Landlord Down', 'Landlord Up'][playerInfo[gameState.currentPlayer].douzeroPlayerPosition]}
+                                        {
+                                            ['Landlord', 'Landlord Down', 'Landlord Up'][
+                                                playerInfo[gameState.currentPlayer].douzeroPlayerPosition
+                                            ]
+                                        }
                                     </span>
                                 ) : (
                                     <span>Waiting...</span>
@@ -850,12 +960,19 @@ function PvEDoudizhuDemoView() {
                             </Layout.Col>
                             <Layout.Col span="15">
                                 <div>
-                                    <label className={"form-label-left"} style={{width: '155px', lineHeight: '28px', fontSize: '15px'}}>AI Thinking Time</label>
-                                    <div style={{"marginLeft": "170px", "marginRight": "10px"}}>
+                                    <label
+                                        className={'form-label-left'}
+                                        style={{ width: '155px', lineHeight: '28px', fontSize: '15px' }}
+                                    >
+                                        AI Thinking Time
+                                    </label>
+                                    <div style={{ marginLeft: '170px', marginRight: '10px' }}>
                                         <Slider
-                                            value={gameSpeedMap.find(element => element.delay === apiPlayDelay).value}
+                                            value={gameSpeedMap.find((element) => element.delay === apiPlayDelay).value}
                                             getAriaValueText={sliderValueText}
-                                            onChange={(e, newVal)=>{changeApiPlayerDelay(newVal)}}
+                                            onChange={(e, newVal) => {
+                                                changeApiPlayerDelay(newVal);
+                                            }}
                                             aria-labelledby="discrete-slider-custom"
                                             step={1}
                                             min={0}

@@ -70,7 +70,17 @@
     bottom: 0;
 }
 
-.playingCards.selectable label.card:active::after {
+/* .playingCards.selectable label.card:active::after {
+    background-color: rgba(23, 146, 210, 0.5);
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3em;
+    height: 4em;
+} */
+
+.playingCards.selectable label.card.user-selecting::after {
     background-color: rgba(23, 146, 210, 0.5);
     content: '';
     position: absolute;

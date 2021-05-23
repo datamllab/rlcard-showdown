@@ -10,6 +10,16 @@ import PlaceHolderPlayer from '../../assets/images/Portrait/Player.png';
 import { computeHandCardsWidth, millisecond2Second, sortDoudizhuCards, translateCardData } from '../../utils';
 
 class DoudizhuGameBoard extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.isSelectingCards = false;
+        this.selectingCards = { start: null, cards: [] };
+        this.state = {
+            highlightedCards: [],
+        };
+    }
+
     computePlayerPortrait(playerId, playerIdx) {
         if (this.props.playerInfo.length > 0) {
             return this.props.playerInfo[playerIdx].role === 'landlord' ? (
@@ -32,6 +42,52 @@ class DoudizhuGameBoard extends React.Component {
             );
     }
 
+    handleContainerMouseLeave() {
+        if (this.isSelectingCards) {
+            console.log('container leave');
+            this.isSelectingCards = false;
+            this.selectingCards = { start: null, cards: [] };
+            this.setState({ highlightedCards: [] });
+        }
+    }
+
+    handleContainerMouseUp() {
+        if (this.isSelectingCards) {
+            console.log('container up');
+            this.isSelectingCards = false;
+            this.props.handleSelectedCards(this.selectingCards.cards);
+            this.selectingCards = { start: null, cards: [] };
+            this.setState({ highlightedCards: [] });
+        } else {
+            this.props.handleMainPlayerAct('deselect');
+        }
+    }
+
+    handleCardMouseDown(card, idx) {
+        console.log('down');
+        this.isSelectingCards = true;
+        this.selectingCards.start = idx;
+        this.selectingCards.cards = [card];
+        this.setState({ highlightedCards: this.selectingCards.cards });
+        console.log(this.selectingCards);
+    }
+
+    handleCardMouseOver(allCards, card, idx) {
+        if (this.isSelectingCards) {
+            console.log('over');
+            let tmpCards;
+            if (idx > this.selectingCards.start) {
+                tmpCards = allCards.slice(this.selectingCards.start, idx + 1);
+            } else if (idx < this.selectingCards.start) {
+                tmpCards = allCards.slice(idx, this.selectingCards.start + 1);
+            } else {
+                tmpCards = [card];
+            }
+            this.selectingCards = { ...this.selectingCards, cards: tmpCards };
+            this.setState({ highlightedCards: this.selectingCards.cards });
+        }
+    }
+
     computeSingleLineHand(inputCards, fadeClassName = '', cardSelectable = false) {
         const cards = inputCards === 'pass' ? inputCards : sortDoudizhuCards(inputCards);
         if (cards === 'pass') {
@@ -48,19 +104,30 @@ class DoudizhuGameBoard extends React.Component {
                     }`}
                 >
                     <ul className="hand" style={{ width: computeHandCardsWidth(cards.length, 12) }}>
-                        {cards.map((card) => {
+                        {cards.map((card, idx) => {
                             const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
                             let selected = false;
                             if (this.props.gamePlayable && cardSelectable) {
                                 selected = this.props.selectedCards.indexOf(card) >= 0;
                             }
 
-                            // todo: right click and move to select multiple cards
                             return (
                                 <li key={`handCard-${card}`}>
                                     <label
-                                        onClick={() => this.props.handleSelectedCards([card])}
-                                        className={`card ${rankClass} ${suitClass} ${selected ? 'selected' : ''}`}
+                                        onMouseDown={(e) => {
+                                            e.stopPropagation();
+                                            cardSelectable && this.handleCardMouseDown(card, idx);
+                                        }}
+                                        onMouseOver={(e) => {
+                                            e.stopPropagation();
+                                            cardSelectable && this.handleCardMouseOver(cards, card, idx);
+                                        }}
+                                        // onClick={() => this.props.handleSelectedCards([card])}
+                                        className={`card ${rankClass} ${suitClass} ${selected ? 'selected' : ''} ${
+                                            cardSelectable && this.state.highlightedCards.includes(card)
+                                                ? 'user-selecting'
+                                                : ''
+                                        }`}
                                     >
                                         <span className="rank">{rankText}</span>
                                         <span className="suit">{suitText}</span>
@@ -147,7 +214,8 @@ class DoudizhuGameBoard extends React.Component {
                         {this.props.gamePlayable ? (
                             <>
                                 <Button
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                        e.stopPropagation();
                                         this.props.handleMainPlayerAct('deselect');
                                     }}
                                     style={{ marginRight: '2em' }}
@@ -158,7 +226,8 @@ class DoudizhuGameBoard extends React.Component {
                                 </Button>
                                 <Button
                                     disabled={this.props.isPassDisabled}
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                        e.stopPropagation();
                                         this.props.handleMainPlayerAct('pass');
                                     }}
                                     style={{ marginRight: '2em' }}
@@ -169,7 +238,9 @@ class DoudizhuGameBoard extends React.Component {
                                 </Button>
                                 <Button
                                     disabled={!this.props.selectedCards || this.props.selectedCards.length === 0}
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                        console.log('play', e.stopPropagation);
+                                        e.stopPropagation();
                                         this.props.handleMainPlayerAct('play');
                                     }}
                                     variant="contained"
@@ -227,7 +298,17 @@ class DoudizhuGameBoard extends React.Component {
             if (found) leftId = found.id;
         }
         return (
-            <div className="doudizhu-wrapper" style={{}}>
+            <div
+                className="doudizhu-wrapper"
+                onMouseLeave={(e) => {
+                    e.stopPropagation();
+                    this.handleContainerMouseLeave();
+                }}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    this.handleContainerMouseUp();
+                }}
+            >
                 <div
                     id={'gameboard-background'}
                     className={

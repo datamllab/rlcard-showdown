@@ -815,7 +815,7 @@ function PvEDoudizhuDemoView() {
                     {gameEndDialogTitle}
                 </DialogTitle>
                 <DialogContent>
-                    <TableContainer component={Paper} className="doudizhu-statistic-table">
+                    <TableContainer className="doudizhu-statistic-table" component={Paper}>
                         <Table aria-label="statistic table">
                             <TableHead>
                                 <TableRow>
@@ -841,7 +841,21 @@ function PvEDoudizhuDemoView() {
                     </TableContainer>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => handleCloseGameEndDialog()} color="primary" variant="contained" autoFocus>
+                    <Button
+                        onClick={() => {
+                            // todo: disable all action (pass, deselect) if cancel
+                            setIsGameEndDialogOpen(false);
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={() => handleCloseGameEndDialog()}
+                        color="primary"
+                        variant="contained"
+                        autoFocus
+                        style={{ margin: '16px' }}
+                    >
                         Play Again
                     </Button>
                 </DialogActions>

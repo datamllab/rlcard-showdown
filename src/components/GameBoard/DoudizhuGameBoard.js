@@ -225,6 +225,18 @@ class DoudizhuGameBoard extends React.Component {
                                     Deselect
                                 </Button>
                                 <Button
+                                    disabled={this.props.isHintDisabled}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        this.props.handleMainPlayerAct('hint');
+                                    }}
+                                    style={{ marginRight: '2em' }}
+                                    variant="contained"
+                                    color="primary"
+                                >
+                                    Hint
+                                </Button>
+                                <Button
                                     disabled={this.props.isPassDisabled}
                                     onClick={(e) => {
                                         e.stopPropagation();

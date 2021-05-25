@@ -59,6 +59,7 @@ let playedCardsLandlord = [];
 let playedCardsLandlordDown = [];
 let playedCardsLandlordUp = [];
 let legalActions = { turn: -1, actions: [] };
+let hintIdx = -1;
 let gameEndDialogTitle = '';
 let statisticRows = [];
 let syncGameStatus = 'ready';
@@ -77,6 +78,7 @@ function PvEDoudizhuDemoView() {
     });
     const [selectedCards, setSelectedCards] = useState([]); // user selected hand card
     const [isPassDisabled, setIsPassDisabled] = useState(true);
+    const [isHintDisabled, setIsHintDisabled] = useState(true);
     const [predictionRes, setPredictionRes] = useState({ prediction: [], hands: [] });
     const [hideRivalHand, setHideRivalHand] = useState(true);
     const [hidePredictionArea, setHidePredictionArea] = useState(true);
@@ -117,6 +119,7 @@ function PvEDoudizhuDemoView() {
 
         // if next player is user, get legal actions
         if ((gameState.currentPlayer + 1) % 3 === mainPlayerId) {
+            hintIdx = -1;
             const player_hand_cards = cardArr2DouzeroFormat(gameState.hands[mainPlayerId].slice().reverse());
             let rival_move = '';
             if (playingCard.length === 0) {
@@ -134,7 +137,7 @@ function PvEDoudizhuDemoView() {
                 turn: gameState.turn + 1,
                 actions: data.legal_action.split(','),
             };
-
+            setIsHintDisabled(data.legal_action === '');
             setIsPassDisabled(playingCard.length === 0 && gameHistory[gameHistory.length - 1].length === 0);
         }
 
@@ -561,6 +564,7 @@ function PvEDoudizhuDemoView() {
         setConsiderationTime(initConsiderationTime);
         setToggleFade('');
         setIsPassDisabled(true);
+        setIsHintDisabled(true);
         setGameState({
             hands: [[], [], []],
             latestAction: [[], [], []],
@@ -598,6 +602,7 @@ function PvEDoudizhuDemoView() {
                 turn: 0,
                 actions: data.legal_action.split(','),
             };
+            setIsHintDisabled(data.legal_action === '');
         }
 
         setGameState(newGameState);
@@ -656,6 +661,33 @@ function PvEDoudizhuDemoView() {
             }
             case 'deselect': {
                 setSelectedCards([]);
+                break;
+            }
+            case 'hint': {
+                if (gameState.turn === legalActions.turn) {
+                    setSelectedCards([]);
+                    hintIdx++;
+                    if (hintIdx >= legalActions.actions.length) {
+                        hintIdx = 0;
+                    }
+                    const hintRanks = legalActions.actions[hintIdx].split('');
+                    let hintCards = [];
+                    gameState.hands[gameState.currentPlayer].forEach((card) => {
+                        const { rank } = card2SuiteAndRank(card);
+                        const idx = hintRanks.indexOf(rank);
+                        if (idx >= 0) {
+                            hintRanks.splice(idx, 1);
+                            hintCards.push(card);
+                        }
+                    });
+                    setSelectedCards(hintCards);
+                } else {
+                    Message({
+                        message: 'Legal Action not received or turn info inconsistant',
+                        type: 'error',
+                        showClose: true,
+                    });
+                }
                 break;
             }
         }
@@ -827,7 +859,7 @@ function PvEDoudizhuDemoView() {
                             </TableHead>
                             <TableBody>
                                 {statisticRows.map((row) => (
-                                    <TableRow key={row.name}>
+                                    <TableRow key={'statistic-row-' + row.role}>
                                         <TableCell component="th" scope="row">
                                             {row.role}
                                         </TableCell>
@@ -866,9 +898,10 @@ function PvEDoudizhuDemoView() {
                         <div style={{ height: '100%' }}>
                             <Paper className={'doudizhu-gameboard-paper'} elevation={3}>
                                 <DoudizhuGameBoard
-                                    showCardBack={hideRivalHand}
+                                    showCardBack={gameStatus === 'playing' && hideRivalHand}
                                     handleSelectRole={handleSelectRole}
                                     isPassDisabled={isPassDisabled}
+                                    isHintDisabled={isHintDisabled}
                                     gamePlayable={true}
                                     playerInfo={playerInfo}
                                     hands={gameState.hands}
@@ -1000,6 +1033,19 @@ function PvEDoudizhuDemoView() {
                             </Layout.Col>
                         </Layout.Row>
                     </Paper>
+                </div>
+                <div className="citation">
+                    This demo is based on <a href="https://github.com/datamllab/rlcard">RLCard</a> and{' '}
+                    <a href="https://github.com/daochenzha/douzero">DouZero</a>. If you find these projects useful,
+                    please cite:
+                    <pre>
+                        {`@article{zha2019rlcard,
+  title={RLCard: A Toolkit for Reinforcement Learning in Card Games},
+  author={Zha, Daochen and Lai, Kwei-Herng and Cao, Yuanpu and Huang, Songyi and Wei, Ruzhe and Guo, Junyu and Hu, Xia},
+  journal={arXiv preprint arXiv:1910.04376},
+  year={2019}
+}`}
+                    </pre>
                 </div>
             </div>
         </div>

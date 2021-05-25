@@ -24,3 +24,26 @@ code {
 .el-message {
   z-index: 9999;
 }
+
+.citation {
+  margin-top: 20px;
+  padding: 5px;
+
+  -webkit-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+
+  a {
+    &:visited {
+      color: blue;
+    }
+  }
+
+  pre {
+    padding: 10px;
+    border-radius: 5px;
+    color: #212529;
+    background-color: rgb(255, 255, 255);
+    border: solid 1px #e9e9e9; 
+  }
+}

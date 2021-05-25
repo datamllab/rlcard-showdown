@@ -117,6 +117,17 @@
             font-family: 'Arvo', 'Rockwell', monospace, PingFangSC-Regular, sans-serif;
         }
     }
+
+    @media (pointer: coarse) {
+        .MuiSlider-root{
+            padding-top: 13px;
+            padding-bottom: 13px;
+
+            span.MuiSlider-markLabel {
+                top: 26px;
+            }
+        }
+    }
 }
 
 .doudizhu-view-container {

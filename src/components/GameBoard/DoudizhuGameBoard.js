@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
 import { Layout } from 'element-react';
 import React from 'react';
+import { withTranslation } from 'react-i18next';
 import '../../assets/doudizhu.scss';
 import Landlord_wName from '../../assets/images/Portrait/Landlord_wName.png';
 import Peasant_wName from '../../assets/images/Portrait/Peasant_wName.png';
@@ -289,6 +290,7 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     render() {
+        const t = this.props.t;
         // compute the id as well as index in list for every player
         const bottomId = this.props.mainPlayerId;
         let found = this.props.playerInfo.find((element) => {
@@ -324,7 +326,10 @@ class DoudizhuGameBoard extends React.Component {
                 <div
                     id={'gameboard-background'}
                     className={
-                        this.props.gameStatus === 'ready' && this.props.gamePlayable ? 'blur-background' : undefined
+                        (this.props.gameStatus === 'ready' || this.props.gameStatus === 'localeSelection') &&
+                        this.props.gamePlayable
+                            ? 'blur-background'
+                            : undefined
                     }
                 >
                     <div id={'left-player'}>
@@ -371,7 +376,7 @@ class DoudizhuGameBoard extends React.Component {
                         </div>
                     </div>
                 </div>
-                {this.props.gamePlayable && this.props.gameStatus === 'ready' ? (
+                {this.props.gamePlayable && this.props.gameStatus === 'ready' && (
                     <Layout.Row
                         type="flex"
                         style={{
@@ -386,40 +391,74 @@ class DoudizhuGameBoard extends React.Component {
                     >
                         <Button
                             onClick={() => this.props.handleSelectRole('landlord_up')}
-                            style={{ width: '225px' }}
+                            style={{ width: '225px', justifyContent: 'space-evenly' }}
                             variant="contained"
                             color="primary"
                             startIcon={<img src={Peasant_wName} alt="Peasant" width="48px" height="48px" />}
                         >
-                            Play as Peasant
-                            <br />
-                            (Landlord Up)
+                            {t('doudizhu.play_as_peasant')}
+                            <br />({t('doudizhu.landlord_up')})
                         </Button>
                         <Button
                             onClick={() => this.props.handleSelectRole('landlord')}
-                            style={{ width: '225px', marginTop: '20px', marginBottom: '20px' }}
+                            style={{
+                                width: '225px',
+                                justifyContent: 'space-evenly',
+                                marginTop: '20px',
+                                marginBottom: '20px',
+                            }}
                             variant="contained"
                             color="primary"
                             startIcon={<img src={Landlord_wName} alt="Peasant" width="48px" height="48px" />}
                         >
-                            Play as Landlord
+                            {t('doudizhu.play_as_landlord')}
                         </Button>
                         <Button
                             onClick={() => this.props.handleSelectRole('landlord_down')}
-                            style={{ width: '225px' }}
+                            style={{ width: '225px', justifyContent: 'space-evenly' }}
                             variant="contained"
                             color="primary"
                             startIcon={<img src={Peasant_wName} alt="Peasant" width="48px" height="48px" />}
                         >
-                            Play as Peasant
-                            <br />
-                            (Landlord Down)
+                            {t('doudizhu.play_as_peasant')}
+                            <br />({t('doudizhu.landlord_down')})
                         </Button>
                     </Layout.Row>
-                ) : undefined}
+                )}
+                {this.props.gamePlayable && this.props.gameStatus === 'localeSelection' && (
+                    <Layout.Row
+                        type="flex"
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            height: '100%',
+                            width: '100%',
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Button
+                            onClick={() => this.props.handleLocaleChange('zh')}
+                            style={{ width: '225px', padding: '15px' }}
+                            variant="contained"
+                            color="primary"
+                        >
+                            中文开始游戏
+                        </Button>
+                        <Button
+                            onClick={() => this.props.handleLocaleChange('en')}
+                            style={{ width: '225px', padding: '15px', marginTop: '20px' }}
+                            variant="contained"
+                            color="primary"
+                        >
+                            Start Game in English
+                        </Button>
+                    </Layout.Row>
+                )}
             </div>
         );
     }
 }
 
-export default DoudizhuGameBoard;
+export default withTranslation()(DoudizhuGameBoard);

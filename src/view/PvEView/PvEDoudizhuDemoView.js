@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
+import { MenuItem, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -11,10 +11,12 @@ import Paper from '@material-ui/core/Paper';
 import Slider from '@material-ui/core/Slider';
 import Switch from '@material-ui/core/Switch';
 import NotInterestedIcon from '@material-ui/icons/NotInterested';
+import TranslateIcon from '@material-ui/icons/Translate';
 import axios from 'axios';
 import { Layout, Message } from 'element-react';
 import qs from 'query-string';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import '../../assets/doudizhu.scss';
 import { DoudizhuGameBoard } from '../../components/GameBoard';
 import {
@@ -62,14 +64,15 @@ let legalActions = { turn: -1, actions: [] };
 let hintIdx = -1;
 let gameEndDialogTitle = '';
 let statisticRows = [];
-let syncGameStatus = 'ready';
+let syncGameStatus = localStorage.getItem('LOCALE') ? 'ready' : 'localeSelection';
 
 function PvEDoudizhuDemoView() {
+    const { t, i18n } = useTranslation();
     const [apiPlayDelay, setApiPlayDelay] = useState(3000);
     const [isGameEndDialogOpen, setIsGameEndDialogOpen] = useState(false);
     const [considerationTime, setConsiderationTime] = useState(initConsiderationTime);
     const [toggleFade, setToggleFade] = useState('');
-    const [gameStatus, setGameStatus] = useState('ready'); // "ready", "playing", "paused", "over"
+    const [gameStatus, setGameStatus] = useState(localStorage.getItem('LOCALE') ? 'ready' : 'localeSelection'); // "localeSelection", "ready", "playing", "paused", "over"
     const [gameState, setGameState] = useState({
         hands: [[], [], []],
         latestAction: [[], [], []],
@@ -82,6 +85,7 @@ function PvEDoudizhuDemoView() {
     const [predictionRes, setPredictionRes] = useState({ prediction: [], hands: [] });
     const [hideRivalHand, setHideRivalHand] = useState(true);
     const [hidePredictionArea, setHidePredictionArea] = useState(true);
+    const [locale, setLocale] = useState(localStorage.getItem('LOCALE') || 'en');
 
     const cardArr2DouzeroFormat = (cards) => {
         return cards
@@ -834,6 +838,12 @@ function PvEDoudizhuDemoView() {
         return value;
     };
 
+    const handleLocaleChange = useCallback((newLocale) => {
+        i18n.changeLanguage(newLocale);
+        setLocale(newLocale);
+        localStorage.setItem('LOCALE', newLocale);
+    }, []);
+
     return (
         <div>
             <Dialog
@@ -915,6 +925,10 @@ function PvEDoudizhuDemoView() {
                                     toggleFade={toggleFade}
                                     gameStatus={gameStatus}
                                     handleMainPlayerAct={handleMainPlayerAct}
+                                    handleLocaleChange={(newLocale) => {
+                                        handleLocaleChange(newLocale);
+                                        setGameStatus('ready');
+                                    }}
                                 />
                             </Paper>
                         </div>
@@ -989,7 +1003,7 @@ function PvEDoudizhuDemoView() {
                                         control={
                                             <Switch checked={!hidePredictionArea} onChange={toggleHidePredictionArea} />
                                         }
-                                        label="AI Hand Face-Up"
+                                        label={t('doudizhu.ai_hand_faceup')}
                                     />
                                 </FormGroup>
                             </Layout.Col>
@@ -998,14 +1012,14 @@ function PvEDoudizhuDemoView() {
                             </Layout.Col>
                             <Layout.Col
                                 span="3"
-                                style={{ height: '51px', lineHeight: '51px', marginLeft: '-1px', marginRight: '-1px' }}
+                                style={{ height: '51px', lineHeight: '51px', marginLeft: '-2px', marginRight: '-2px' }}
                             >
                                 <div style={{ textAlign: 'center' }}>{`Turn ${gameState.turn}`}</div>
                             </Layout.Col>
                             <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
                                 <Divider orientation="vertical" />
                             </Layout.Col>
-                            <Layout.Col span="15">
+                            <Layout.Col span="12">
                                 <div>
                                     <label
                                         className={'form-label-left'}
@@ -1013,7 +1027,7 @@ function PvEDoudizhuDemoView() {
                                     >
                                         AI Thinking Time
                                     </label>
-                                    <div style={{ marginLeft: '170px', marginRight: '10px' }}>
+                                    <div style={{ marginLeft: '170px', marginRight: '20px' }}>
                                         <Slider
                                             value={gameSpeedMap.find((element) => element.delay === apiPlayDelay).value}
                                             getAriaValueText={sliderValueText}
@@ -1031,13 +1045,44 @@ function PvEDoudizhuDemoView() {
                                     </div>
                                 </div>
                             </Layout.Col>
+                            <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
+                                <Divider orientation="vertical" />
+                            </Layout.Col>
+                            <Layout.Col span="3" style={{ height: '100%' }}>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        height: '100%',
+                                        paddingLeft: '10px',
+                                    }}
+                                >
+                                    <TranslateIcon />
+                                    <Select
+                                        id="language-select"
+                                        style={{ width: '100%', textAlign: 'center', marginLeft: '7px' }}
+                                        value={locale}
+                                        onChange={(e) => handleLocaleChange(e.target.value)}
+                                    >
+                                        <MenuItem value={'zh'}>中文</MenuItem>
+                                        <MenuItem value={'en'}>English</MenuItem>
+                                    </Select>
+                                </div>
+                            </Layout.Col>
                         </Layout.Row>
                     </Paper>
                 </div>
                 <div className="citation">
-                    This demo is based on <a href="https://github.com/datamllab/rlcard">RLCard</a> and{' '}
-                    <a href="https://github.com/daochenzha/douzero">DouZero</a>. If you find these projects useful,
-                    please cite:
+                    This demo is based on{' '}
+                    <a href="https://github.com/datamllab/rlcard" target="_blank">
+                        RLCard
+                    </a>{' '}
+                    and{' '}
+                    <a href="https://github.com/daochenzha/douzero" target="_blank">
+                        DouZero
+                    </a>
+                    . If you find these projects useful, please cite:
                     <pre>
                         {`@article{zha2019rlcard,
   title={RLCard: A Toolkit for Reinforcement Learning in Card Games},

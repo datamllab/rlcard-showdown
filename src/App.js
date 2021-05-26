@@ -21,7 +21,6 @@ function App() {
         <Router>
             <Navbar subtitleMap={navbarSubtitleMap} />
             <div style={{ marginTop: '75px' }}>
-                {t('wdnmd')}
                 <Route exact path="/">
                     <Redirect to="/leaderboard?type=game&name=leduc-holdem" />
                     {/* <Redirect to="/pve/doudizhu-demo" /> */}

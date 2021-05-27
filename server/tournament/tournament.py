@@ -89,7 +89,7 @@ def doudizhu_tournament(game, agents, names, num_eval_games):
 
             data['moveHistory'].append(history)
             state, player_id = env.step(action, env.agents[player_id].use_raw)
-        data = json.dumps(data)
+        data = json.dumps(str(data))
         #data = json.dumps(data, indent=2, sort_keys=True)
         json_data.append(data)
         if env.get_payoffs()[0] > 0:
@@ -150,7 +150,7 @@ def leduc_holdem_tournament(game, agents, num_eval_games):
                 round_history = []
         perfect = env.get_perfect_information()
         data['publicCard'] = perfect['public_card']
-        data = json.dumps(data)
+        data = json.dumps(str(data))
         #data = json.dumps(data, indent=2, sort_keys=True)
         json_data.append(data)
         if env.get_payoffs()[0] > 0:

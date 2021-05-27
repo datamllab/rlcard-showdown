@@ -4,6 +4,7 @@ This is the GUI support for the [RLCard](https://github.com/datamllab/rlcard) pr
 *   Official Website: [http://www.rlcard.org](http://www.rlcard.org)
 *   Tutorial in Jupyter Notebook: [https://github.com/datamllab/rlcard-tutorial](https://github.com/datamllab/rlcard-tutorial)
 *   Paper: [https://www.ijcai.org/Proceedings/2020/764](https://www.ijcai.org/Proceedings/2020/764)
+*   Document: [click here](docs/README.md)
 
 ## Cite this work
 If you find this repo useful, you may cite:
@@ -25,7 +26,7 @@ If you find this repo useful, you may cite:
 ```
 
 ## Installation
-RLCard-Showdown has separated frontend and backend. The frontend is built with React and the backend is based on Django.
+RLCard-Showdown has separated frontend and backend. The frontend is built with React and the backend of leaderboard is based on Django.
 
 ### Prerequisite
 To set up the frontend, you should make sure you have [Node.js](https://nodejs.org/) and NPM installed. Normally you just need to manually install Node.js, and the NPM package would be automatically installed together with Node.js for you. Please refer to its official website for installation of Node.js.
@@ -35,34 +36,34 @@ You can run the following commands to verify the installation
 node -v
 npm -v
 ```
-For backend, make sure that you have **Python 3.5+** and **pip** installed.
+For backend, make sure that you have **Python 3.6+** and **pip** installed.
 
 ### Install Frontend and Backend
 The frontend can be installed with the help of NPM:
 ```
-git clone https://github.com/datamllab/rlcard-showdown.git
+git clone --depth 1 https://github.com/datamllab/rlcard-showdown.git
 cd rlcard-showdown
 npm install
 ```
-The backend can be installed with
+The backend of leaderboard can be installed with
 ```
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 cd server
-python manage.py migrate
+python3 manage.py migrate
 cd ..
 ```
 
 ### Run RLCard-Showdown
-Launch the backend with
+Launch the backend of leaderboard with
 ```
 cd server
-python manage.py runserver
+python3 manage.py runserver
 ```
 Run the following command in a new terminal under the project folder to start frontend in development mode:
 ```
 npm start
 ```
-The frontend will be started in port 3000 in localhost by default. You can view it at [http://127.0.0.1:3000/](http://127.0.0.1:3000/). The backend will run by default in [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+You can view frontend at [http://127.0.0.1:3000/](http://127.0.0.1:3000/). The backend of leaderboard will run in [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
 
 More documentation can be found [here](docs/api.md). User guide is [here](docs/guide.md).
 
@@ -73,7 +74,7 @@ More documentation can be found [here](docs/api.md). User guide is [here](docs/g
 ![leduc-replay](https://github.com/datamllab/rlcard-showdown/blob/master/docs/imgs/leduc-replay.png?raw=true)
 
 ### Contact Us
-If you have any questions or feedback, feel free to drop an email to [Songyi Huang](mailto:songyih@sfu.ca) for the frontend or [Daochen Zha](http://dczha.com/) for backend.
+If you have any questions or feedback, feel free to drop an email to [Songyi Huang](https://github.com/hsywhu) for the frontend or [Daochen Zha](https://github.com/daochenzha) for backend.
 
 ### Acknowledgements
 We would like to thank JJ World Network Technology Co., LTD for the generous support, [Chieh-An Tsai](https://anntsai.myportfolio.com/) for user interface design, and [Lei Pan](mailto:lpa25@sfu.ca) for the help in visualizations.

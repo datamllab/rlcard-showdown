@@ -1,9 +1,30 @@
 {
+    "hidden": "Hidden",
+    "waiting...": "Waiting...",
+    "play_again": "Play Again",
+    "cancel": "Cancel",
+    "turn": "Turn",
+
     "doudizhu": {
         "ai_hand_faceup": "AI Hand Face-Up",
         "play_as_landlord": "Play As Landlord",
         "play_as_peasant": "Play As Peasant",
         "landlord_up": "Landlord Up",
-        "landlord_down": "Landlord Down"
+        "landlord_down": "Landlord Down",
+        "peasants_win": "Peasants Win!",
+        "landlord_win": "Landlord Wins!",
+        "only_choice": "Only Choice",
+        "role": "Role",
+        "win": "Win",
+        "total": "Total",
+        "win_rate": "Win Rate",
+        "three_landlord_cards": "Three Landlord Cards",
+        "ai_thinking_time": "AI Thinking Time",
+        "landlord": "Landlord",
+        "expected_win_rate": "Expected Win Rate",
+        "pass": "Pass",
+        "deselect": "Deselect",
+        "hint": "Hint",
+        "play": "Play"
     }
 }

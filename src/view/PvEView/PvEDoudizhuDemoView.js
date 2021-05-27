@@ -277,7 +277,8 @@ function PvEDoudizhuDemoView() {
             localStorage.setItem('GAME_STATISTICS', JSON.stringify(gameStatistics));
 
             setTimeout(() => {
-                gameEndDialogTitle = winner.role === 'peasant' ? 'Peasants win!' : 'Landlord wins!';
+                gameEndDialogTitle =
+                    winner.role === 'peasant' ? t('doudizhu.peasants_win') : t('doudizhu.landlord_win');
                 statisticRows = [
                     {
                         role: 'Landlord',
@@ -403,13 +404,13 @@ function PvEDoudizhuDemoView() {
                     if (apiRes.data.legal_action === '') {
                         proceedNextTurn([]);
                         setPredictionRes({
-                            prediction: [['', 'Only Choice']],
+                            prediction: [['', t('doudizhu.only_choice')]],
                             hands: gameState.hands[gameState.currentPlayer].slice(),
                         });
                     } else if (apiRes.data.legal_action.split(',').length === 1) {
                         proceedNextTurn(apiRes.data.legal_action.split(''));
                         setPredictionRes({
-                            prediction: [[apiRes.data.legal_action, 'Only Choice']],
+                            prediction: [[apiRes.data.legal_action, t('doudizhu.only_choice')]],
                             hands: gameState.hands[gameState.currentPlayer].slice(),
                         });
                     } else {
@@ -715,7 +716,7 @@ function PvEDoudizhuDemoView() {
         if (computedCards === 'pass') {
             return (
                 <div className={'non-card ' + toggleFade}>
-                    <span>Pass</span>
+                    <span>{t('doudizhu.pass')}</span>
                 </div>
             );
         } else {
@@ -745,7 +746,7 @@ function PvEDoudizhuDemoView() {
                 return (
                     <div className={'playing'}>
                         <div className={'non-card'}>
-                            <span>{'Hidden'}</span>
+                            <span>{t('hidden')}</span>
                         </div>
                     </div>
                 );
@@ -761,9 +762,9 @@ function PvEDoudizhuDemoView() {
                     </div>
                     {predictionRes.prediction.length > idx ? (
                         <div className={'non-card'} style={{ marginTop: '0px' }}>
-                            <span>{`Expected Win Rate: ${(Number(predictionRes.prediction[idx][1]) * 100).toFixed(
-                                2,
-                            )}%`}</span>
+                            <span>{`${t('doudizhu.expected_win_rate')}: ${(
+                                Number(predictionRes.prediction[idx][1]) * 100
+                            ).toFixed(2)}%`}</span>
                         </div>
                     ) : (
                         ''
@@ -771,7 +772,7 @@ function PvEDoudizhuDemoView() {
                 </div>
             );
         } else {
-            return <span className={'waiting'}>Waiting...</span>;
+            return <span className={'waiting'}>{t('waiting...')}</span>;
         }
     };
 
@@ -861,10 +862,10 @@ function PvEDoudizhuDemoView() {
                         <Table aria-label="statistic table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Role</TableCell>
-                                    <TableCell>Win</TableCell>
-                                    <TableCell>Total</TableCell>
-                                    <TableCell>Win Rate</TableCell>
+                                    <TableCell>{t('doudizhu.role')}</TableCell>
+                                    <TableCell>{t('doudizhu.win')}</TableCell>
+                                    <TableCell>{t('doudizhu.total')}</TableCell>
+                                    <TableCell>{t('doudizhu.win_rate')}</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -889,7 +890,7 @@ function PvEDoudizhuDemoView() {
                             setIsGameEndDialogOpen(false);
                         }}
                     >
-                        Cancel
+                        {t('cancel')}
                     </Button>
                     <Button
                         onClick={() => handleCloseGameEndDialog()}
@@ -898,7 +899,7 @@ function PvEDoudizhuDemoView() {
                         autoFocus
                         style={{ margin: '16px' }}
                     >
-                        Play Again
+                        {t('play_again')}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -938,7 +939,7 @@ function PvEDoudizhuDemoView() {
                             {playerInfo.length > 0 && gameState.currentPlayer !== null ? (
                                 <div style={{ padding: '16px' }}>
                                     <span style={{ textAlign: 'center', marginBottom: '8px', display: 'block' }}>
-                                        Three Landlord Cards
+                                        {t('doudizhu.three_landlord_cards')}
                                     </span>
                                     <div className="playingCards" style={{ display: 'flex', justifyContent: 'center' }}>
                                         {sortDoudizhuCards(originalThreeLandlordCards, true).map((card) => {
@@ -966,21 +967,23 @@ function PvEDoudizhuDemoView() {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <span>Waiting...</span>
+                                    <span>{t('waiting...')}</span>
                                 </div>
                             )}
                             <Divider />
                             <div className={'probability-player'} style={{ height: '19px', textAlign: 'center' }}>
                                 {playerInfo.length > 0 && gameState.currentPlayer !== null ? (
                                     <span>
-                                        {
-                                            ['Landlord', 'Landlord Down', 'Landlord Up'][
-                                                playerInfo[gameState.currentPlayer].douzeroPlayerPosition
-                                            ]
-                                        }
+                                        {t(
+                                            `doudizhu.${
+                                                ['landlord', 'landlord_down', 'landlord_up'][
+                                                    playerInfo[gameState.currentPlayer].douzeroPlayerPosition
+                                                ]
+                                            }`,
+                                        )}
                                     </span>
                                 ) : (
-                                    <span>Waiting...</span>
+                                    <span>{t('waiting...')}</span>
                                 )}
                             </div>
                             <Divider />
@@ -1014,7 +1017,7 @@ function PvEDoudizhuDemoView() {
                                 span="3"
                                 style={{ height: '51px', lineHeight: '51px', marginLeft: '-2px', marginRight: '-2px' }}
                             >
-                                <div style={{ textAlign: 'center' }}>{`Turn ${gameState.turn}`}</div>
+                                <div style={{ textAlign: 'center' }}>{`${t('turn')} ${gameState.turn}`}</div>
                             </Layout.Col>
                             <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
                                 <Divider orientation="vertical" />
@@ -1025,9 +1028,9 @@ function PvEDoudizhuDemoView() {
                                         className={'form-label-left'}
                                         style={{ width: '155px', lineHeight: '28px', fontSize: '15px' }}
                                     >
-                                        AI Thinking Time
+                                        {t('doudizhu.ai_thinking_time')}
                                     </label>
-                                    <div style={{ marginLeft: '170px', marginRight: '20px' }}>
+                                    <div style={{ marginLeft: '160px', marginRight: '30px' }}>
                                         <Slider
                                             value={gameSpeedMap.find((element) => element.delay === apiPlayDelay).value}
                                             getAriaValueText={sliderValueText}
@@ -1058,7 +1061,7 @@ function PvEDoudizhuDemoView() {
                                         paddingLeft: '10px',
                                     }}
                                 >
-                                    <TranslateIcon />
+                                    <TranslateIcon style={{ width: '1.2rem', height: '1.2rem' }} />
                                     <Select
                                         id="language-select"
                                         style={{ width: '100%', textAlign: 'center', marginLeft: '7px' }}
@@ -1074,15 +1077,32 @@ function PvEDoudizhuDemoView() {
                     </Paper>
                 </div>
                 <div className="citation">
-                    This demo is based on{' '}
-                    <a href="https://github.com/datamllab/rlcard" target="_blank">
-                        RLCard
-                    </a>{' '}
-                    and{' '}
-                    <a href="https://github.com/daochenzha/douzero" target="_blank">
-                        DouZero
-                    </a>
-                    . If you find these projects useful, please cite:
+                    {locale === 'en' ? (
+                        <>
+                            This demo is based on{' '}
+                            <a href="https://github.com/datamllab/rlcard" target="_blank">
+                                RLCard
+                            </a>{' '}
+                            and{' '}
+                            <a href="https://github.com/daochenzha/douzero" target="_blank">
+                                DouZero
+                            </a>
+                            . If you find these projects useful, please cite:
+                        </>
+                    ) : (
+                        <>
+                            本演示基于{' '}
+                            <a href="https://github.com/datamllab/rlcard" target="_blank">
+                                RLCard
+                            </a>{' '}
+                            和{' '}
+                            <a href="https://github.com/daochenzha/douzero" target="_blank">
+                                DouZero
+                            </a>{' '}
+                            项目。如果这些项目帮到您，请添加引用:
+                        </>
+                    )}
+
                     <pre>
                         {`@article{zha2019rlcard,
   title={RLCard: A Toolkit for Reinforcement Learning in Card Games},

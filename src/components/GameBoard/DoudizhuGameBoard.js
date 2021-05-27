@@ -45,7 +45,6 @@ class DoudizhuGameBoard extends React.Component {
 
     handleContainerMouseLeave() {
         if (this.isSelectingCards) {
-            console.log('container leave');
             this.isSelectingCards = false;
             this.selectingCards = { start: null, cards: [] };
             this.setState({ highlightedCards: [] });
@@ -54,7 +53,6 @@ class DoudizhuGameBoard extends React.Component {
 
     handleContainerMouseUp() {
         if (this.isSelectingCards) {
-            console.log('container up');
             this.isSelectingCards = false;
             this.props.handleSelectedCards(this.selectingCards.cards);
             this.selectingCards = { start: null, cards: [] };
@@ -65,17 +63,14 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     handleCardMouseDown(card, idx) {
-        console.log('down');
         this.isSelectingCards = true;
         this.selectingCards.start = idx;
         this.selectingCards.cards = [card];
         this.setState({ highlightedCards: this.selectingCards.cards });
-        console.log(this.selectingCards);
     }
 
     handleCardMouseOver(allCards, card, idx) {
         if (this.isSelectingCards) {
-            console.log('over');
             let tmpCards;
             if (idx > this.selectingCards.start) {
                 tmpCards = allCards.slice(this.selectingCards.start, idx + 1);
@@ -90,11 +85,12 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     computeSingleLineHand(inputCards, fadeClassName = '', cardSelectable = false) {
+        const t = this.props.t;
         const cards = inputCards === 'pass' ? inputCards : sortDoudizhuCards(inputCards);
         if (cards === 'pass') {
             return (
                 <div className="non-card">
-                    <span>PASS</span>
+                    <span>{t('doudizhu.pass')}</span>
                 </div>
             );
         } else {
@@ -200,6 +196,7 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     playerDecisionArea(playerIdx) {
+        const t = this.props.t;
         let fadeClassName = '';
         if (this.props.toggleFade === 'fade-out' && (playerIdx + 2) % 3 === this.props.currentPlayer)
             fadeClassName = 'fade-out';
@@ -214,7 +211,7 @@ class DoudizhuGameBoard extends React.Component {
                         </div>
                         {this.props.gamePlayable ? (
                             <>
-                                <Button
+                                {/* <Button
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         this.props.handleMainPlayerAct('deselect');
@@ -223,8 +220,8 @@ class DoudizhuGameBoard extends React.Component {
                                     variant="contained"
                                     color="primary"
                                 >
-                                    Deselect
-                                </Button>
+                                    {t('doudizhu.deselect')}
+                                </Button> */}
                                 <Button
                                     disabled={this.props.isHintDisabled}
                                     onClick={(e) => {
@@ -235,7 +232,7 @@ class DoudizhuGameBoard extends React.Component {
                                     variant="contained"
                                     color="primary"
                                 >
-                                    Hint
+                                    {t('doudizhu.hint')}
                                 </Button>
                                 <Button
                                     disabled={this.props.isPassDisabled}
@@ -247,7 +244,7 @@ class DoudizhuGameBoard extends React.Component {
                                     variant="contained"
                                     color="primary"
                                 >
-                                    Pass
+                                    {t('doudizhu.pass')}
                                 </Button>
                                 <Button
                                     disabled={!this.props.selectedCards || this.props.selectedCards.length === 0}
@@ -259,7 +256,7 @@ class DoudizhuGameBoard extends React.Component {
                                     variant="contained"
                                     color="primary"
                                 >
-                                    Play
+                                    {t('doudizhu.play')}
                                 </Button>
                             </>
                         ) : undefined}
@@ -339,7 +336,7 @@ class DoudizhuGameBoard extends React.Component {
                                 this.computeSideHand(this.props.hands[leftIdx])
                             ) : (
                                 <div className="player-hand-placeholder">
-                                    <span>Waiting...</span>
+                                    <span>{t('waiting...')}</span>
                                 </div>
                             )}
                         </div>
@@ -352,7 +349,7 @@ class DoudizhuGameBoard extends React.Component {
                                 this.computeSideHand(this.props.hands[rightIdx])
                             ) : (
                                 <div className="player-hand-placeholder">
-                                    <span>Waiting...</span>
+                                    <span>{t('waiting...')}</span>
                                 </div>
                             )}
                         </div>
@@ -370,7 +367,7 @@ class DoudizhuGameBoard extends React.Component {
                                 </div>
                             ) : (
                                 <div className="player-hand-placeholder">
-                                    <span>Waiting...</span>
+                                    <span>{t('waiting...')}</span>
                                 </div>
                             )}
                         </div>

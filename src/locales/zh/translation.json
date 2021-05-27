@@ -1,9 +1,30 @@
 {
+    "hidden": "隐藏",
+    "waiting...": "等待中...",
+    "play_again": "再次游玩",
+    "cancel": "取消",
+    "turn": "回合",
+
     "doudizhu": {
         "ai_hand_faceup": "显示AI手牌",
         "play_as_landlord": "扮演地主",
         "play_as_peasant": "扮演农民",
         "landlord_up": "地主上家",
-        "landlord_down": "地主下家"
+        "landlord_down": "地主下家",
+        "peasants_win": "农民胜利!",
+        "landlord_win": "地主胜利!",
+        "only_choice": "唯一选择",
+        "role": "角色",
+        "win": "胜场",
+        "total": "全部",
+        "win_rate": "胜率",
+        "three_landlord_cards": "地主牌",
+        "ai_thinking_time": "AI考虑时间",
+        "landlord": "地主",
+        "expected_win_rate": "预计胜率",
+        "pass": "不出",
+        "deselect": "取消选择",
+        "hint": "提示",
+        "play": "出牌"
     }
 }

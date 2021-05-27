@@ -21,8 +21,8 @@ class DoudizhuRandomModel(Model):
         ''' Load random model
         '''
         env = rlcard.make('doudizhu')
-        self.agent = RandomAgent(action_num=env.action_num)
-        self.player_num = env.player_num
+        self.agent = RandomAgent(num_actions=env.num_actions)
+        self.num_players = env.num_players
 
     @property
     def agents(self):
@@ -34,7 +34,7 @@ class DoudizhuRandomModel(Model):
         Note: Each agent should be just like RL agent with step and eval_step
               functioning well.
         '''
-        return [self.agent for _ in range(self.player_num)]
+        return [self.agent for _ in range(self.num_players)]
 
     @property
     def use_raw(self):

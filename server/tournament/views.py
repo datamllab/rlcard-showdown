@@ -102,13 +102,13 @@ def query_agent_payoff(request):
 def launch(request):
     if request.method == 'GET':
         try:
-            eval_num = int(request.GET['eval_num'])
+            num_eval_games = int(request.GET['num_eval_games'])
             game = request.GET['name']
         except:
             return HttpResponse(json.dumps({'value': -1, 'info': 'parameters error'}))
 
         MODEL_IDS_ALL = _get_model_ids_all()
-        games_data, payoffs_data = Tournament(game, MODEL_IDS_ALL[game], eval_num).launch()
+        games_data, payoffs_data = Tournament(game, MODEL_IDS_ALL[game], num_eval_games).launch()
         Game.objects.filter(name=game).delete()
         Payoff.objects.filter(name=game).delete()
         for game_data in games_data:

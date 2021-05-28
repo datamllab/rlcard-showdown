@@ -1,0 +1,7 @@
+*.swp
+*.so
+__pycache__
+.DS_Store
+*.egg-info
+*.pyc
+*.onnx

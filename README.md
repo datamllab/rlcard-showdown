@@ -1,5 +1,5 @@
 # RLCard Showdown
-This is the GUI support for the [RLCard](https://github.com/datamllab/rlcard) project and DouZero project. The project provides evaluation and visualization tools to help understand the performance of the agents. Currently, we only support Leduc Hold'em and Dou Dizhu. The frontend is developed with [React](https://reactjs.org/). The backend is based on [Django](https://www.djangoproject.com/) and [Flask](https://flask.palletsprojects.com/). Have fun!
+This is the GUI support for the [RLCard](https://github.com/datamllab/rlcard) project and DouZero project. RLCard-Showdown provides evaluation and visualization tools to help understand the performance of the agents. It includes a replay module, where you can analyze the replays, and a PvE module, where you can play with the AI interactively. Currently, we only support Leduc Hold'em and Dou Dizhu. The frontend is developed with [React](https://reactjs.org/). The backend is based on [Django](https://www.djangoproject.com/) and [Flask](https://flask.palletsprojects.com/). Have fun!
 
 *   Official Website: [http://www.rlcard.org](http://www.rlcard.org)
 *   Tutorial in Jupyter Notebook: [https://github.com/datamllab/rlcard-tutorial](https://github.com/datamllab/rlcard-tutorial)
@@ -52,18 +52,25 @@ cd ..
 cd server
 python3 manage.py runserver
 ```
-2. In a new terminal, start the PvE server (i.e., human vs AI) of DouZero with
+2. Download the pre-trained models in [Google Drive](https://drive.google.com/file/d/1zx-20xNBDbCFd8GWhZFUkl07lofbNHpy/view?usp=sharing) or [百度网盘](https://pan.baidu.com/s/12MgxVBBz4mgitT74quSWfw) 提取码: qh6s. Extract it in `pve_server/pretrained`.
+
+In a new terminal, start the PvE server (i.e., human vs AI) of DouZero with
 ```
 cd pve_server
 python3 run_douzero.py
 ```
+Alternatively, you can start the PvE server interfaced with RLCard:
+```
+cd pve_server
+python3 run_dmc.py
+```
+They are conceptually the same with minor differences in state representation and training time of the pre-trained models (DouZero is fully trained with more than a month, while DMC in RLCard is only trained for hours).
+
 3. Run the following command in another new terminal under the project folder to start frontend:
 ```
 npm start
 ```
 You can view leaderboard at [http://127.0.0.1:3000/](http://127.0.0.1:3000/) and PvE demo of Dou Dizhu at [http://127.0.0.1:3000/pve/doudizhu-demo](http://127.0.0.1:3000/pve/doudizhu-demo). The backend of leaderboard will run in [http://127.0.0.1:8000/](http://127.0.0.1:8000/). The PvE backend will run in [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
-
-More documentation can be found [here](docs/api.md). User guide is [here](docs/guide.md).
 
 ## Demos
 ![leaderboards](https://github.com/datamllab/rlcard-showdown/blob/master/docs/imgs/leaderboards.png?raw=true)

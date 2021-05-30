@@ -1,4 +1,4 @@
-rlcard[training]
+rlcard[torch]
 Django
 tqdm
 django-cors-headers

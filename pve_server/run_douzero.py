@@ -1,3 +1,5 @@
+import itertools
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
@@ -236,6 +238,9 @@ def _get_legal_card_play_actions(player_hand_cards, rival_move):
 
     for m in moves:
         m.sort()
+
+    moves.sort()
+    moves = list(move for move,_ in itertools.groupby(moves))
 
     return moves
 

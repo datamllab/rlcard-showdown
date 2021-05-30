@@ -1,4 +1,6 @@
 import os
+import itertools
+
 import torch
 import numpy as np
 from heapq import nlargest
@@ -322,6 +324,9 @@ def _get_legal_card_play_actions(player_hand_cards, rival_move):
 
     for m in moves:
         m.sort()
+
+    moves.sort()
+    moves = list(move for move,_ in itertools.groupby(moves))
 
     return moves
 

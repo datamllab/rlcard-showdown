@@ -1,51 +1,49 @@
-import React from 'react';
-import axios from 'axios';
-import qs from 'query-string';
-import '../../assets/gameview.scss';
-import {LeducHoldemGameBoard} from '../../components/GameBoard';
-import {deepCopy} from "../../utils";
-import { apiUrl } from "../../utils/config";
-
-import { Layout, Loading } from 'element-react';
-import { Message } from 'element-react';
-import Slider from '@material-ui/core/Slider';
 import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
-import Divider from '@material-ui/core/Divider';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
-import PauseCircleOutlineRoundedIcon from '@material-ui/icons/PauseCircleOutlineRounded';
-import ReplayRoundedIcon from '@material-ui/icons/ReplayRounded';
-import NotInterestedIcon from '@material-ui/icons/NotInterested';
-import SkipNextIcon from '@material-ui/icons/SkipNext';
-import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Divider from '@material-ui/core/Divider';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Paper from '@material-ui/core/Paper';
+import Slider from '@material-ui/core/Slider';
+import NotInterestedIcon from '@material-ui/icons/NotInterested';
+import PauseCircleOutlineRoundedIcon from '@material-ui/icons/PauseCircleOutlineRounded';
+import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
+import ReplayRoundedIcon from '@material-ui/icons/ReplayRounded';
+import SkipNextIcon from '@material-ui/icons/SkipNext';
+import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
+import axios from 'axios';
+import { Layout, Loading, Message } from 'element-react';
+import qs from 'query-string';
+import React from 'react';
+import '../../assets/gameview.scss';
+import { LeducHoldemGameBoard } from '../../components/GameBoard';
+import { deepCopy } from '../../utils';
+import { apiUrl } from '../../utils/config';
 
 class LeducHoldemReplayView extends React.Component {
     constructor(props) {
         super(props);
 
-        const mainViewerId = 0;     // Id of the player at the bottom of screen
+        const mainViewerId = 0; // Id of the player at the bottom of screen
         this.initConsiderationTime = 2000;
         this.considerationTimeDeduction = 100;
         this.gameStateTimeout = null;
         this.moveHistory = [];
         this.moveHistoryTotalLength = null;
-        this.gameStateHistory = [[],[]];
+        this.gameStateHistory = [[], []];
         this.initGameState = {
-            gameStatus: "ready", // "ready", "playing", "paused", "over"
+            gameStatus: 'ready', // "ready", "playing", "paused", "over"
             playerInfo: [],
             hands: [],
-            latestAction: ["", ""],
+            latestAction: ['', ''],
             mainViewerId: mainViewerId,
             round: 0,
             turn: 0,
             pot: [1, 1],
-            publicCard: "",
+            publicCard: '',
             currentPlayer: null,
             considerationTime: this.initConsiderationTime,
             completedPercent: 0,
@@ -55,61 +53,66 @@ class LeducHoldemReplayView extends React.Component {
             gameStateLoop: null,
             gameSpeed: 0,
             gameEndDialog: false,
-            gameEndDialogText: "",
-            fullScreenLoading: false
-        }
+            gameEndDialogText: '',
+            fullScreenLoading: false,
+        };
     }
 
-    generateNewState(){
+    generateNewState() {
         let gameInfo = deepCopy(this.state.gameInfo);
         const turn = this.state.gameInfo.turn;
-        if(turn >= this.moveHistory[this.state.gameInfo.round].length){
+        if (turn >= this.moveHistory[this.state.gameInfo.round].length) {
             gameInfo.turn = 0;
             gameInfo.round = 1;
             // check if the game state of next turn is already in game state history
-            if(gameInfo.turn < this.gameStateHistory[gameInfo.round].length){
+            if (gameInfo.turn < this.gameStateHistory[gameInfo.round].length) {
                 gameInfo = deepCopy(this.gameStateHistory[gameInfo.round][gameInfo.turn]);
                 return gameInfo;
             }
-            gameInfo.latestAction = ["", ""];
+            gameInfo.latestAction = ['', ''];
             gameInfo.currentPlayer = this.moveHistory[1][0].playerIdx;
             gameInfo.considerationTime = this.initConsiderationTime;
             this.setState({ gameInfo: gameInfo });
-        }else{
+        } else {
             // check if the game state of next turn is already in game state history
-            if(turn+1 < this.gameStateHistory[gameInfo.round].length){
-                gameInfo = deepCopy(this.gameStateHistory[gameInfo.round][gameInfo.turn+1]);
+            if (turn + 1 < this.gameStateHistory[gameInfo.round].length) {
+                gameInfo = deepCopy(this.gameStateHistory[gameInfo.round][gameInfo.turn + 1]);
                 return gameInfo;
             }
-            if(gameInfo.currentPlayer === this.moveHistory[gameInfo.round][gameInfo.turn].playerIdx){
+            if (gameInfo.currentPlayer === this.moveHistory[gameInfo.round][gameInfo.turn].playerIdx) {
                 gameInfo.latestAction[gameInfo.currentPlayer] = this.moveHistory[gameInfo.round][gameInfo.turn].move;
                 switch (gameInfo.latestAction[gameInfo.currentPlayer]) {
-                    case "check":
+                    case 'check':
                         break;
-                    case "raise":
-                        gameInfo.pot[gameInfo.currentPlayer] = (gameInfo.pot[(gameInfo.currentPlayer+2-1)%2] + (gameInfo.round+1) * 2);
+                    case 'raise':
+                        gameInfo.pot[gameInfo.currentPlayer] =
+                            gameInfo.pot[(gameInfo.currentPlayer + 2 - 1) % 2] + (gameInfo.round + 1) * 2;
                         break;
-                    case "call":
+                    case 'call':
                         // the upstream player must have bet more
-                        if(gameInfo.pot[(gameInfo.currentPlayer+2-1)%2] > gameInfo.pot[gameInfo.currentPlayer]){
-                            gameInfo.pot[gameInfo.currentPlayer] = gameInfo.pot[(gameInfo.currentPlayer+2-1)%2];
-                        }else{
+                        if (gameInfo.pot[(gameInfo.currentPlayer + 2 - 1) % 2] > gameInfo.pot[gameInfo.currentPlayer]) {
+                            gameInfo.pot[gameInfo.currentPlayer] = gameInfo.pot[(gameInfo.currentPlayer + 2 - 1) % 2];
+                        } else {
                             Message({
-                                message: "Current player choose call but has bet more or equal to the upstream player",
-                                type: "error",
-                                showClose: true
+                                message: 'Current player choose call but has bet more or equal to the upstream player',
+                                type: 'error',
+                                showClose: true,
                             });
                         }
                         break;
-                    case "fold":
+                    case 'fold':
                         // if one player folds, game ends
-                        const foldedFound = gameInfo.playerInfo.find(element=>{return element.index === gameInfo.currentPlayer});
+                        const foldedFound = gameInfo.playerInfo.find((element) => {
+                            return element.index === gameInfo.currentPlayer;
+                        });
                         const foldedId = foldedFound ? foldedFound.id : -1;
-                        const winnerFound = gameInfo.playerInfo.find(element=>{return element.index === (gameInfo.currentPlayer+1)%2});
+                        const winnerFound = gameInfo.playerInfo.find((element) => {
+                            return element.index === (gameInfo.currentPlayer + 1) % 2;
+                        });
                         const winnerId = winnerFound ? winnerFound.id : -1;
-                        gameInfo.gameStatus = "over";
+                        gameInfo.gameStatus = 'over';
                         this.setState({ gameInfo: gameInfo });
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             const mes = `Player ${foldedId} folded, player ${winnerId} wins!`;
                             this.setState({ gameEndDialog: true, gameEndDialogText: mes });
                         }, 200);
@@ -117,76 +120,76 @@ class LeducHoldemReplayView extends React.Component {
                     default:
                         Message({
                             message: "Error in player's latest action",
-                            type: "error",
-                            showClose: true
+                            type: 'error',
+                            showClose: true,
                         });
                 }
                 gameInfo.turn++;
-                if(gameInfo.round !== 0 && gameInfo.turn === this.moveHistory[gameInfo.round].length){
-                    gameInfo.gameStatus = "over";
-                    this.setState({gameInfo: gameInfo});
-                    setTimeout(()=>{
+                if (gameInfo.round !== 0 && gameInfo.turn === this.moveHistory[gameInfo.round].length) {
+                    gameInfo.gameStatus = 'over';
+                    this.setState({ gameInfo: gameInfo });
+                    setTimeout(() => {
                         // TODO: show winner
-                        this.setState({gameEndDialog: true, gameEndDialogText: ""});
+                        this.setState({ gameEndDialog: true, gameEndDialogText: '' });
                     }, 200);
                     return gameInfo;
                 }
-                gameInfo.currentPlayer = (gameInfo.currentPlayer+1)%2;
+                gameInfo.currentPlayer = (gameInfo.currentPlayer + 1) % 2;
                 gameInfo.considerationTime = this.initConsiderationTime;
                 gameInfo.completedPercent += 100.0 / this.moveHistoryTotalLength;
-                gameInfo.gameStatus = "playing";
+                gameInfo.gameStatus = 'playing';
                 this.setState({ gameInfo: gameInfo });
-            }else{
+            } else {
                 Message({
-                    message: "Mismatch in current player & move history",
-                    type: "error",
-                    showClose: true
+                    message: 'Mismatch in current player & move history',
+                    type: 'error',
+                    showClose: true,
                 });
             }
         }
         // if current state is new to game state history, push it to the game state history array
-        if(gameInfo.turn === this.gameStateHistory[gameInfo.round].length){
+        if (gameInfo.turn === this.gameStateHistory[gameInfo.round].length) {
             this.gameStateHistory[gameInfo.round].push(gameInfo);
-        }else{
+        } else {
             Message({
-                message: "Inconsistent game state history length and turn number",
-                type: "error",
-                showClose: true
+                message: 'Inconsistent game state history length and turn number',
+                type: 'error',
+                showClose: true,
             });
         }
         return gameInfo;
     }
 
-    gameStateTimer(){
-        this.gameStateTimeout = setTimeout(()=>{
+    gameStateTimer() {
+        this.gameStateTimeout = setTimeout(() => {
             let currentConsiderationTime = this.state.gameInfo.considerationTime;
-            if(currentConsiderationTime > 0) {
+            if (currentConsiderationTime > 0) {
                 currentConsiderationTime -= this.considerationTimeDeduction * Math.pow(2, this.state.gameSpeed);
                 currentConsiderationTime = currentConsiderationTime < 0 ? 0 : currentConsiderationTime;
-                if(currentConsiderationTime === 0 && this.state.gameSpeed < 2){
+                if (currentConsiderationTime === 0 && this.state.gameSpeed < 2) {
                     let gameInfo = deepCopy(this.state.gameInfo);
-                    gameInfo.toggleFade = "fade-out";
-                    this.setState({gameInfo: gameInfo});
+                    gameInfo.toggleFade = 'fade-out';
+                    this.setState({ gameInfo: gameInfo });
                 }
                 let gameInfo = deepCopy(this.state.gameInfo);
                 gameInfo.considerationTime = currentConsiderationTime;
-                this.setState({gameInfo: gameInfo});
+                this.setState({ gameInfo: gameInfo });
                 this.gameStateTimer();
-            }else{
+            } else {
                 let gameInfo = this.generateNewState();
-                if(gameInfo.gameStatus === "over") return;
+                if (gameInfo.gameStatus === 'over') return;
                 this.gameStateTimer();
-                gameInfo.gameStatus = "playing";
-                if(this.state.gameInfo.toggleFade === "fade-out") {
-                    gameInfo.toggleFade = "fade-in";
+                gameInfo.gameStatus = 'playing';
+                if (this.state.gameInfo.toggleFade === 'fade-out') {
+                    gameInfo.toggleFade = 'fade-in';
                 }
-                this.setState({gameInfo: gameInfo}, ()=>{
+                this.setState({ gameInfo: gameInfo }, () => {
                     // toggle fade in
-                    if(this.state.gameInfo.toggleFade !== ""){
-                        setTimeout(()=>{
+                    if (this.state.gameInfo.toggleFade !== '') {
+                        setTimeout(() => {
                             let gameInfo = deepCopy(this.state.gameInfo);
-                            gameInfo.toggleFade = "";
-                            this.setState({gameInfo: gameInfo});
+                            gameInfo.toggleFade = '';
+                            this.setState({ gameInfo: gameInfo });
                         }, 200);
                     }
                 });
@@ -198,36 +201,40 @@ class LeducHoldemReplayView extends React.Component {
         const { name, agent0, agent1, index } = qs.parse(window.location.search);
         const requestUrl = `${apiUrl}/tournament/replay?name=${name}&agent0=${agent0}&agent1=${agent1}&index=${index}`;
         // start full screen loading
-        this.setState({fullScreenLoading: true});
+        this.setState({ fullScreenLoading: true });
 
-        axios.get(requestUrl)
-            .then(res => {
+        axios
+            .get(requestUrl)
+            .then((res) => {
                 res = res.data;
+                // for test use
+                if (typeof res === 'string') res = JSON.parse(res.replaceAll("'", '"').replaceAll('None', 'null'));
+
                 if (res.moveHistory.length === 0) {
                     Message({
-                        message: "Empty move history",
-                        type: "error",
+                        message: 'Empty move history',
+                        type: 'error',
                         showClose: true,
                     });
-                    this.setState({fullScreenLoading: false});
+                    this.setState({ fullScreenLoading: false });
                     return false;
                 }
                 // init replay info
                 this.moveHistory = res.moveHistory;
                 this.moveHistoryTotalLength = this.moveHistory.reduce((count, round) => count + round.length, 0) - 1;
                 let gameInfo = deepCopy(this.initGameState);
-                gameInfo.gameStatus = "playing";
+                gameInfo.gameStatus = 'playing';
                 gameInfo.playerInfo = res.playerInfo;
                 gameInfo.hands = res.initHands;
                 gameInfo.currentPlayer = res.moveHistory[0][0].playerIdx;
                 // the other player is big blind, should have 2 unit in pot
                 gameInfo.pot[(res.moveHistory[0][0].playerIdx + 1) % 2] = 2;
                 gameInfo.publicCard = res.publicCard;
-                if(this.gameStateHistory.length !== 0 && this.gameStateHistory[0].length === 0){
+                if (this.gameStateHistory.length !== 0 && this.gameStateHistory[0].length === 0) {
                     this.gameStateHistory[gameInfo.round].push(gameInfo);
                 }
-                this.setState({gameInfo: gameInfo, fullScreenLoading: false}, ()=>{
-                    if(this.gameStateTimeout){
+                this.setState({ gameInfo: gameInfo, fullScreenLoading: false }, () => {
+                    if (this.gameStateTimeout) {
                         window.clearTimeout(this.gameStateTimeout);
                         this.gameStateTimeout = null;
                     }
@@ -235,114 +242,195 @@ class LeducHoldemReplayView extends React.Component {
                     this.gameStateTimer();
                 });
             })
-            .catch(err => {
+            .catch((err) => {
                 console.log(err);
                 Message({
                     message: `Error in getting replay data: ${err}`,
-                    type: "error",
-                    showClose: true
+                    type: 'error',
+                    showClose: true,
                 });
-                this.setState({fullScreenLoading: false});
+                this.setState({ fullScreenLoading: false });
             });
-    };
+    }
 
-    pauseReplay(){
-        if(this.gameStateTimeout){
+    pauseReplay() {
+        if (this.gameStateTimeout) {
             window.clearTimeout(this.gameStateTimeout);
             this.gameStateTimeout = null;
         }
         let gameInfo = deepCopy(this.state.gameInfo);
-        gameInfo.gameStatus = "paused";
+        gameInfo.gameStatus = 'paused';
         this.setState({ gameInfo: gameInfo });
     }
 
-    resumeReplay(){
+    resumeReplay() {
         this.gameStateTimer();
         let gameInfo = deepCopy(this.state.gameInfo);
-        gameInfo.gameStatus = "playing";
+        gameInfo.gameStatus = 'playing';
         this.setState({ gameInfo: gameInfo });
     }
 
-    changeGameSpeed(newVal){
-        this.setState({gameSpeed: newVal});
+    changeGameSpeed(newVal) {
+        this.setState({ gameSpeed: newVal });
     }
 
-    gameStatusButton(status){
+    gameStatusButton(status) {
         switch (status) {
-            case "ready":
-                return <Button className={"status-button"} variant={"contained"} startIcon={<PlayArrowRoundedIcon />} color="primary" onClick={()=>{this.startReplay()}}>Start</Button>;
-            case "playing":
-                return <Button className={"status-button"} variant={"contained"} startIcon={<PauseCircleOutlineRoundedIcon />} color="secondary" onClick={()=>{this.pauseReplay()}}>Pause</Button>;
-            case "paused":
-                return <Button className={"status-button"} variant={"contained"} startIcon={<PlayArrowRoundedIcon />} color="primary" onClick={()=>{this.resumeReplay()}}>Resume</Button>;
-            case "over":
-                return <Button className={"status-button"} variant={"contained"} startIcon={<ReplayRoundedIcon />} color="primary" onClick={()=>{this.startReplay()}}>Restart</Button>;
+            case 'ready':
+                return (
+                    <Button
+                        className={'status-button'}
+                        variant={'contained'}
+                        startIcon={<PlayArrowRoundedIcon />}
+                        color="primary"
+                        onClick={() => {
+                            this.startReplay();
+                        }}
+                    >
+                        Start
+                    </Button>
+                );
+            case 'playing':
+                return (
+                    <Button
+                        className={'status-button'}
+                        variant={'contained'}
+                        startIcon={<PauseCircleOutlineRoundedIcon />}
+                        color="secondary"
+                        onClick={() => {
+                            this.pauseReplay();
+                        }}
+                    >
+                        Pause
+                    </Button>
+                );
+            case 'paused':
+                return (
+                    <Button
+                        className={'status-button'}
+                        variant={'contained'}
+                        startIcon={<PlayArrowRoundedIcon />}
+                        color="primary"
+                        onClick={() => {
+                            this.resumeReplay();
+                        }}
+                    >
+                        Resume
+                    </Button>
+                );
+            case 'over':
+                return (
+                    <Button
+                        className={'status-button'}
+                        variant={'contained'}
+                        startIcon={<ReplayRoundedIcon />}
+                        color="primary"
+                        onClick={() => {
+                            this.startReplay();
+                        }}
+                    >
+                        Restart
+                    </Button>
+                );
             default:
                 alert(`undefined game status: ${status}`);
         }
     }
 
-    computeProbabilityItem(idx){
-        if(this.state.gameInfo.gameStatus !== "ready"){
+    computeProbabilityItem(action) {
+        if (this.state.gameInfo.gameStatus !== 'ready') {
             let currentMove = null;
-            if(this.state.gameInfo.turn !== this.moveHistory[this.state.gameInfo.round].length){
+            if (this.state.gameInfo.turn !== this.moveHistory[this.state.gameInfo.round].length) {
                 currentMove = this.moveHistory[this.state.gameInfo.round][this.state.gameInfo.turn];
             }
             let style = {};
-            style["backgroundColor"] = currentMove !== null ? `rgba(63, 81, 181, ${currentMove.probabilities[idx].probability})` : "#bdbdbd";
+            let probabilities = null;
+            let probabilityItemType = null;
+            if (currentMove) {
+                if (Array.isArray(currentMove.info)) {
+                    probabilityItemType = 'Rule';
+                } else {
+                    if ('probs' in currentMove.info) {
+                        probabilityItemType = 'Probability';
+                        probabilities = currentMove.info.probs[action];
+                    } else if ('values' in currentMove.info) {
+                        probabilityItemType = 'Expected payoff';
+                        probabilities = currentMove.info.values[action];
+                    } else {
+                        probabilityItemType = 'Rule';
+                    }
+                }
+            }
+
+            // style["backgroundColor"] = currentMove !== null ? `rgba(63, 81, 181, ${currentMove.probabilities[idx].probability})` : "#bdbdbd";
+            style['backgroundColor'] = currentMove !== null ? `#fff` : '#bdbdbd';
             return (
-                <div className={"playing"} style={style}>
+                <div className={'playing'} style={style}>
                     <div className="probability-move">
-                    {currentMove !== null ?
-                        <img src={require('../../assets/images/Actions/' + currentMove.probabilities[idx].move + (currentMove.probabilities[idx].probability < 0 ? "_u" : "") + '.png')} alt={currentMove.probabilities[idx].move} height="30%" width="30%" />
-                        :
-                        <NotInterestedIcon fontSize="large" />}
+                        {currentMove !== null ? (
+                            <img
+                                src={require('../../assets/images/Actions/' +
+                                    action +
+                                    (probabilities === undefined || probabilities === null ? '_u' : '') +
+                                    '.png')}
+                                alt={action}
+                                height="30%"
+                                width="30%"
+                            />
+                        ) : (
+                            <NotInterestedIcon fontSize="large" />
+                        )}
                     </div>
-                    {currentMove !== null ?
-                        (<div className={"non-card"}>
-                            {
-                                currentMove.probabilities[idx].probability === -1 ?
+                    {currentMove !== null ? (
+                        <div className={'non-card'}>
+                            {probabilities === undefined ? (
                                 <span>Illegal</span>
-                                :
-                                currentMove.probabilities[idx].probability === -2 ?
+                            ) : probabilityItemType === 'Rule' ? (
                                 <span>Rule Based</span>
-                                :
-                                <span>{`Probability ${(currentMove.probabilities[idx].probability * 100).toFixed(2)}%`}</span>
-                            }
-                        </div>) : ""}
+                            ) : (
+                                <span>
+                                    {probabilityItemType === 'Probability'
+                                        ? `Probability: ${(probabilities * 100).toFixed(2)}%`
+                                        : `Expected payoff: ${probabilities.toFixed(4)}`}
+                                </span>
+                            )}
+                        </div>
+                    ) : (
+                        ''
+                    )}
                 </div>
-            )
-        }else {
-            return <span className={"waiting"}>Waiting...</span>
+            );
+        } else {
+            return <span className={'waiting'}>Waiting...</span>;
         }
     }
 
     go2PrevGameState() {
         let gameInfo;
-        if(this.state.gameInfo.turn === 0 && this.state.gameInfo.round !== 0){
-            let prevRound = this.gameStateHistory[this.state.gameInfo.round-1];
-            gameInfo = deepCopy(prevRound[prevRound.length-1]);
-        }else{
+        if (this.state.gameInfo.turn === 0 && this.state.gameInfo.round !== 0) {
+            let prevRound = this.gameStateHistory[this.state.gameInfo.round - 1];
+            gameInfo = deepCopy(prevRound[prevRound.length - 1]);
+        } else {
             gameInfo = deepCopy(this.gameStateHistory[this.state.gameInfo.round][this.state.gameInfo.turn - 1]);
         }
-        gameInfo.gameStatus = "paused";
-        gameInfo.toggleFade = "";
-        this.setState({gameInfo: gameInfo});
+        gameInfo.gameStatus = 'paused';
+        gameInfo.toggleFade = '';
+        this.setState({ gameInfo: gameInfo });
     }
 
     go2NextGameState() {
         let gameInfo = this.generateNewState();
-        if(gameInfo.gameStatus === "over") return;
-        gameInfo.gameStatus = "paused";
-        gameInfo.toggleFade = "";
-        this.setState({gameInfo: gameInfo});
+        if (gameInfo.gameStatus === 'over') return;
+        gameInfo.gameStatus = 'paused';
+        gameInfo.toggleFade = '';
+        this.setState({ gameInfo: gameInfo });
     }
 
     handleCloseGameEndDialog() {
-        this.setState({gameEndDialog: false, gameEndDialogText: ""});
+        this.setState({ gameEndDialog: false, gameEndDialogText: '' });
     }
 
-    render(){
+    render() {
         let sliderValueText = (value) => {
             return value;
         };
@@ -374,34 +462,44 @@ class LeducHoldemReplayView extends React.Component {
             {
                 value: 3,
                 label: 'x8',
-            }
+            },
         ];
 
         return (
             <div>
                 <Dialog
                     open={this.state.gameEndDialog}
-                    onClose={()=>{this.handleCloseGameEndDialog()}}
+                    onClose={() => {
+                        this.handleCloseGameEndDialog();
+                    }}
                     aria-labelledby="alert-dialog-title"
                     aria-describedby="alert-dialog-description"
                 >
-                    <DialogTitle id="alert-dialog-title" style={{"width": "200px"}}>{"Game Ends!"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-title" style={{ width: '200px' }}>
+                        {'Game Ends!'}
+                    </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
                             {this.state.gameEndDialogText}
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={()=>{this.handleCloseGameEndDialog()}} color="primary" autoFocus>
+                        <Button
+                            onClick={() => {
+                                this.handleCloseGameEndDialog();
+                            }}
+                            color="primary"
+                            autoFocus
+                        >
                             OK
                         </Button>
                     </DialogActions>
                 </Dialog>
-                <div className={"leduc-view-container"}>
-                    <Layout.Row style={{"height": "540px"}}>
-                        <Layout.Col style={{"height": "100%"}} span="17">
-                            <div style={{"height": "100%"}}>
-                                <Paper className={"leduc-gameboard-paper"} elevation={3}>
+                <div className={'leduc-view-container'}>
+                    <Layout.Row style={{ height: '540px' }}>
+                        <Layout.Col style={{ height: '100%' }} span="17">
+                            <div style={{ height: '100%' }}>
+                                <Paper className={'leduc-gameboard-paper'} elevation={3}>
                                     <LeducHoldemGameBoard
                                         playerInfo={this.state.gameInfo.playerInfo}
                                         hands={this.state.gameInfo.hands}
@@ -417,30 +515,21 @@ class LeducHoldemReplayView extends React.Component {
                                 </Paper>
                             </div>
                         </Layout.Col>
-                        <Layout.Col span="7" style={{"height": "100%"}}>
-                            <Paper className={"leduc-probability-paper"} elevation={3}>
-                                <div className={"probability-player"}>
-                                    {
-                                        this.state.gameInfo.playerInfo.length > 0 ?
+                        <Layout.Col span="7" style={{ height: '100%' }}>
+                            <Paper className={'leduc-probability-paper'} elevation={3}>
+                                <div className={'probability-player'}>
+                                    {this.state.gameInfo.playerInfo.length > 0 ? (
                                         <span>Current Player: {this.state.gameInfo.currentPlayer}</span>
-                                        :
+                                    ) : (
                                         <span>Waiting...</span>
-                                    }
+                                    )}
                                 </div>
                                 <Divider />
-                                <div className={"probability-table"}>
-                                    <div className={"probability-item"}>
-                                        {this.computeProbabilityItem(0)}
-                                    </div>
-                                    <div className={"probability-item"}>
-                                        {this.computeProbabilityItem(1)}
-                                    </div>
-                                    <div className={"probability-item"}>
-                                        {this.computeProbabilityItem(2)}
-                                    </div>
-                                    <div className={"probability-item"}>
-                                        {this.computeProbabilityItem(3)}
-                                    </div>
+                                <div className={'probability-table'}>
+                                    <div className={'probability-item'}>{this.computeProbabilityItem('call')}</div>
+                                    <div className={'probability-item'}>{this.computeProbabilityItem('check')}</div>
+                                    <div className={'probability-item'}>{this.computeProbabilityItem('raise')}</div>
+                                    <div className={'probability-item'}>{this.computeProbabilityItem('fold')}</div>
                                 </div>
                             </Paper>
                         </Layout.Col>
@@ -450,60 +539,77 @@ class LeducHoldemReplayView extends React.Component {
                     </div>
                     <Loading loading={this.state.fullScreenLoading}>
                         <div className="game-controller">
-                        <Paper className={"game-controller-paper"} elevation={3}>
-                            <Layout.Row style={{"height": "51px"}}>
-                                <Layout.Col span="7" style={{"height": "51px", "lineHeight": "48px"}}>
-                                <div>
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        disabled={this.state.gameInfo.gameStatus !== "paused" || (this.state.gameInfo.round === 0 && this.state.gameInfo.turn === 0)}
-                                        onClick={()=>{this.go2PrevGameState()}}
-                                    >
-                                        <SkipPreviousIcon />
-                                    </Button>
-                                    { this.gameStatusButton(this.state.gameInfo.gameStatus) }
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        disabled={this.state.gameInfo.gameStatus !== "paused"}
-                                        onClick={()=>{this.go2NextGameState()}}
-                                    >
-                                        <SkipNextIcon />
-                                    </Button>
-                                </div>
-                                </Layout.Col>
-                                <Layout.Col span="1" style={{"height": "100%", "width": "1px"}}>
-                                    <Divider orientation="vertical" />
-                                </Layout.Col>
-                                <Layout.Col span="3" style={{"height": "51px", "lineHeight": "51px", "marginLeft": "-1px", "marginRight": "-1px"}}>
-                                    <div style={{"textAlign": "center"}}>{`Turn ${this.state.gameInfo.turn}`}</div>
-                                </Layout.Col>
-                                <Layout.Col span="1" style={{"height": "100%", "width": "1px"}}>
-                                    <Divider orientation="vertical" />
-                                </Layout.Col>
-                                <Layout.Col span="14">
-                                    <div>
-                                        <label className={"form-label-left"}>Game Speed</label>
-                                        <div style={{"marginLeft": "100px", "marginRight": "10px"}}>
-                                            <Slider
-                                                value={this.state.gameSpeed}
-                                                getAriaValueText={sliderValueText}
-                                                onChange={(e, newVal)=>{this.changeGameSpeed(newVal)}}
-                                                aria-labelledby="discrete-slider-custom"
-                                                step={1}
-                                                min={-3}
-                                                max={3}
-                                                track={false}
-                                                valueLabelDisplay="off"
-                                                marks={gameSpeedMarks}
-                                            />
+                            <Paper className={'game-controller-paper'} elevation={3}>
+                                <Layout.Row style={{ height: '51px' }}>
+                                    <Layout.Col span="7" style={{ height: '51px', lineHeight: '48px' }}>
+                                        <div>
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                disabled={
+                                                    this.state.gameInfo.gameStatus !== 'paused' ||
+                                                    (this.state.gameInfo.round === 0 && this.state.gameInfo.turn === 0)
+                                                }
+                                                onClick={() => {
+                                                    this.go2PrevGameState();
+                                                }}
+                                            >
+                                                <SkipPreviousIcon />
+                                            </Button>
+                                            {this.gameStatusButton(this.state.gameInfo.gameStatus)}
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                disabled={this.state.gameInfo.gameStatus !== 'paused'}
+                                                onClick={() => {
+                                                    this.go2NextGameState();
+                                                }}
+                                            >
+                                                <SkipNextIcon />
+                                            </Button>
                                         </div>
-                                    </div>
-                                </Layout.Col>
-                            </Layout.Row>
-                        </Paper>
-                    </div>
+                                    </Layout.Col>
+                                    <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
+                                        <Divider orientation="vertical" />
+                                    </Layout.Col>
+                                    <Layout.Col
+                                        span="3"
+                                        style={{
+                                            height: '51px',
+                                            lineHeight: '51px',
+                                            marginLeft: '-1px',
+                                            marginRight: '-1px',
+                                        }}
+                                    >
+                                        <div style={{ textAlign: 'center' }}>{`Turn ${this.state.gameInfo.turn}`}</div>
+                                    </Layout.Col>
+                                    <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
+                                        <Divider orientation="vertical" />
+                                    </Layout.Col>
+                                    <Layout.Col span="14">
+                                        <div>
+                                            <label className={'form-label-left'}>Game Speed</label>
+                                            <div style={{ marginLeft: '100px', marginRight: '10px' }}>
+                                                <Slider
+                                                    value={this.state.gameSpeed}
+                                                    getAriaValueText={sliderValueText}
+                                                    onChange={(e, newVal) => {
+                                                        this.changeGameSpeed(newVal);
+                                                    }}
+                                                    aria-labelledby="discrete-slider-custom"
+                                                    step={1}
+                                                    min={-3}
+                                                    max={3}
+                                                    track={false}
+                                                    valueLabelDisplay="off"
+                                                    marks={gameSpeedMarks}
+                                                />
+                                            </div>
+                                        </div>
+                                    </Layout.Col>
+                                </Layout.Row>
+                            </Paper>
+                        </div>
                     </Loading>
                 </div>
             </div>

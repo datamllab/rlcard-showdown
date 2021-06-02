@@ -41,9 +41,10 @@ def _get_model_ids_all():
             def __init__(self):
                 self.model_id = name
                 self._entry_point = M
+                self.target_path = target_path
 
             def load(self):
-                model = self._entry_point(target_path)
+                model = self._entry_point(self.target_path)
                 return model
         rlcard.models.registration.model_registry.model_specs[name] = ModelSpec()
         MODEL_IDS_ALL[game].append(name)

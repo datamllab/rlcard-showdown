@@ -1,27 +1,27 @@
-import React, {useEffect} from 'react';
-import qs from 'query-string';
-import MenuBar from "../components/MenuBar";
-
-import PropTypes from 'prop-types';
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import Button from "@material-ui/core/Button";
+import Paper from '@material-ui/core/Paper';
 import { lighten, makeStyles } from '@material-ui/core/styles';
+import withStyles from "@material-ui/core/styles/withStyles";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
+import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from '@material-ui/core/TableRow';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import { apiUrl } from "../utils/config";
-import axios from 'axios';
-import TablePagination from "@material-ui/core/TablePagination";
-import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import withStyles from "@material-ui/core/styles/withStyles";
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
-import Button from "@material-ui/core/Button";
-import {useHistory} from "react-router-dom";
-import {Message, Loading} from "element-react";
+import axios from 'axios';
+import { Loading, Message } from "element-react";
+import PropTypes from 'prop-types';
+import qs from 'query-string';
+import React, { useEffect } from 'react';
+import { useHistory } from "react-router-dom";
+import MenuBar from "../components/MenuBar";
+import { apiUrl } from "../utils/config";
+
 
 const gameList = [
     {game: 'leduc-holdem', dispName: 'Leduc Hold\'em'},
@@ -241,7 +241,7 @@ const EnhancedTableToolbar = (props) => {
             const handleLaunchTournament = (gameName) => {
                 // todo: customize eval num
                 setButtonLoading(true);
-                axios.get(`${apiUrl}/tournament/launch?eval_num=200&name=${gameName}`)
+                axios.get(`${apiUrl}/tournament/launch?num_eval_games=200&name=${gameName}`)
                     .then(res => {
                         setTimeout(() => {setButtonLoading(false)}, 250);
                         Message({

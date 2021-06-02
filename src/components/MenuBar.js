@@ -115,6 +115,7 @@ function MenuBar(props) {
     };
 
     const [uploadDialogOpen, setUploadDialogOpen] = React.useState(false);
+    const [downloadChannelDialogOpen, setDownloadChannelDialogOpen] = React.useState(false);
 
     const openUploadDialog = () => {
         setUploadDialogOpen(true);
@@ -131,6 +132,10 @@ function MenuBar(props) {
     const handleUploadDialogClose = () => {
         setUploadForm({ ...uploadFormInitValue });
         setUploadDialogOpen(false);
+    };
+
+    const handleDownloadChannelDialogClose = () => {
+        setDownloadChannelDialogOpen(false);
     };
 
     let uploadRef = React.createRef();
@@ -326,12 +331,14 @@ function MenuBar(props) {
                                         DQN model
                                     </Link>{' '}
                                     for Leduc Holdem or{' '}
-                                    <Link
-                                        href={apiUrl + '/tournament/download_examples?name=example_luduc_rule_model'}
-                                        download
+                                    <a
+                                        href="#"
+                                        onClick={() => {
+                                            setDownloadChannelDialogOpen(true);
+                                        }}
                                     >
                                         DMC model
-                                    </Link>{' '}
+                                    </a>{' '}
                                     for Doudizhu to test and learn about model upload functionality.
                                 </Typography>
                             </CardContent>
@@ -408,16 +415,46 @@ function MenuBar(props) {
                 </Loading>
             </Dialog>
             <Dialog
-                open={uploadDialogOpen}
-                onClose={handleUploadDialogClose}
+                open={downloadChannelDialogOpen}
+                onClose={handleDownloadChannelDialogClose}
                 aria-labelledby="form-dialog-title"
-                disableBackdropClick={true}
             >
                 <DialogTitle id="form-dialog-title">Choose Download Channel</DialogTitle>
                 <DialogContent>
-                    <Button>Google Drive</Button>
-                    <Button>百度网盘</Button>
+                    <div>
+                        <Button
+                            href="https://drive.google.com/file/d/127XEKfEJrYyPtobT4u7j4_KBqk19FUej/view?usp=sharing"
+                            target="_blank"
+                            color="primary"
+                            variant="contained"
+                            fullWidth
+                        >
+                            Google Drive
+                        </Button>
+                        <Button
+                            href="https://pan.baidu.com/s/1fHH86DBpGRnN58q9ctAt6A"
+                            target="_blank"
+                            style={{ marginTop: '20px', marginBottom: '10px' }}
+                            color="primary"
+                            variant="contained"
+                            fullWidth
+                        >
+                            百度网盘
+                        </Button>
+                        <div style={{ width: '100%', textAlign: 'center', marginBottom: '20px' }}>(提取码: s54s)</div>
+                    </div>
                 </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => {
+                            setDownloadChannelDialogOpen(false);
+                        }}
+                        variant="contained"
+                        disableElevation
+                    >
+                        Cancel
+                    </Button>
+                </DialogActions>
             </Dialog>
         </Drawer>
     );

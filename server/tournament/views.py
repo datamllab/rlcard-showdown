@@ -70,7 +70,7 @@ def replay(request):
         index = request.GET['index']
         g = Game.objects.get(name=name, agent0=agent0, agent1=agent1, index=index)
         json_data = g.replay
-        return HttpResponse(json_data)
+        return HttpResponse(json.dumps(json.loads(json_data)))
 
 def query_game(request):
     if request.method == 'GET':

@@ -34,7 +34,8 @@ class Tournament(object):
                     data, payoffs, wins = doudizhu_tournament(self.game, agents, names, self.num_eval_games)
                 elif self.game == 'leduc-holdem':
                     agents = [self.models[i].agents[0], self.models[j].agents[1]]
-                    data, payoffs, wins = leduc_holdem_tournament(self.game, agents, self.num_eval_games)
+                    names = [self.model_ids[i], self.model_ids[j]]
+                    data, payoffs, wins = leduc_holdem_tournament(self.game, agents, names, self.num_eval_games)
                 mean_payoff = np.mean(payoffs)
                 print('Average payoff:', mean_payoff)
                 print()
@@ -116,7 +117,7 @@ def _calculate_doudizhu_move(action, player_id, current_hand_cards):
                     break
     return ' '.join(cards_with_suit)
 
-def leduc_holdem_tournament(game, agents, num_eval_games):
+def leduc_holdem_tournament(game, agents, names, num_eval_games):
     env = rlcard.make(game, config={'allow_raw_data': True})
     env.set_agents(agents)
     payoffs = []
@@ -124,7 +125,7 @@ def leduc_holdem_tournament(game, agents, num_eval_games):
     wins = []
     for _ in tqdm(range(num_eval_games)):
         data = {}
-        data['playerInfo'] = [{'id': i, 'index': i} for i in range(env.num_players)]
+        data['playerInfo'] = [{'id': i, 'index': i, 'agentInfo': {'name': names[i]}} for i in range(env.num_players)]
         state, player_id = env.reset()
         perfect = env.get_perfect_information()
         data['initHands'] = perfect['hand_cards']

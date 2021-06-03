@@ -8,10 +8,10 @@ import Divider from '@material-ui/core/Divider';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Paper from '@material-ui/core/Paper';
 import Slider from '@material-ui/core/Slider';
+import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import PauseCircleOutlineRoundedIcon from '@material-ui/icons/PauseCircleOutlineRounded';
 import PlayArrowRoundedIcon from '@material-ui/icons/PlayArrowRounded';
 import ReplayRoundedIcon from '@material-ui/icons/ReplayRounded';
-// import NotInterestedIcon from '@material-ui/icons/NotInterested';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
 import SkipPreviousIcon from '@material-ui/icons/SkipPrevious';
 import axios from 'axios';
@@ -20,7 +20,14 @@ import qs from 'query-string';
 import React from 'react';
 import '../../assets/gameview.scss';
 import { DoudizhuGameBoard } from '../../components/GameBoard';
-import { computeHandCardsWidth, deepCopy, doubleRaf, removeCards, translateCardData } from '../../utils';
+import {
+    card2SuiteAndRank,
+    computeHandCardsWidth,
+    deepCopy,
+    doubleRaf,
+    removeCards,
+    translateCardData,
+} from '../../utils';
 import { apiUrl } from '../../utils/config';
 
 class DoudizhuReplayView extends React.Component {
@@ -190,10 +197,25 @@ class DoudizhuReplayView extends React.Component {
 
                 // for test use
                 if (typeof res === 'string') res = JSON.parse(res.replaceAll("'", '"').replaceAll('None', 'null'));
-                console.log(res);
 
                 // init replay info
                 this.moveHistory = res.moveHistory;
+                // pre-process move history
+                for (const historyItem of this.moveHistory) {
+                    if (historyItem.info && !Array.isArray(historyItem.info)) {
+                        if ('probs' in historyItem.info) {
+                            historyItem.info.probs = Object.entries(historyItem.info.probs).sort(
+                                (a, b) => Number(b[1]) - Number(a[1]),
+                            );
+                        } else if ('values' in historyItem.info) {
+                            historyItem.info.values = Object.entries(historyItem.info.values).sort(
+                                (a, b) => Number(b[1]) - Number(a[1]),
+                            );
+                        }
+                    }
+                }
+                console.log('pre-processed move history', this.moveHistory);
+
                 let gameInfo = deepCopy(this.initGameState);
                 gameInfo.gameStatus = 'playing';
                 gameInfo.playerInfo = res.playerInfo;
@@ -343,32 +365,103 @@ class DoudizhuReplayView extends React.Component {
         }
     }
 
+    computePredictionCards(cards, hands) {
+        let computedCards = [];
+        if (cards.length > 0) {
+            hands.forEach((card) => {
+                let { rank } = card2SuiteAndRank(card);
+
+                // X is B, D is R
+                if (rank === 'X') rank = 'B';
+                else if (rank === 'D') rank = 'R';
+                const idx = cards.indexOf(rank);
+                if (idx >= 0) {
+                    cards.splice(idx, 1);
+                    computedCards.push(card);
+                }
+            });
+        } else {
+            computedCards = 'pass';
+        }
+
+        if (computedCards === 'pass') {
+            return (
+                <div className={'non-card ' + this.state.gameInfo.toggleFade}>
+                    <span>{'PASS'}</span>
+                </div>
+            );
+        } else {
+            return (
+                <div className={'unselectable playingCards loose ' + this.state.gameInfo.toggleFade}>
+                    <ul className="hand" style={{ width: computeHandCardsWidth(computedCards.length, 10) }}>
+                        {computedCards.map((card) => {
+                            const [rankClass, suitClass, rankText, suitText] = translateCardData(card);
+                            return (
+                                <li key={`handCard-${card}`}>
+                                    <label className={`card ${rankClass} ${suitClass}`} href="/#">
+                                        <span className="rank">{rankText}</span>
+                                        <span className="suit">{suitText}</span>
+                                    </label>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            );
+        }
+    }
+
     computeProbabilityItem(idx) {
         // return <span className={'waiting'}>Currently Unavailable...</span>;
         if (this.state.gameInfo.gameStatus !== 'ready' && this.state.gameInfo.turn < this.moveHistory.length) {
+            let currentMove = null;
+            if (this.state.gameInfo.turn !== this.moveHistory.length) {
+                currentMove = this.moveHistory[this.state.gameInfo.turn];
+            }
+
             let style = {};
             // style["backgroundColor"] = this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? `rgba(63, 81, 181, ${this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability})` : "#bdbdbd";
-            // let probabilities
+            let probabilities = null;
+            let probabilityItemType = null;
+
+            if (currentMove) {
+                if (Array.isArray(currentMove.info)) {
+                    probabilityItemType = 'Rule';
+                } else {
+                    if ('probs' in currentMove.info) {
+                        probabilityItemType = 'Probability';
+                        probabilities = idx < currentMove.info.probs.length ? currentMove.info.probs[idx] : null;
+                    } else if ('values' in currentMove.info) {
+                        probabilityItemType = 'Expected payoff';
+                        probabilities = idx < currentMove.info.values.length ? currentMove.info.values[idx] : null;
+                    } else {
+                        probabilityItemType = 'Rule';
+                    }
+                }
+            }
+
+            style['backgroundColor'] = currentMove !== null ? '#fff' : '#bdbdbd';
+
             return (
                 <div className={'playing'} style={style}>
                     <div className="probability-move">
-                        {this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? (
-                            this.computeSingleLineHand(
-                                this.cardStr2Arr(this.moveHistory[this.state.gameInfo.turn].probabilities[idx].move),
+                        {probabilities ? (
+                            this.computePredictionCards(
+                                probabilities[0] === 'pass' ? [] : probabilities[0].split(''),
+                                this.state.gameInfo.hands[currentMove.playerIdx],
                             )
                         ) : (
                             <NotInterestedIcon fontSize="large" />
                         )}
                     </div>
-                    {this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx ? (
-                        <div className={'non-card'}>
+                    {probabilities ? (
+                        <div className={'non-card ' + this.state.gameInfo.toggleFade}>
                             <span>
-                                {this.moveHistory[this.state.gameInfo.turn].probabilities.length > idx
-                                    ? `Probability ${(
-                                          this.moveHistory[this.state.gameInfo.turn].probabilities[idx].probability *
-                                          100
-                                      ).toFixed(2)}%`
-                                    : ''}
+                                {probabilityItemType === 'Rule'
+                                    ? 'Rule Based'
+                                    : probabilityItemType === 'Probability'
+                                    ? `Probability ${(probabilities[1] * 100).toFixed(2)}%`
+                                    : `Expected payoff: ${probabilities[1].toFixed(4)}`}
                             </span>
                         </div>
                     ) : (

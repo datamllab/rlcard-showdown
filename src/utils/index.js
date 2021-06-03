@@ -101,9 +101,9 @@ export function computeHandCardsWidth(num, emWidth) {
 }
 
 export function card2SuiteAndRank(card) {
-    if (card === 'BJ') {
+    if (card === 'BJ' || card === 'B') {
         return { suite: null, rank: 'X' };
-    } else if (card === 'RJ') {
+    } else if (card === 'RJ' || card === 'R') {
         return { suite: null, rank: 'D' };
     } else {
         return { suite: card[0], rank: card[1] };

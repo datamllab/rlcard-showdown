@@ -322,7 +322,7 @@ function MenuBar(props) {
                                     <HelpIcon style={{ marginRight: '5px' }} />
                                     Note
                                 </Typography>
-                                <Typography variant="body2" component="p">
+                                <Typography variant="body2" component="p" id="upload-model-note">
                                     Download the example{' '}
                                     <Link
                                         href={apiUrl + '/tournament/download_examples?name=leduc_holdem_dqn'}

@@ -23,15 +23,33 @@ class DoudizhuGameBoard extends React.Component {
 
     computePlayerPortrait(playerId, playerIdx) {
         if (this.props.playerInfo.length > 0) {
+            const chipTitle =
+                this.props.playerInfo[playerIdx].agentInfo && this.props.playerInfo[playerIdx].agentInfo.name
+                    ? ''
+                    : 'ID';
+            const chipLabel =
+                this.props.playerInfo[playerIdx].agentInfo && this.props.playerInfo[playerIdx].agentInfo.name
+                    ? this.props.playerInfo[playerIdx].agentInfo.name
+                    : playerId;
             return this.props.playerInfo[playerIdx].role === 'landlord' ? (
                 <div>
                     <img src={Landlord_wName} alt={'Landlord'} height="70%" width="70%" />
-                    <Chip avatar={<Avatar>ID</Avatar>} label={playerId} color="primary" />
+                    <Chip
+                        style={{ maxWidth: '135px' }}
+                        avatar={chipTitle ? <Avatar>{chipTitle}</Avatar> : undefined}
+                        label={chipLabel}
+                        color="primary"
+                    />
                 </div>
             ) : (
                 <div>
                     <img src={Peasant_wName} alt={'Peasant'} height="70%" width="70%" />
-                    <Chip avatar={<Avatar>ID</Avatar>} label={playerId} color="primary" />
+                    <Chip
+                        style={{ maxWidth: '135px' }}
+                        avatar={chipTitle ? <Avatar>{chipTitle}</Avatar> : undefined}
+                        label={chipLabel}
+                        color="primary"
+                    />
                 </div>
             );
         } else
@@ -44,6 +62,7 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     handleContainerMouseLeave() {
+        if (!this.props.gamePlayable) return;
         if (this.isSelectingCards) {
             this.isSelectingCards = false;
             this.selectingCards = { start: null, cards: [] };
@@ -52,6 +71,7 @@ class DoudizhuGameBoard extends React.Component {
     }
 
     handleContainerMouseUp() {
+        if (!this.props.gamePlayable) return;
         if (this.isSelectingCards) {
             this.isSelectingCards = false;
             this.props.handleSelectedCards(this.selectingCards.cards);

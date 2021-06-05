@@ -1102,36 +1102,54 @@ function PvEDoudizhuDemoView() {
                     </Paper>
                 </div>
                 <div className="citation">
-                    {/* {locale === 'en' ? (
+                    {locale === 'en' ? (
                         <>
-                            This demo is based on{' '}
-                            <a href="https://github.com/datamllab/rlcard" target="_blank">
-                                RLCard
-                            </a>{' '}
-                            and{' '}
-                            <a href="https://github.com/daochenzha/douzero" target="_blank">
-                                DouZero
-                            </a>
-                            . If you find these projects useful, please cite:
+                            <p style={{ margin: '4px' }}>
+                                Too slow? Run the demo locally and check out more analysis tools (e.g., replays) with{' '}
+                                <a href="https://github.com/datamllab/rlcard-showdown" target="_blank">
+                                    RLCard-Showdown
+                                </a>
+                                !
+                            </p>
+                            <p style={{ margin: '4px', marginTop: '15px' }}>
+                                This demo is based on{' '}
+                                <a href="https://github.com/datamllab/rlcard" target="_blank">
+                                    RLCard
+                                </a>{' '}
+                                and{' '}
+                                <a href="https://github.com/daochenzha/douzero" target="_blank">
+                                    DouZero
+                                </a>
+                                . If you find these projects useful, please cite:
+                            </p>
                         </>
                     ) : (
                         <>
-                            本演示基于{' '}
-                            <a href="https://github.com/datamllab/rlcard" target="_blank">
-                                RLCard
-                            </a>{' '}
-                            和{' '}
-                            <a href="https://github.com/daochenzha/douzero" target="_blank">
-                                DouZero
-                            </a>{' '}
-                            项目。如果这些项目帮到您，请添加引用:
+                            <p style={{ margin: '4px' }}>
+                                运行太慢？使用{' '}
+                                <a href="https://github.com/datamllab/rlcard-showdown" target="_blank">
+                                    RLCard-Showdown
+                                </a>{' '}
+                                在本地运行该演示以及更多分析工具（如录像回放）!
+                            </p>
+                            <p style={{ margin: '4px', marginTop: '15px' }}>
+                                本演示基于{' '}
+                                <a href="https://github.com/datamllab/rlcard" target="_blank">
+                                    RLCard
+                                </a>{' '}
+                                和{' '}
+                                <a href="https://github.com/daochenzha/douzero" target="_blank">
+                                    DouZero
+                                </a>{' '}
+                                项目。如果这些项目帮到您，请添加引用:
+                            </p>
                         </>
-                    )} */}
-                    Zha, Daochen, Kwei-Herng Lai, Songyi Huang, Yuanpu Cao, Keerthana Reddy, Juan Vargas, Alex Nguyen,
-                    Ruzhe Wei, Junyu Guo, and Xia Hu. "RLCard: A Platform for Reinforcement Learning in Card Games." In
-                    IJCAI. 2020.
+                    )}
                     <pre>
-                        {`@article{zha2019rlcard,
+                        {`Zha, Daochen, Kwei-Herng Lai, Songyi Huang, Yuanpu Cao, Keerthana Reddy, Juan Vargas, Alex Nguyen, Ruzhe Wei, Junyu Guo, and
+Xia Hu. "RLCard: A Platform for Reinforcement Learning in Card Games." In IJCAI. 2020.
+
+@article{zha2019rlcard,
   title={RLCard: A Toolkit for Reinforcement Learning in Card Games},
   author={Zha, Daochen and Lai, Kwei-Herng and Cao, Yuanpu and Huang, Songyi and Wei, Ruzhe and Guo, Junyu and Hu, Xia},
   journal={arXiv preprint arXiv:1910.04376},

@@ -63,7 +63,6 @@ let playedCardsLandlordUp = [];
 let legalActions = { turn: -1, actions: [] };
 let hintIdx = -1;
 let gameEndDialogTitle = '';
-let statisticRows = [];
 let syncGameStatus = localStorage.getItem('LOCALE') ? 'ready' : 'localeSelection';
 
 function PvEDoudizhuDemoView() {
@@ -86,6 +85,7 @@ function PvEDoudizhuDemoView() {
     const [hideRivalHand, setHideRivalHand] = useState(true);
     const [hidePredictionArea, setHidePredictionArea] = useState(true);
     const [locale, setLocale] = useState(localStorage.getItem('LOCALE') || 'en');
+    const [statisticRows, setStatisticRows] = useState([]);
 
     const cardArr2DouzeroFormat = (cards) => {
         return cards
@@ -228,6 +228,7 @@ function PvEDoudizhuDemoView() {
         }
 
         if (newHand.length === 0) {
+            setHideRivalHand(false);
             const winner = playerInfo[gameState.currentPlayer];
 
             // update game overall history
@@ -279,9 +280,9 @@ function PvEDoudizhuDemoView() {
             setTimeout(() => {
                 gameEndDialogTitle =
                     winner.role === 'peasant' ? t('doudizhu.peasants_win') : t('doudizhu.landlord_win');
-                statisticRows = [
+                setStatisticRows([
                     {
-                        role: 'Landlord',
+                        role: t('doudizhu.landlord'),
                         win: gameStatistics.landlordWinNum,
                         total: gameStatistics.landlordGameNum,
                         winRate: gameStatistics.landlordGameNum
@@ -289,7 +290,7 @@ function PvEDoudizhuDemoView() {
                             : '-',
                     },
                     {
-                        role: 'Landlord Up',
+                        role: t('doudizhu.landlord_up'),
                         win: gameStatistics.landlordUpWinNum,
                         total: gameStatistics.landlordUpGameNum,
                         winRate: gameStatistics.landlordUpGameNum
@@ -298,7 +299,7 @@ function PvEDoudizhuDemoView() {
                             : '-',
                     },
                     {
-                        role: 'Landlord Down',
+                        role: t('doudizhu.landlord_down'),
                         win: gameStatistics.landlordDownWinNum,
                         total: gameStatistics.landlordDownGameNum,
                         winRate: gameStatistics.landlordDownGameNum
@@ -315,10 +316,10 @@ function PvEDoudizhuDemoView() {
                             ? ((gameStatistics.totalWinNum / gameStatistics.totalGameNum) * 100).toFixed(2) + '%'
                             : '-',
                     },
-                ];
+                ]);
 
                 setIsGameEndDialogOpen(true);
-            }, 300);
+            }, 2000);
         } else {
             setConsiderationTime(initConsiderationTime);
             // manually trigger timer if consideration time equals initConsiderationTime
@@ -540,6 +541,36 @@ function PvEDoudizhuDemoView() {
         }, considerationTimeDeduction);
     };
 
+    const handleResetStatistics = () => {
+        localStorage.removeItem('GAME_STATISTICS');
+        setStatisticRows([
+            {
+                role: 'Landlord',
+                win: 0,
+                total: 0,
+                winRate: '-',
+            },
+            {
+                role: 'Landlord Up',
+                win: 0,
+                total: 0,
+                winRate: '-',
+            },
+            {
+                role: 'Landlord Down',
+                win: 0,
+                total: 0,
+                winRate: '-',
+            },
+            {
+                role: 'All',
+                win: 0,
+                total: 0,
+                winRate: '-',
+            },
+        ]);
+    };
+
     const handleCloseGameEndDialog = () => {
         // reset all game state for new game
         shuffledDoudizhuDeck = shuffleArray(fullDoudizhuDeck.slice());
@@ -578,6 +609,7 @@ function PvEDoudizhuDemoView() {
         });
         setSelectedCards([]); // user selected hand card
         setPredictionRes({ prediction: [], hands: [] });
+        setHideRivalHand(hidePredictionArea);
 
         setGameStatus('ready');
         syncGameStatus = 'ready';
@@ -884,14 +916,7 @@ function PvEDoudizhuDemoView() {
                     </TableContainer>
                 </DialogContent>
                 <DialogActions>
-                    <Button
-                        onClick={() => {
-                            // todo: disable all action (pass, deselect) if cancel
-                            setIsGameEndDialogOpen(false);
-                        }}
-                    >
-                        {t('cancel')}
-                    </Button>
+                    <Button onClick={() => handleResetStatistics()}>{t('reset')}</Button>
                     <Button
                         onClick={() => handleCloseGameEndDialog()}
                         color="primary"
@@ -1077,7 +1102,7 @@ function PvEDoudizhuDemoView() {
                     </Paper>
                 </div>
                 <div className="citation">
-                    {locale === 'en' ? (
+                    {/* {locale === 'en' ? (
                         <>
                             This demo is based on{' '}
                             <a href="https://github.com/datamllab/rlcard" target="_blank">
@@ -1101,8 +1126,10 @@ function PvEDoudizhuDemoView() {
                             </a>{' '}
                             项目。如果这些项目帮到您，请添加引用:
                         </>
-                    )}
-
+                    )} */}
+                    Zha, Daochen, Kwei-Herng Lai, Songyi Huang, Yuanpu Cao, Keerthana Reddy, Juan Vargas, Alex Nguyen,
+                    Ruzhe Wei, Junyu Guo, and Xia Hu. "RLCard: A Platform for Reinforcement Learning in Card Games." In
+                    IJCAI. 2020.
                     <pre>
                         {`@article{zha2019rlcard,
   title={RLCard: A Toolkit for Reinforcement Learning in Card Games},

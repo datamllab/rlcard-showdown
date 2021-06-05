@@ -117,7 +117,9 @@ class DoudizhuGameBoard extends React.Component {
             return (
                 <div
                     className={`playingCards loose ${fadeClassName} ${
-                        this.props.gamePlayable && cardSelectable ? 'selectable' : 'unselectable'
+                        this.props.gameStatus === 'playing' && this.props.gamePlayable && cardSelectable
+                            ? 'selectable'
+                            : 'unselectable'
                     }`}
                 >
                     <ul className="hand" style={{ width: computeHandCardsWidth(cards.length, 12) }}>
@@ -243,7 +245,7 @@ class DoudizhuGameBoard extends React.Component {
                                     {t('doudizhu.deselect')}
                                 </Button> */}
                                 <Button
-                                    disabled={this.props.isHintDisabled}
+                                    disabled={this.props.isHintDisabled || this.props.gameStatus !== 'playing'}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         this.props.handleMainPlayerAct('hint');
@@ -255,7 +257,7 @@ class DoudizhuGameBoard extends React.Component {
                                     {t('doudizhu.hint')}
                                 </Button>
                                 <Button
-                                    disabled={this.props.isPassDisabled}
+                                    disabled={this.props.isPassDisabled || this.props.gameStatus !== 'playing'}
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         this.props.handleMainPlayerAct('pass');
@@ -267,7 +269,11 @@ class DoudizhuGameBoard extends React.Component {
                                     {t('doudizhu.pass')}
                                 </Button>
                                 <Button
-                                    disabled={!this.props.selectedCards || this.props.selectedCards.length === 0}
+                                    disabled={
+                                        !this.props.selectedCards ||
+                                        this.props.selectedCards.length === 0 ||
+                                        this.props.gameStatus !== 'playing'
+                                    }
                                     onClick={(e) => {
                                         console.log('play', e.stopPropagation);
                                         e.stopPropagation();

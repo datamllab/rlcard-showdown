@@ -1,9 +1,10 @@
 {
     "hidden": "隐藏",
     "waiting...": "等待中...",
-    "play_again": "再次游玩",
+    "play_again": "再来一局",
     "cancel": "取消",
     "turn": "回合",
+    "reset": "重置",
 
     "doudizhu": {
         "ai_hand_faceup": "显示AI手牌",

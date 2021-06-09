@@ -1145,15 +1145,15 @@ function PvEDoudizhuDemoView() {
                             </p>
                         </>
                     )}
-                    <pre>
+                    <pre style={{overflowX: 'auto'}}>
                         {`Zha, Daochen, Kwei-Herng Lai, Songyi Huang, Yuanpu Cao, Keerthana Reddy, Juan Vargas, Alex Nguyen, Ruzhe Wei, Junyu Guo, and
 Xia Hu. "RLCard: A Platform for Reinforcement Learning in Card Games." In IJCAI. 2020.
 
-@article{zha2019rlcard,
-  title={RLCard: A Toolkit for Reinforcement Learning in Card Games},
-  author={Zha, Daochen and Lai, Kwei-Herng and Cao, Yuanpu and Huang, Songyi and Wei, Ruzhe and Guo, Junyu and Hu, Xia},
-  journal={arXiv preprint arXiv:1910.04376},
-  year={2019}
+@inproceedings{zha2020rlcard,
+  title={RLCard: A Platform for Reinforcement Learning in Card Games},
+  author={Zha, Daochen and Lai, Kwei-Herng and Huang, Songyi and Cao, Yuanpu and Reddy, Keerthana and Vargas, Juan and Nguyen, Alex and Wei, Ruzhe and Guo, Junyu and Hu, Xia},
+  booktitle={IJCAI},
+  year={2020}
 }`}
                     </pre>
                 </div>

@@ -1117,7 +1117,7 @@ function PvEDoudizhuDemoView() {
                                     RLCard
                                 </a>{' '}
                                 and{' '}
-                                <a href="https://github.com/daochenzha/douzero" target="_blank">
+                                <a href="https://github.com/kwai/DouZero" target="_blank">
                                     DouZero
                                 </a>
                                 . If you find these projects useful, please cite:
@@ -1138,22 +1138,42 @@ function PvEDoudizhuDemoView() {
                                     RLCard
                                 </a>{' '}
                                 和{' '}
-                                <a href="https://github.com/daochenzha/douzero" target="_blank">
+                                <a href="https://github.com/kwai/DouZero" target="_blank">
                                     DouZero
                                 </a>{' '}
                                 项目。如果这些项目帮到您，请添加引用:
                             </p>
                         </>
                     )}
+                    <p style={{ margin: '4px' }}>Zha, Daochen, Kwei-Herng Lai, Songyi Huang, Yuanpu Cao, Keerthana Reddy, Juan Vargas, Alex Nguyen, Ruzhe Wei, Junyu Guo, and Xia Hu. "RLCard: A Platform for Reinforcement Learning in Card Games." In IJCAI. 2020. </p>
                     <pre style={{overflowX: 'auto'}}>
-                        {`Zha, Daochen, Kwei-Herng Lai, Songyi Huang, Yuanpu Cao, Keerthana Reddy, Juan Vargas, Alex Nguyen, Ruzhe Wei, Junyu Guo, and
-Xia Hu. "RLCard: A Platform for Reinforcement Learning in Card Games." In IJCAI. 2020.
-
-@inproceedings{zha2020rlcard,
+                        {`@inproceedings{zha2020rlcard,
   title={RLCard: A Platform for Reinforcement Learning in Card Games},
-  author={Zha, Daochen and Lai, Kwei-Herng and Huang, Songyi and Cao, Yuanpu and Reddy, Keerthana and Vargas, Juan and Nguyen, Alex and Wei, Ruzhe and Guo, Junyu and Hu, Xia},
+  author={Daochen, Zha and Lai, Kwei-Herng and Huang, Songyi and Cao, Yuanpu and Reddy, Keerthana and Vargas, Juan and Nguyen, Alex and Wei, Ruzhe and Guo, Junyu and Hu, Xia},
   booktitle={IJCAI},
   year={2020}
+}`}
+                    </pre>
+                    {locale === 'en' ? (
+                        <>
+							<p style={{ margin: '4pt' }}>
+								and our ICML 2021 paper with
+                            </p>
+						</>
+                    ) : (
+                        <>
+							<p style={{ margin: '4pt' }}>
+								以及ICML 2021论文
+                            </p>
+                        </>
+                    )}
+					<p style={{ margin: '4pt' }}>Daochen Zha, Jingru Xie, Wenye Ma, Sheng Zhang, Xiangru Lian, Xia Hu, and Ji Liu. "DouZero: Mastering DouDizhu with Self-Play Deep Reinforcement Learning." arXiv preprint arXiv:2106.06135 (2021). </p>
+                    <pre style={{overflowX: 'auto'}}>
+						{`@article{zha2021douzero,
+  title={DouZero: Mastering DouDizhu with Self-Play Deep Reinforcement Learning},
+  author={Zha, Daochen and Xie, Jingru and Ma, Wenye and Zhang, Sheng and Lian, Xiangru and Hu, Xia and Liu, Ji},
+  journal={arXiv preprint arXiv:2106.06135},
+  year={2021}
 }`}
                     </pre>
                 </div>

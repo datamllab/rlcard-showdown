@@ -8,8 +8,7 @@ This is the GUI support for the [RLCard](https://github.com/datamllab/rlcard) pr
 *   Online Demo with DouZero: [https://www.douzero.org/](https://www.douzero.org/)
 
 ## Cite this work
-Daochen Zha, Kwei-Herng Lai, Songyi Huang, Yuanpu Cao, Keerthana Reddy, Juan Vargas, Alex Nguyen, Ruzhe Wei, Junyu Guo, and Xia Hu. "RLCard: A Platform for Reinforcement Learning in Card Games." In IJCAI. 2020.
-
+Zha, Daochen, et al. "RLCard: A Platform for Reinforcement Learning in Card Games." IJCAI. 2020.
 ```bibtex
 @inproceedings{zha2020rlcard,
   title={RLCard: A Platform for Reinforcement Learning in Card Games},

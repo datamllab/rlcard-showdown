@@ -1145,7 +1145,7 @@ function PvEDoudizhuDemoView() {
                             </p>
                         </>
                     )}
-                    <p style={{ margin: '4px' }}>Zha, Daochen, Kwei-Herng Lai, Songyi Huang, Yuanpu Cao, Keerthana Reddy, Juan Vargas, Alex Nguyen, Ruzhe Wei, Junyu Guo, and Xia Hu. "RLCard: A Platform for Reinforcement Learning in Card Games." In IJCAI. 2020. </p>
+                    <p style={{ margin: '4px' }}>Zha, Daochen, et al. "RLCard: A Platform for Reinforcement Learning in Card Games." IJCAI. 2020.</p>
                     <pre style={{overflowX: 'auto'}}>
                         {`@inproceedings{zha2020rlcard,
   title={RLCard: A Platform for Reinforcement Learning in Card Games},
@@ -1167,7 +1167,7 @@ function PvEDoudizhuDemoView() {
                             </p>
                         </>
                     )}
-					<p style={{ margin: '4pt' }}>Daochen Zha, Jingru Xie, Wenye Ma, Sheng Zhang, Xiangru Lian, Xia Hu, and Ji Liu. "DouZero: Mastering DouDizhu with Self-Play Deep Reinforcement Learning." arXiv preprint arXiv:2106.06135 (2021). </p>
+					<p style={{ margin: '4pt' }}>Zha, Daochen, et al. "DouZero: Mastering DouDizhu with Self-Play Deep Reinforcement Learning." arXiv preprint arXiv:2106.06135 (2021). </p>
                     <pre style={{overflowX: 'auto'}}>
 						{`@article{zha2021douzero,
   title={DouZero: Mastering DouDizhu with Self-Play Deep Reinforcement Learning},

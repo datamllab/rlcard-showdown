@@ -545,19 +545,19 @@ function PvEDoudizhuDemoView() {
         localStorage.removeItem('GAME_STATISTICS');
         setStatisticRows([
             {
-                role: 'Landlord',
+                role: t('doudizhu.landlord'),
                 win: 0,
                 total: 0,
                 winRate: '-',
             },
             {
-                role: 'Landlord Up',
+                role: t('doudizhu.landlord_up'),
                 win: 0,
                 total: 0,
                 winRate: '-',
             },
             {
-                role: 'Landlord Down',
+                role: t('doudizhu.landlord_down'),
                 win: 0,
                 total: 0,
                 winRate: '-',

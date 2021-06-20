@@ -1149,7 +1149,7 @@ function PvEDoudizhuDemoView() {
                     <pre style={{overflowX: 'auto'}}>
                         {`@inproceedings{zha2020rlcard,
   title={RLCard: A Platform for Reinforcement Learning in Card Games},
-  author={Daochen, Zha and Lai, Kwei-Herng and Huang, Songyi and Cao, Yuanpu and Reddy, Keerthana and Vargas, Juan and Nguyen, Alex and Wei, Ruzhe and Guo, Junyu and Hu, Xia},
+  author={Zha, Daochen and Lai, Kwei-Herng and Huang, Songyi and Cao, Yuanpu and Reddy, Keerthana and Vargas, Juan and Nguyen, Alex and Wei, Ruzhe and Guo, Junyu and Hu, Xia},
   booktitle={IJCAI},
   year={2020}
 }`}

@@ -1145,8 +1145,10 @@ function PvEDoudizhuDemoView() {
                             </p>
                         </>
                     )}
-                    <p style={{ margin: '4px' }}>Zha, Daochen, et al. "RLCard: A Platform for Reinforcement Learning in Card Games." IJCAI. 2020.</p>
-                    <pre style={{overflowX: 'auto'}}>
+                    <p style={{ margin: '4px' }}>
+                        Zha, Daochen, et al. "RLCard: A Platform for Reinforcement Learning in Card Games." IJCAI. 2020.
+                    </p>
+                    <pre style={{ overflowX: 'auto' }}>
                         {`@inproceedings{zha2020rlcard,
   title={RLCard: A Platform for Reinforcement Learning in Card Games},
   author={Zha, Daochen and Lai, Kwei-Herng and Huang, Songyi and Cao, Yuanpu and Reddy, Keerthana and Vargas, Juan and Nguyen, Alex and Wei, Ruzhe and Guo, Junyu and Hu, Xia},
@@ -1156,24 +1158,32 @@ function PvEDoudizhuDemoView() {
                     </pre>
                     {locale === 'en' ? (
                         <>
-							<p style={{ margin: '4pt' }}>
-								and our ICML 2021 paper with
-                            </p>
-						</>
+                            <p style={{ margin: '4pt' }}>and our ICML 2021 paper with</p>
+                        </>
                     ) : (
                         <>
-							<p style={{ margin: '4pt' }}>
-								以及ICML 2021论文
-                            </p>
+                            <p style={{ margin: '4pt' }}>以及ICML 2021论文</p>
                         </>
                     )}
-					<p style={{ margin: '4pt' }}>Zha, Daochen, et al. "DouZero: Mastering DouDizhu with Self-Play Deep Reinforcement Learning." arXiv preprint arXiv:2106.06135 (2021). </p>
-                    <pre style={{overflowX: 'auto'}}>
-						{`@article{zha2021douzero,
-  title={DouZero: Mastering DouDizhu with Self-Play Deep Reinforcement Learning},
-  author={Zha, Daochen and Xie, Jingru and Ma, Wenye and Zhang, Sheng and Lian, Xiangru and Hu, Xia and Liu, Ji},
-  journal={arXiv preprint arXiv:2106.06135},
-  year={2021}
+                    <p style={{ margin: '4pt' }}>
+                        Zha, Daochen et al. “DouZero: Mastering DouDizhu with Self-Play Deep Reinforcement Learning.”
+                        ICML (2021).
+                    </p>
+                    <pre style={{ overflowX: 'auto' }}>
+                        {`@InProceedings{pmlr-v139-zha21a,
+  title = 	 {DouZero: Mastering DouDizhu with Self-Play Deep Reinforcement Learning},
+  author =       {Zha, Daochen and Xie, Jingru and Ma, Wenye and Zhang, Sheng and Lian, Xiangru and Hu, Xia and Liu, Ji},
+  booktitle = 	 {Proceedings of the 38th International Conference on Machine Learning},
+  pages = 	 {12333--12344},
+  year = 	 {2021},
+  editor = 	 {Meila, Marina and Zhang, Tong},
+  volume = 	 {139},
+  series = 	 {Proceedings of Machine Learning Research},
+  month = 	 {18--24 Jul},
+  publisher =    {PMLR},
+  pdf = 	 {http://proceedings.mlr.press/v139/zha21a/zha21a.pdf},
+  url = 	 {http://proceedings.mlr.press/v139/zha21a.html},
+  abstract = 	 {Games are abstractions of the real world, where artificial agents learn to compete and cooperate with other agents. While significant achievements have been made in various perfect- and imperfect-information games, DouDizhu (a.k.a. Fighting the Landlord), a three-player card game, is still unsolved. DouDizhu is a very challenging domain with competition, collaboration, imperfect information, large state space, and particularly a massive set of possible actions where the legal actions vary significantly from turn to turn. Unfortunately, modern reinforcement learning algorithms mainly focus on simple and small action spaces, and not surprisingly, are shown not to make satisfactory progress in DouDizhu. In this work, we propose a conceptually simple yet effective DouDizhu AI system, namely DouZero, which enhances traditional Monte-Carlo methods with deep neural networks, action encoding, and parallel actors. Starting from scratch in a single server with four GPUs, DouZero outperformed all the existing DouDizhu AI programs in days of training and was ranked the first in the Botzone leaderboard among 344 AI agents. Through building DouZero, we show that classic Monte-Carlo methods can be made to deliver strong results in a hard domain with a complex action space. The code and an online demo are released at https://github.com/kwai/DouZero with the hope that this insight could motivate future work.}
 }`}
                     </pre>
                 </div>

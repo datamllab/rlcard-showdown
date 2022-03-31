@@ -23,6 +23,8 @@ import { useHistory } from 'react-router-dom';
 import MenuBar from '../components/MenuBar';
 import { apiUrl } from '../utils/config';
 
+  
+
 const gameList = [
     { game: 'leduc-holdem', dispName: "Leduc Hold'em" },
     { game: 'doudizhu', dispName: 'Dou Dizhu' },
@@ -176,8 +178,8 @@ const leaderBoardHeadCells = [
 
 const StyledTableCell = withStyles((theme) => ({
     head: {
-        backgroundColor: '#373538',
-        color: theme.palette.common.white,
+        backgroundColor: '#d4d4d4',
+        color:' #677289',
         fontWeight: 600,
         fontSize: 15,
     },
@@ -253,8 +255,7 @@ const EnhancedTableToolbar = (props) => {
     const launchTournamentSuccessMessage = () => {
         return (
             <span>
-                Successfully launched tournament,<a href="javascript:window.location.reload(true)"> Click here </a>to
-                refresh page
+                Successfully launched tournament!
             </span>
         );
     };
@@ -273,6 +274,7 @@ const EnhancedTableToolbar = (props) => {
                         setTimeout(() => {
                             setButtonLoading(false);
                         }, 250);
+                        // <Alert severity="success">Successfully launched tournament!</Alert>
                         Message({
                             message: launchTournamentSuccessMessage(),
                             type: 'success',
@@ -300,7 +302,8 @@ const EnhancedTableToolbar = (props) => {
             return (
                 <div className={classes.button}>
                     <Loading loading={buttonLoading}>
-                        <Button variant="contained" color="primary" onClick={() => setDialogOpen(true)}>
+                        <Button variant="contained" style={{backgroundColor: '#01b5f0', color:'#fff',fontWeight
+                    : 'bold'}} onClick={() => setDialogOpen(true)}>
                             Launch Tournament
                         </Button>
                     </Loading>
@@ -331,7 +334,7 @@ const EnhancedTableToolbar = (props) => {
                             </Button>
                             <Button
                                 onClick={() => handleLaunchTournament(routeInfo.name)}
-                                color="primary"
+                                style={{backgroundColor: '#01b5f0', color:'#fff',fontWeight: 'bold'}}
                                 variant="contained"
                                 disableElevation
                             >
@@ -490,7 +493,7 @@ const AgentTableContent = (props) => {
                                         rel="noopener noreferrer"
                                         target="_blank"
                                     >
-                                        <PlayCircleOutlineIcon style={{ verticalAlign: 'middle' }} />
+                                        <PlayCircleOutlineIcon style={{ verticalAlign: 'middle', color: '#01b5f0'}} />
                                     </a>
                                 </TableCell>
                             </TableRow>

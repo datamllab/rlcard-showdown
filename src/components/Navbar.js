@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import logo_white from "../assets/images/logo_white.png";
+import logo_new from "../assets/images/logo_new.png";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import AppBar from "@material-ui/core/AppBar";
 import axios from 'axios';
@@ -21,13 +22,13 @@ function Navbar({subtitleMap}) {
     return (
         <AppBar position="fixed" className={"header-bar-wrapper"}>
             <div className={"header-bar"}>
-                <Link to="/leaderboard"><img src={logo_white} alt={"Logo"} height="65px" /></Link>
-                <div className={"title unselectable"}><div className={"title-text"}>Showdown<span className={"subtitle"}>{subtitle ? '/ ' + subtitle : ''}</span></div></div>
+                <Link to="/leaderboard"><img src={logo_new} alt={"Logo"} height="45px" className = {'header-logo'}/></Link>
+                <div className={"title unselectable"}><div className={"title-text"}>强化学习棋盘演示系统<span className={"subtitle"}>{subtitle ? '/ ' + subtitle : ''}</span></div></div>
                 <div className={"stretch"} />
-                <div className={"github-info"} onClick={()=>{window.location.href = 'https://github.com/datamllab/rlcard'}}>
+                {/* <div className={"github-info"} onClick={()=>{window.location.href = 'https://github.com/datamllab/rlcard'}}>
                     <div className={"github-icon"}><GitHubIcon /></div>
                     <div className={"github-text"}>Github<br /><span>{stars} stars</span></div>
-                </div>
+                </div> */}
             </div>
         </AppBar>
         )

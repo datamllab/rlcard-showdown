@@ -1106,18 +1106,19 @@ function PvEDoudizhuDemoView() {
                         <>
                             <p style={{ margin: '4px' }}>
                                 Too slow? Run the demo locally and check out more analysis tools (e.g., replays) with{' '}
-                                <a href="https://github.com/datamllab/rlcard-showdown" target="_blank">
+                                <a href="https://github.com/datamllab/rlcard-showdown" target="_blank"  
+                                style={{ color:'#01b5f0' }}>
                                     RLCard-Showdown
                                 </a>
                                 !
                             </p>
                             <p style={{ margin: '4px', marginTop: '15px' }}>
                                 This demo is based on{' '}
-                                <a href="https://github.com/datamllab/rlcard" target="_blank">
+                                <a href="https://github.com/datamllab/rlcard" target="_blank" style={{ color:'#01b5f0' }}>
                                     RLCard
                                 </a>{' '}
                                 and{' '}
-                                <a href="https://github.com/kwai/DouZero" target="_blank">
+                                <a href="https://github.com/kwai/DouZero" target="_blank" style={{ color:'#01b5f0' }}>
                                     DouZero
                                 </a>
                                 . If you find these projects useful, please cite:
@@ -1127,18 +1128,18 @@ function PvEDoudizhuDemoView() {
                         <>
                             <p style={{ margin: '4px' }}>
                                 运行太慢？使用{' '}
-                                <a href="https://github.com/datamllab/rlcard-showdown" target="_blank">
+                                <a href="https://github.com/datamllab/rlcard-showdown" target="_blank" style={{ color:'#01b5f0' }}>
                                     RLCard-Showdown
                                 </a>{' '}
                                 在本地运行该演示以及更多分析工具（如录像回放）!
                             </p>
                             <p style={{ margin: '4px', marginTop: '15px' }}>
                                 本演示基于{' '}
-                                <a href="https://github.com/datamllab/rlcard" target="_blank">
+                                <a href="https://github.com/datamllab/rlcard" target="_blank" style={{ color:'#01b5f0' }}>
                                     RLCard
                                 </a>{' '}
                                 和{' '}
-                                <a href="https://github.com/kwai/DouZero" target="_blank">
+                                <a href="https://github.com/kwai/DouZero" target="_blank" style={{ color:'#01b5f0' }}>
                                     DouZero
                                 </a>{' '}
                                 项目。如果这些项目帮到您，请添加引用:

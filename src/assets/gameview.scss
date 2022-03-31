@@ -3,7 +3,7 @@
 }
 
 .MuiAppBar-colorPrimary.header-bar-wrapper {
-    background-color: #373538;
+    background-color: #d4d4d4;
 }
 
 .header-bar {
@@ -15,6 +15,12 @@
     display: flex;
     .stretch {
         flex: 1;
+    }
+
+    .header-logo{
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
     }
 
     .github-info {
@@ -57,9 +63,11 @@
         justify-content: center;
         .title-text{
             line-height: 65px;
-            font-size: 26px;
+            color: #677289;
+            font-size: 20px;
             font-weight: 600;
             letter-spacing: 1px;
+            margin-left: 140px;
             transform: scale(1, 1.1) translateY(-1px);
             -ms-transform:scale(1, 1.1) translateY(-1px);
             -webkit-transform:scale(1, 1.1) translateY(1px);

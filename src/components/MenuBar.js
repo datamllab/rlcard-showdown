@@ -93,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
         },
         '&$active': {
             '& span': {
-                color: '#3f51b5',
+                color: '#01b5f0',
                 fontWeight: 600,
             },
         },
@@ -304,7 +304,8 @@ function MenuBar(props) {
                     })}
                 </Collapse>
             </List>
-            <Button variant="contained" color="primary" onClick={openUploadDialog} className={classes.button}>
+            <Button variant="contained" style={{backgroundColor: '#01b5f0', color:'#fff',fontWeight: 'bold'}} 
+            onClick={openUploadDialog} className={classes.button}>
                 Upload Model
             </Button>
             <Dialog
@@ -408,7 +409,7 @@ function MenuBar(props) {
                         <Button onClick={handleUploadDialogClose} variant="contained" disableElevation>
                             Cancel
                         </Button>
-                        <Button onClick={handleSubmitUpload} color="primary" variant="contained" disableElevation>
+                        <Button onClick={handleSubmitUpload} style={{backgroundColor: '#01b5f0', color:'#fff'}} variant="contained" disableElevation>
                             Upload
                         </Button>
                     </DialogActions>

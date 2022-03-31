@@ -7,6 +7,9 @@ import { withTranslation } from 'react-i18next';
 import '../../assets/doudizhu.scss';
 import Landlord_wName from '../../assets/images/Portrait/Landlord_wName.png';
 import Peasant_wName from '../../assets/images/Portrait/Peasant_wName.png';
+import rich from '../../assets/images/Portrait/rich.png';
+import poor from '../../assets/images/Portrait/poor.png';
+
 import PlaceHolderPlayer from '../../assets/images/Portrait/Player.png';
 import { computeHandCardsWidth, millisecond2Second, sortDoudizhuCards, translateCardData } from '../../utils';
 
@@ -33,7 +36,7 @@ class DoudizhuGameBoard extends React.Component {
                     : playerId;
             return this.props.playerInfo[playerIdx].role === 'landlord' ? (
                 <div>
-                    <img src={Landlord_wName} alt={'Landlord'} height="70%" width="70%" />
+                    <img src={rich} alt={'rich'} height="70%" width="70%" />
                     <Chip
                         style={{ maxWidth: '135px' }}
                         avatar={chipTitle ? <Avatar>{chipTitle}</Avatar> : undefined}
@@ -43,7 +46,7 @@ class DoudizhuGameBoard extends React.Component {
                 </div>
             ) : (
                 <div>
-                    <img src={Peasant_wName} alt={'Peasant'} height="70%" width="70%" />
+                    <img src={poor} alt={'Peasant'} height="70%" width="70%" />
                     <Chip
                         style={{ maxWidth: '135px' }}
                         avatar={chipTitle ? <Avatar>{chipTitle}</Avatar> : undefined}
@@ -55,7 +58,7 @@ class DoudizhuGameBoard extends React.Component {
         } else
             return (
                 <div>
-                    <img src={PlaceHolderPlayer} alt={'Player'} height="70%" width="70%" />
+                    <img src={poor} alt={'Player'} height="70%" width="70%" />
                     <Chip avatar={<Avatar>ID</Avatar>} label={playerId} color="primary" />
                 </div>
             );
@@ -414,10 +417,9 @@ class DoudizhuGameBoard extends React.Component {
                     >
                         <Button
                             onClick={() => this.props.handleSelectRole('landlord_up')}
-                            style={{ width: '225px', justifyContent: 'space-evenly' }}
+                            style={{ width: '225px', justifyContent: 'space-evenly',backgroundColor: '#01b5f0', color: '#fff' }}
                             variant="contained"
-                            color="primary"
-                            startIcon={<img src={Peasant_wName} alt="Peasant" width="48px" height="48px" />}
+                            startIcon={<img src={poor} alt="Peasant" width="48px" height="48px" />}
                         >
                             {t('doudizhu.play_as_peasant')}
                             <br />({t('doudizhu.landlord_up')})
@@ -429,19 +431,19 @@ class DoudizhuGameBoard extends React.Component {
                                 justifyContent: 'space-evenly',
                                 marginTop: '20px',
                                 marginBottom: '20px',
+                                backgroundColor: '#01b5f0', 
+                                color: '#fff'
                             }}
                             variant="contained"
-                            color="primary"
-                            startIcon={<img src={Landlord_wName} alt="Peasant" width="48px" height="48px" />}
+                            startIcon={<img src={rich} alt="Peasant" width="48px" height="48px" />}
                         >
                             {t('doudizhu.play_as_landlord')}
                         </Button>
                         <Button
                             onClick={() => this.props.handleSelectRole('landlord_down')}
-                            style={{ width: '225px', justifyContent: 'space-evenly' }}
+                            style={{ width: '225px', justifyContent: 'space-evenly',backgroundColor: '#01b5f0', color: '#fff' }}
                             variant="contained"
-                            color="primary"
-                            startIcon={<img src={Peasant_wName} alt="Peasant" width="48px" height="48px" />}
+                            startIcon={<img src={poor} alt="Peasant" width="48px" height="48px" />}
                         >
                             {t('doudizhu.play_as_peasant')}
                             <br />({t('doudizhu.landlord_down')})
@@ -463,17 +465,15 @@ class DoudizhuGameBoard extends React.Component {
                     >
                         <Button
                             onClick={() => this.props.handleLocaleChange('zh')}
-                            style={{ width: '225px', padding: '15px' }}
+                            style={{ width: '225px', padding: '15px',backgroundColor: '#01b5f0', color:'#fff' }}
                             variant="contained"
-                            color="primary"
                         >
                             中文开始游戏
                         </Button>
                         <Button
                             onClick={() => this.props.handleLocaleChange('en')}
-                            style={{ width: '225px', padding: '15px', marginTop: '20px' }}
+                            style={{ width: '225px', padding: '15px', marginTop: '20px',backgroundColor: '#01b5f0', color:'#fff', }}
                             variant="contained"
-                            color="primary"
                         >
                             Start Game in English
                         </Button>

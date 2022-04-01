@@ -929,6 +929,89 @@ function PvEDoudizhuDemoView() {
                 </DialogActions>
             </Dialog>
             <div className={'doudizhu-view-container'}>
+            <div className="game-controller">
+                    <Paper className={'game-controller-paper'} elevation={3}>
+                        <Layout.Row style={{ height: '51px' }}>
+                            <Layout.Col span="6" style={{ height: '51px', lineHeight: '48px' }}>
+                                <FormGroup style={{ height: '100%' }}>
+                                    <FormControlLabel
+                                        style={{ textAlign: 'center', height: '100%', display: 'inline-block' }}
+                                        className="switch-control"
+                                        control={
+                                            <Switch checked={!hidePredictionArea} onChange={toggleHidePredictionArea} />
+                                        }
+                                        label={t('doudizhu.ai_hand_faceup')}
+                                    />
+                                </FormGroup>
+                            </Layout.Col>
+                            <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
+                                <Divider orientation="vertical" />
+                            </Layout.Col>
+                            <Layout.Col
+                                span="3"
+                                style={{ height: '51px', lineHeight: '51px', marginLeft: '-2px', marginRight: '-2px' }}
+                            >
+                                <div style={{ textAlign: 'center' }}>{`${t('turn')} ${gameState.turn}`}</div>
+                            </Layout.Col>
+                            <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
+                                <Divider orientation="vertical" />
+                            </Layout.Col>
+                            <Layout.Col span="12">
+                                <div>
+                                    <label
+                                        className={'form-label-left'}
+                                        style={{ width: '155px', lineHeight: '28px', fontSize: '15px' }}
+                                    >
+                                        {t('doudizhu.ai_thinking_time')}
+                                    </label>
+                                    <div style={{ marginLeft: '160px', marginRight: '30px' }}>
+                                        <Slider
+                                            style = {{color: '#01b5f0'}}
+                                            value={gameSpeedMap.find((element) => element.delay === apiPlayDelay).value}
+                                            getAriaValueText={sliderValueText}
+                                            onChange={(e, newVal) => {
+                                                changeApiPlayerDelay(newVal);
+                                            }}
+                                            aria-labelledby="discrete-slider-custom"
+                                            step={1}
+                                            min={0}
+                                            max={5}
+                                            track={false}
+                                            valueLabelDisplay="off"
+                                            marks={gameSpeedMarks}
+                                        />
+                                    </div>
+                                </div>
+                            </Layout.Col>
+                            <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
+                                <Divider orientation="vertical" />
+                            </Layout.Col>
+                            <Layout.Col span="3" style={{ height: '100%' }}>
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        height: '100%',
+                                        paddingLeft: '10px',
+                                    }}
+                                >
+                                    <TranslateIcon style={{ width: '1.2rem', height: '1.2rem' }} />
+                                    <Select
+                                        id="language-select"
+                                        style={{ width: '100%', textAlign: 'center', marginLeft: '7px' }}
+                                        value={locale}
+                                        onChange={(e) => handleLocaleChange(e.target.value)}
+                                    >
+                                        <MenuItem value={'zh'}>中文</MenuItem>
+                                        <MenuItem value={'en'}>English</MenuItem>
+                                    </Select>
+                                </div>
+                            </Layout.Col>
+                        </Layout.Row>
+                    </Paper>
+                </div>
+       
                 <Layout.Row style={{ height: '540px' }}>
                     <Layout.Col style={{ height: '100%' }} span="17">
                         <div style={{ height: '100%' }}>
@@ -1020,88 +1103,7 @@ function PvEDoudizhuDemoView() {
                         </Paper>
                     </Layout.Col>
                 </Layout.Row>
-                <div className="game-controller">
-                    <Paper className={'game-controller-paper'} elevation={3}>
-                        <Layout.Row style={{ height: '51px' }}>
-                            <Layout.Col span="6" style={{ height: '51px', lineHeight: '48px' }}>
-                                <FormGroup style={{ height: '100%' }}>
-                                    <FormControlLabel
-                                        style={{ textAlign: 'center', height: '100%', display: 'inline-block' }}
-                                        className="switch-control"
-                                        control={
-                                            <Switch checked={!hidePredictionArea} onChange={toggleHidePredictionArea} />
-                                        }
-                                        label={t('doudizhu.ai_hand_faceup')}
-                                    />
-                                </FormGroup>
-                            </Layout.Col>
-                            <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
-                                <Divider orientation="vertical" />
-                            </Layout.Col>
-                            <Layout.Col
-                                span="3"
-                                style={{ height: '51px', lineHeight: '51px', marginLeft: '-2px', marginRight: '-2px' }}
-                            >
-                                <div style={{ textAlign: 'center' }}>{`${t('turn')} ${gameState.turn}`}</div>
-                            </Layout.Col>
-                            <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
-                                <Divider orientation="vertical" />
-                            </Layout.Col>
-                            <Layout.Col span="12">
-                                <div>
-                                    <label
-                                        className={'form-label-left'}
-                                        style={{ width: '155px', lineHeight: '28px', fontSize: '15px' }}
-                                    >
-                                        {t('doudizhu.ai_thinking_time')}
-                                    </label>
-                                    <div style={{ marginLeft: '160px', marginRight: '30px' }}>
-                                        <Slider
-                                            value={gameSpeedMap.find((element) => element.delay === apiPlayDelay).value}
-                                            getAriaValueText={sliderValueText}
-                                            onChange={(e, newVal) => {
-                                                changeApiPlayerDelay(newVal);
-                                            }}
-                                            aria-labelledby="discrete-slider-custom"
-                                            step={1}
-                                            min={0}
-                                            max={5}
-                                            track={false}
-                                            valueLabelDisplay="off"
-                                            marks={gameSpeedMarks}
-                                        />
-                                    </div>
-                                </div>
-                            </Layout.Col>
-                            <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
-                                <Divider orientation="vertical" />
-                            </Layout.Col>
-                            <Layout.Col span="3" style={{ height: '100%' }}>
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        height: '100%',
-                                        paddingLeft: '10px',
-                                    }}
-                                >
-                                    <TranslateIcon style={{ width: '1.2rem', height: '1.2rem' }} />
-                                    <Select
-                                        id="language-select"
-                                        style={{ width: '100%', textAlign: 'center', marginLeft: '7px' }}
-                                        value={locale}
-                                        onChange={(e) => handleLocaleChange(e.target.value)}
-                                    >
-                                        <MenuItem value={'zh'}>中文</MenuItem>
-                                        <MenuItem value={'en'}>English</MenuItem>
-                                    </Select>
-                                </div>
-                            </Layout.Col>
-                        </Layout.Row>
-                    </Paper>
-                </div>
-            </div>
+        </div>
         </div>
     );
 }

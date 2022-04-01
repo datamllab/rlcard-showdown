@@ -104,7 +104,7 @@
     text-indent: -4000px;
     background-color: #ccc;
     background-repeat: no-repeat;
-    background-image: url("./faces/pokerback.png"); /* image is "Pattern 069" from http://www.squidfingers.com/patterns/ */
+    background-image: url("./faces/card_black.png"); /* image is "Pattern 069" from http://www.squidfingers.com/patterns/ */
     /* background-size: 100% 100%; */
     background-position: bottom;
     /*background-image: -moz-repeating-linear-gradient(34% 6% 135deg,#0F1E59, #75A1BF, #3E3E63 50%);*/

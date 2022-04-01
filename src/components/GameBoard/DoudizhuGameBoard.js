@@ -38,20 +38,18 @@ class DoudizhuGameBoard extends React.Component {
                 <div>
                     <img src={rich} alt={'rich'} height="70%" width="70%" />
                     <Chip
-                        style={{ maxWidth: '135px' }}
-                        avatar={chipTitle ? <Avatar>{chipTitle}</Avatar> : undefined}
-                        label={chipLabel}
-                        color="primary"
+                        style={{ maxWidth: '135px',backgroundColor: 'rgba(1,181,240,0.5)'}}
+                        avatar={chipTitle ? <Avatar style = {{backgroundColor: 'rgba(1,181,240)',color: '#fff'}}>{chipTitle}</Avatar> : undefined}
+                        label={<span style = {{color: '#fff'}}>{chipLabel}</span>}
                     />
                 </div>
             ) : (
                 <div>
                     <img src={poor} alt={'Peasant'} height="70%" width="70%" />
                     <Chip
-                        style={{ maxWidth: '135px' }}
-                        avatar={chipTitle ? <Avatar>{chipTitle}</Avatar> : undefined}
-                        label={chipLabel}
-                        color="primary"
+                        style={{ maxWidth: '135px',backgroundColor: 'rgba(1,181,240,0.5)'}}
+                        avatar={chipTitle ? <Avatar style = {{backgroundColor: 'rgba(1,181,240)',color: '#fff'}}>{chipTitle}</Avatar> : undefined}
+                        label={<span style = {{color: '#fff'}}>{chipLabel}</span>}
                     />
                 </div>
             );
@@ -59,7 +57,11 @@ class DoudizhuGameBoard extends React.Component {
             return (
                 <div>
                     <img src={poor} alt={'Player'} height="70%" width="70%" />
-                    <Chip avatar={<Avatar>ID</Avatar>} label={playerId} color="primary" />
+                    <Chip
+                    style={{ maxWidth: '135px',backgroundColor: 'rgba(1,181,240,0.5)'}} 
+                    avatar={<Avatar style = {{backgroundColor: 'rgba(1,181,240)',color: '#fff'}}>ID</Avatar>} 
+                    label={<span style = {{color: '#fff'}}>{playerId}</span>}
+                    />
                 </div>
             );
     }

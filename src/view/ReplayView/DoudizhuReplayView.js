@@ -559,6 +559,89 @@ class DoudizhuReplayView extends React.Component {
                     </DialogActions>
                 </Dialog>
                 <div className={'doudizhu-view-container'}>
+                <Loading loading={this.state.fullScreenLoading}>
+                        <div className="game-controller">
+                            <Paper className={'game-controller-paper'} elevation={3}>
+                                <Layout.Row style={{ height: '51px' }}>
+                                    <Layout.Col span="7" style={{ height: '51px', lineHeight: '48px' }}>
+                                        <div>
+                                            <Button
+                                                variant="contained"
+                                                style = {{color: '#01b5f0'}}
+                                                disabled={
+                                                    this.state.gameInfo.gameStatus !== 'paused' ||
+                                                    this.state.gameInfo.turn === 0
+                                                }
+                                                onClick={() => {
+                                                    this.go2PrevGameState();
+                                                }}
+                                            >
+                                                <SkipPreviousIcon />
+                                            </Button>
+                                            {this.gameStatusButton(this.state.gameInfo.gameStatus)}
+                                            <Button
+                                                variant="contained"
+                                                style = {{color: '#01b5f0'}}
+                                                disabled={this.state.gameInfo.gameStatus !== 'paused'}
+                                                onClick={() => {
+                                                    this.go2NextGameState();
+                                                }}
+                                            >
+                                                <SkipNextIcon />
+                                            </Button>
+                                        </div>
+                                    </Layout.Col>
+                                    <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
+                                        <Divider orientation="vertical" />
+                                    </Layout.Col>
+                                    <Layout.Col
+                                        span="3"
+                                        style={{
+                                            height: '51px',
+                                            lineHeight: '51px',
+                                            marginLeft: '-1px',
+                                            marginRight: '-1px',
+                                        }}
+                                    >
+                                        <div style={{ textAlign: 'center' }}>{`Turn ${this.state.gameInfo.turn}`}</div>
+                                    </Layout.Col>
+                                    <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
+                                        <Divider orientation="vertical" />
+                                    </Layout.Col>
+                                    <Layout.Col span="14">
+                                        <div>
+                                            <label className={'form-label-left'}>Game Speed</label>
+                                            <div style={{ marginLeft: '100px', marginRight: '10px' }}>
+                                                <Slider
+                                                    style = {{color: '#01b5f0'}}
+                                                    value={this.state.gameSpeed}
+                                                    getAriaValueText={sliderValueText}
+                                                    onChange={(e, newVal) => {
+                                                        this.changeGameSpeed(newVal);
+                                                    }}
+                                                    aria-labelledby="discrete-slider-custom"
+                                                    step={1}
+                                                    min={-3}
+                                                    max={3}
+                                                    track={false}
+                                                    valueLabelDisplay="off"
+                                                    marks={gameSpeedMarks}
+                                                />
+                                            </div>
+                                        </div>
+                                    </Layout.Col>
+                                </Layout.Row>
+                            </Paper>
+                        </div>
+                    </Loading>
+
+                    <div className="progress-bar">
+                        <LinearProgress 
+                        style = {{backgroundColor: 'rgb(1, 181, 240, 0.3)'}}
+                        variant="determinate" 
+                        value={this.state.gameInfo.completedPercent} />
+                    </div>
+   
                     <Layout.Row style={{ height: '540px' }}>
                         <Layout.Col style={{ height: '100%' }} span="17">
                             <div style={{ height: '100%' }}>
@@ -601,84 +684,8 @@ class DoudizhuReplayView extends React.Component {
                             </Paper>
                         </Layout.Col>
                     </Layout.Row>
-                    <div className="progress-bar">
-                        <LinearProgress variant="determinate" value={this.state.gameInfo.completedPercent} />
-                    </div>
-                    <Loading loading={this.state.fullScreenLoading}>
-                        <div className="game-controller">
-                            <Paper className={'game-controller-paper'} elevation={3}>
-                                <Layout.Row style={{ height: '51px' }}>
-                                    <Layout.Col span="7" style={{ height: '51px', lineHeight: '48px' }}>
-                                        <div>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                disabled={
-                                                    this.state.gameInfo.gameStatus !== 'paused' ||
-                                                    this.state.gameInfo.turn === 0
-                                                }
-                                                onClick={() => {
-                                                    this.go2PrevGameState();
-                                                }}
-                                            >
-                                                <SkipPreviousIcon />
-                                            </Button>
-                                            {this.gameStatusButton(this.state.gameInfo.gameStatus)}
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                disabled={this.state.gameInfo.gameStatus !== 'paused'}
-                                                onClick={() => {
-                                                    this.go2NextGameState();
-                                                }}
-                                            >
-                                                <SkipNextIcon />
-                                            </Button>
-                                        </div>
-                                    </Layout.Col>
-                                    <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
-                                        <Divider orientation="vertical" />
-                                    </Layout.Col>
-                                    <Layout.Col
-                                        span="3"
-                                        style={{
-                                            height: '51px',
-                                            lineHeight: '51px',
-                                            marginLeft: '-1px',
-                                            marginRight: '-1px',
-                                        }}
-                                    >
-                                        <div style={{ textAlign: 'center' }}>{`Turn ${this.state.gameInfo.turn}`}</div>
-                                    </Layout.Col>
-                                    <Layout.Col span="1" style={{ height: '100%', width: '1px' }}>
-                                        <Divider orientation="vertical" />
-                                    </Layout.Col>
-                                    <Layout.Col span="14">
-                                        <div>
-                                            <label className={'form-label-left'}>Game Speed</label>
-                                            <div style={{ marginLeft: '100px', marginRight: '10px' }}>
-                                                <Slider
-                                                    value={this.state.gameSpeed}
-                                                    getAriaValueText={sliderValueText}
-                                                    onChange={(e, newVal) => {
-                                                        this.changeGameSpeed(newVal);
-                                                    }}
-                                                    aria-labelledby="discrete-slider-custom"
-                                                    step={1}
-                                                    min={-3}
-                                                    max={3}
-                                                    track={false}
-                                                    valueLabelDisplay="off"
-                                                    marks={gameSpeedMarks}
-                                                />
-                                            </div>
-                                        </div>
-                                    </Layout.Col>
-                                </Layout.Row>
-                            </Paper>
-                        </div>
-                    </Loading>
-                </div>
+                   
+              </div>
             </div>
         );
     }

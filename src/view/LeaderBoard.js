@@ -302,8 +302,8 @@ const EnhancedTableToolbar = (props) => {
             return (
                 <div className={classes.button}>
                     <Loading loading={buttonLoading}>
-                        <Button variant="contained" style={{backgroundColor: '#01b5f0', color:'#fff',fontWeight
-                    : 'bold'}} onClick={() => setDialogOpen(true)}>
+                        <Button variant="contained" style={{backgroundColor: '#01b5f0', color:'#fff',fontWeight: 'bold'}} 
+                        onClick={() => setDialogOpen(true)}>
                             Launch Tournament
                         </Button>
                     </Loading>

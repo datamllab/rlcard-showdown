@@ -23,7 +23,7 @@ function Navbar({subtitleMap}) {
         <AppBar position="fixed" className={"header-bar-wrapper"}>
             <div className={"header-bar"}>
                 <Link to="/leaderboard"><img src={logo_new} alt={"Logo"} height="45px" className = {'header-logo'}/></Link>
-                <div className={"title unselectable"}><div className={"title-text"}>强化学习棋盘演示系统<span className={"subtitle"}>{subtitle ? '/ ' + subtitle : ''}</span></div></div>
+                <div className={"title unselectable"}><div className={"title-text"}>强化学习棋牌演示系统<span className={"subtitle"}>{subtitle ? '/ ' + subtitle : ''}</span></div></div>
                 <div className={"stretch"} />
                 {/* <div className={"github-info"} onClick={()=>{window.location.href = 'https://github.com/datamllab/rlcard'}}>
                     <div className={"github-icon"}><GitHubIcon /></div>

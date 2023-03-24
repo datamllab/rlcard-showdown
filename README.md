@@ -6,6 +6,7 @@ This is the GUI support for the [RLCard](https://github.com/datamllab/rlcard) pr
 *   Paper: [https://www.ijcai.org/Proceedings/2020/764](https://www.ijcai.org/Proceedings/2020/764)
 *   Document: [Click Here](docs/README.md)
 *   Online Demo with DouZero: [https://www.douzero.org/](https://www.douzero.org/)
+*   Miscellaneous Resources: Have you heard of data-centric AI? Please check out our [data-centric AI survey](https://arxiv.org/abs/2303.10158) and [awesome data-centric AI resources](https://github.com/daochenzha/data-centric-AI)!
 
 ## Cite this work
 Zha, Daochen, et al. "RLCard: A Platform for Reinforcement Learning in Card Games." IJCAI. 2020.
